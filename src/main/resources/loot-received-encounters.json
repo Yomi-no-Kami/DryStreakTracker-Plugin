@@ -1,0 +1,170 @@
+[
+  {
+    "encounterId": "martin_master_farmer_pickpocket",
+    "displayName": "Martin the Master Gardener",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Martin_the_Master_Gardener.png",
+    "lootSourceNames": [
+      "Martin"
+    ],
+    "trackedDropIds": [
+      5318
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "branda_royal_titans",
+    "displayName": "Branda the Fire Queen",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Branda_the_Fire_Queen.png",
+    "lootSourceNames": [
+      "Branda the Fire Queen"
+    ],
+    "trackedDropIds": [
+      30631, 30627
+    ],
+    "petDropIds": [
+      30622
+    ]
+  },
+  {
+    "encounterId": "eldric_royal_titans",
+    "displayName": "Eldric the Ice King",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Eldric_the_Ice_King.png",
+    "lootSourceNames": [
+      "Eldric the Ice King"
+    ],
+    "trackedDropIds": [
+      30628, 30626
+    ],
+    "petDropIds": [
+      30622
+    ]
+  },
+  {
+    "encounterId": "maggot_king",
+    "displayName": "Maggot King",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Maggot_King.png",
+    "lootSourceNames": [
+      "Maggot King"
+    ],
+    "trackedDropIds": [
+      33634, 33631
+    ],
+    "petDropIds": [
+      33642
+    ]
+  },
+  {
+    "encounterId": "araxxor",
+    "displayName": "Araxxor",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Araxxor.png",
+    "lootSourceNames": [
+      "Araxxor"
+    ],
+    "trackedDropIds": [
+      29799,29790, 29792, 29794, 29786, 29788
+    ],
+    "petDropIds": [
+      29836
+    ]
+  },
+  {
+    "encounterId": "hespori",
+    "displayName": "Hespori",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Hespori.png",
+    "lootSourceNames": [
+      "Hespori"
+    ],
+    "trackedDropIds": [
+      22994
+    ],
+    "petDropIds": [
+      20661
+    ]
+  },
+  {
+    "encounterId": "barrows",
+    "displayName": "Barrows",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Dharok_the_Wretched.png",
+    "lootSourceNames": [
+      "Barrows"
+    ],
+    "trackedDropIds": [
+      4755, 4757, 4759, 4753,
+      4724, 4726, 4728, 4730,
+      4745, 4747, 4749, 4751,
+      4716, 4718, 4720, 4722,
+      4708, 4710, 4712, 4714,
+      4732, 4734, 4736, 4738
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "moons_of_peril",
+    "displayName": "Moons of Peril",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Blood_Moon.png",
+    "lootSourceNames": [
+      "Lunar Chest"
+    ],
+    "trackedDropIds": [
+      29000, 29004, 29007, 29010,
+      29022, 29025, 29028, 28997,
+      28988, 29013, 29016, 29019
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "bryophyta",
+    "displayName": "Bryophyta",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Bryophyta.png",
+    "lootSourceNames": [
+      "Bryophyta (Chest)"
+    ],
+    "trackedDropIds": [
+      22372
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "obor",
+    "displayName": "Obor",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Obor.png",
+    "lootSourceNames": [
+      "Obor (Chest)"
+    ],
+    "trackedDropIds": [
+      20756
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "",
+    "displayName": "Corrupted Gauntlet",
+    "imageUrl": "",
+    "lootSourceNames": [
+      "Corrupted Hunllef"
+    ],
+    "trackedDropIds": [
+      0
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "gauntlet",
+    "displayName": "Gauntlet",
+    "imageUrl": "",
+    "lootSourceNames": [
+      "Crystalline Hunllef"
+    ],
+    "trackedDropIds": [
+      0
+    ],
+    "petDropIds": [
+    ]
+  }
+]

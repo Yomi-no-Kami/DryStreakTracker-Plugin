@@ -1,0 +1,683 @@
+[
+  {
+    "encounterId": "cerberus",
+    "displayName": "Cerberus",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Cerberus.png",
+    "npcIds": [
+      5862
+    ],
+    "trackedDropIds": [
+      13227,
+      13229,
+      13231,
+      13233,
+      13245
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "scurrius",
+    "displayName": "Scurrius",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Scurrius.png",
+    "npcIds": [
+      7221, 7222
+    ],
+    "trackedDropIds": [
+      28798
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "giant_mole",
+    "displayName": "Giant Mole",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Giant_Mole.png",
+    "npcIds": [
+      5779
+    ],
+    "trackedDropIds": [
+      33382
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "deranged_archaeologist",
+    "displayName": "Deranged Archaeologist",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Deranged_archaeologist.png",
+    "npcIds": [
+      7806
+    ],
+    "trackedDropIds": [
+      30895
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "dagannoth_supreme",
+    "displayName": "Dagannoth Supreme",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Dagannoth_Supreme.png",
+    "npcIds": [
+      2265
+    ],
+    "trackedDropIds": [
+      6733
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "dagannoth_rex",
+    "displayName": "Dagannoth Rex",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Dagannoth_Rex.png",
+    "npcIds": [
+      2267
+    ],
+    "trackedDropIds": [
+      6735, 6737
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "dagannoth_prime",
+    "displayName": "Dagannoth Prime",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Dagannoth_Prime.png",
+    "npcIds": [
+      2266
+    ],
+    "trackedDropIds": [
+      6731
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "sarachnis",
+    "displayName": "Sarachnis",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Sarachnis.png",
+    "npcIds": [
+      8713
+    ],
+    "trackedDropIds": [
+      23528, 23525
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "kalphite_queen",
+    "displayName": "Kalphite Queen",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Kalphite_Queen.png",
+    "npcIds": [
+      965
+    ],
+    "trackedDropIds": [
+      7981, 7158, 11920, 12885, 3140
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "kreearra",
+    "displayName": "Kree'aara",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Kree%27arra.png",
+    "npcIds": [
+      3162
+    ],
+    "trackedDropIds": [
+      11818, 11820, 11822, 11826, 11828, 11830, 11810
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "commander_zilyana",
+    "displayName": "Commander Zilyana",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Commander_Zilyana.png",
+    "npcIds": [
+      2205
+    ],
+    "trackedDropIds": [
+      11818, 11820, 11822, 11814, 13256, 11828, 11785
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "general_graardor",
+    "displayName": "General Graardor",
+    "imageUrl": "https://oldschool.runescape.wiki/images/General_Graardor.png",
+    "npcIds": [
+      2215
+    ],
+    "trackedDropIds": [
+      11818, 11820, 11822, 11812, 11832, 11834, 11836
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "kril_tsutsaroth",
+    "displayName": "K'ril Tsutsaroth",
+    "imageUrl": "https://oldschool.runescape.wiki/images/K%27ril_Tsutsaroth.png",
+    "npcIds": [
+      3129
+    ],
+    "trackedDropIds": [
+      11818, 11820, 11822, 11816, 11787, 11824, 11791
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "the_hueycoatl",
+    "displayName": "The Hueycoatl",
+    "imageUrl": "https://oldschool.runescape.wiki/images/The_Hueycoatl.png",
+    "npcIds": [
+      14009
+    ],
+    "trackedDropIds": [
+      30085, 30070, 30066
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "corporeal_beast",
+    "displayName": "Corporeal Beast",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Corporeal_Beast.png",
+    "npcIds": [
+      319
+    ],
+    "trackedDropIds": [
+      12819, 12823, 12827, 12833, 25521
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "nex",
+    "displayName": "Nex",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Nex.png",
+    "npcIds": [
+      11278, 11282
+    ],
+    "trackedDropIds": [
+      26235, 26370, 26372, 26376, 26378, 26380
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "chaos_fanatic",
+    "displayName": "Chaos Fanatic",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Chaos_Fanatic.png",
+    "npcIds": [
+      6619
+    ],
+    "trackedDropIds": [
+      11928, 11931
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "crazy_archaeologist",
+    "displayName": "Crazy Archaeologist",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Crazy_archaeologist.png",
+    "npcIds": [
+      6618
+    ],
+    "trackedDropIds": [
+      11932, 11929, 11990
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "scorpia",
+    "displayName": "Scorpia",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Scorpia.png",
+    "npcIds": [
+      6615
+    ],
+    "trackedDropIds": [
+      11930, 11933
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "king_black_dragon",
+    "displayName": "King Black Dragon",
+    "imageUrl": "https://oldschool.runescape.wiki/images/King_Black_Dragon.png",
+    "npcIds": [
+      239
+    ],
+    "trackedDropIds": [
+      11920, 7980, 11286
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "chaos_elemental",
+    "displayName": "Chaos Elemental",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Chaos_Elemental.png",
+    "npcIds": [
+      2054
+    ],
+    "trackedDropIds": [
+      11920
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "revenant_maledictus",
+    "displayName": "Revenant Maledictus",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Revenant_maledictus.png",
+    "npcIds": [
+      11246
+    ],
+    "trackedDropIds": [
+      22557, 22547, 22552, 22542, 21804, 21807, 21810,  21813, 22299, 22302, 22305
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "calvarion",
+    "displayName": "Calvar'ion",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Calvar%27ion.png",
+    "npcIds": [
+      11994
+    ],
+    "trackedDropIds": [
+      7158, 11920, 27673, 12601, 27684
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "vetion",
+    "displayName": "Vet'ion",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Vet%27ion_%28enraged%29.png",
+    "npcIds": [
+      6612
+    ],
+    "trackedDropIds": [
+      7158, 11920, 27673, 12601, 27684
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "spindel",
+    "displayName": "Spindel",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Spindel.png",
+    "npcIds": [
+      11998
+    ],
+    "trackedDropIds": [
+      7158, 11920, 27670, 12605, 27687
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "venenatis",
+    "displayName": "Venenatis",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Venenatis.png",
+    "npcIds": [
+      6610
+    ],
+    "trackedDropIds": [
+      7158, 11920, 27670, 12605, 27687
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "artio",
+    "displayName": "Artio",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Artio.png",
+    "npcIds": [
+      11992
+    ],
+    "trackedDropIds": [
+      7158, 11920, 27667, 12603, 27681
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "callisto",
+    "displayName": "Callisto",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Callisto.png",
+    "npcIds": [
+      6609
+    ],
+    "trackedDropIds": [
+      7158, 11920, 27667, 12603, 27681
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "brutus",
+    "displayName": "Brutus",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Brutus.png",
+    "npcIds": [
+      15626
+    ],
+    "trackedDropIds": [
+      33101, 33091, 33093
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "amoxliatl",
+    "displayName": "Amoxliatl",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Amoxliatl.png",
+    "npcIds": [
+      13685
+    ],
+    "trackedDropIds": [
+      29892, 29889
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "mad_angel",
+    "displayName": "Mad Angel",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Mad_Angel_%28dormant%29.png",
+    "npcIds": [
+      16305
+    ],
+    "trackedDropIds": [
+      34027, 34030
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "zulrah",
+    "displayName": "Zulrah",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Zulrah_%28serpentine%29.png",
+    "npcIds": [
+      2042, 2043, 2044
+    ],
+    "trackedDropIds": [
+      12922, 13200, 13201, 12932, 12927, 6571, 12936
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "vorkath",
+    "displayName": "Vorkath",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Vorkath.png",
+    "npcIds": [
+      8061
+    ],
+    "trackedDropIds": [
+      21907, 22111, 11286, 22006, 22106
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "phantom_muspah",
+    "displayName": "Phantom Muspah",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Phantom_Muspah_%28ranged%29.png",
+    "npcIds": [
+      12077, 12078, 12080
+    ],
+    "trackedDropIds": [
+      27627, 27614, 27622
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "the_nightmare",
+    "displayName": "The Nightmare",
+    "imageUrl": "https://oldschool.runescape.wiki/images/The_Nightmare.png",
+    "npcIds": [
+     9433, 378
+    ],
+    "trackedDropIds": [
+      24422, 24419, 24420, 24421, 24517, 24511, 24514, 24495
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "phosanis_nightmare",
+    "displayName": "Phosani's Nightmare",
+    "imageUrl": "https://oldschool.runescape.wiki/images/The_Nightmare.png",
+    "npcIds": [
+      9424, 377
+    ],
+    "trackedDropIds": [
+      24422, 24419, 24420, 24421, 24517, 24511, 24514, 24495, 25838, 25837
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "yama",
+    "displayName": "Yama",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Yama.png",
+    "npcIds": [
+      14176
+    ],
+    "trackedDropIds": [
+      30750, 30753, 30756, 30759
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "duke_sucellus",
+    "displayName": "Duke Sucellus",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Duke_Sucellus.png",
+    "npcIds": [
+      12191, 12192
+    ],
+    "trackedDropIds": [
+      26241, 26243, 26245, 28276, 28281, 28321
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "the_leviathan",
+    "displayName": "The Leviathan",
+    "imageUrl": "https://oldschool.runescape.wiki/images/The_Leviathan.png",
+    "npcIds": [
+      12214
+    ],
+    "trackedDropIds": [
+      26241, 26243, 26245, 28276, 28283, 28325
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "the_whisperer",
+    "displayName": "The Whisperer",
+    "imageUrl": "https://oldschool.runescape.wiki/images/The_Whisperer.png",
+    "npcIds": [
+      12204
+    ],
+    "trackedDropIds": [
+      26241, 26243, 26245, 28276, 28279, 28323
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "vardorvis",
+    "displayName": "Vardorvis",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Vardorvis.png",
+    "npcIds": [
+      12223
+    ],
+    "trackedDropIds": [
+      26241, 26243, 26245, 28276, 28285, 28319
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+  "encounterId": "skotizo",
+  "displayName": "Skotizo",
+  "imageUrl": "https://oldschool.runescape.wiki/images/Skotizo.png",
+  "npcIds": [
+    7286
+  ],
+  "trackedDropIds": [
+    6571, 21275, 19701
+  ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "shellbane_gryphon",
+    "displayName": "Shellbane Gryphon",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Shellbane_gryphon.png",
+    "npcIds": [
+      14860
+    ],
+    "trackedDropIds": [
+      31245, 32921
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "grotesque_guardians",
+    "displayName": "Grotesque Guardians",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Dusk.png",
+    "npcIds": [
+      7889
+    ],
+    "trackedDropIds": [
+      21730, 4153, 21736, 21739, 21742, 21745
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "abyssal_sire",
+    "displayName": "Abyssal Sire",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Abyssal_Sire_%28phase_1%29.png",
+    "npcIds": [
+      5908
+    ],
+    "trackedDropIds": [
+      13273
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "kraken",
+    "displayName": "Kraken",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Kraken.png",
+    "npcIds": [
+      0
+    ],
+    "trackedDropIds": [
+      11905, 12004, 12007
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "thermonuclear_smoke_devil",
+    "displayName": "Thermonuclear Smoke Devil",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Thermonuclear_smoke_devil.png",
+    "npcIds": [
+      499
+    ],
+    "trackedDropIds": [
+      12002, 11998, 3140, 25524
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "alchemical_hydra",
+    "displayName": "Alchemical Hydra",
+    "imageUrl": "",
+    "npcIds": [
+      8621, 8622
+    ],
+    "trackedDropIds": [
+      22966, 22969, 22971, 22973, 22983, 22988, 23077, 20849, 22804, 23064
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "zalcano",
+    "displayName": "Zalcano",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Zalcano.png",
+    "npcIds": [
+      9049, 9050
+    ],
+    "trackedDropIds": [
+      23953, 23908, 6571
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "tekton",
+    "displayName": "Tekton",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Tekton.png",
+    "npcIds": [
+      7540, 7541, 7542, 7545, 7543, 7544
+    ],
+    "trackedDropIds": [
+      6573
+    ],
+    "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "goblin_test",
+    "displayName": "Goblin",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Goblin.png",
+    "npcIds": [
+      655, 656, 657, 658, 659,
+      660, 661, 662, 663, 664,
+      665, 666, 667, 668, 674,
+      677, 678, 2245, 2246, 2247,
+      2248, 2249, 2484, 2485, 2486,
+      2487, 2488, 2489, 3028, 3029,
+      3030, 3031, 3032, 3033, 3034,
+      3035, 3036, 3037, 3038, 3039,
+      3040, 3041, 3042, 3043, 3044,
+      3045, 3046, 3047, 3048, 3051,
+      3052, 3053, 3054, 3073, 3074,
+      3075, 3076, 5192, 5193, 5195,
+      5196, 5197, 5198, 5199, 5200,
+      5201, 5202, 5203, 5204, 5205,
+      5206, 5207, 5208
+    ],
+    "trackedDropIds": [
+      288
+    ],
+    "petDropIds": [
+    ]
+  }
+]
