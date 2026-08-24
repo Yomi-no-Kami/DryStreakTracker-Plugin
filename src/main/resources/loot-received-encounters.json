@@ -168,5 +168,33 @@
     "petDropIds": [
       23757, 23759
     ]
+  },
+  {
+    "encounterId": "doom_of_mokhaiotl",
+    "displayName": "Doom of Mokhaiotl",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Doom_of_Mokhaiotl.png",
+    "lootSourceNames": [
+      "Doom of Mokhaiotl"
+    ],
+    "trackedDropIds": [
+      31088, 31115, 31109
+    ],
+    "petDropIds": [
+      31130
+    ]
+  },
+  {
+    "encounterId": "fortis_colosseum",
+    "displayName": "Fortis Colosseum",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Sol_Heredit_%28sitting%29.png",
+    "lootSourceNames": [
+      "Fortis Colosseum"
+    ],
+    "trackedDropIds": [
+    28933, 28936, 28939, 28919, 28942
+    ],
+    "petDropIds": [
+      28960
+    ]
   }
 ]
