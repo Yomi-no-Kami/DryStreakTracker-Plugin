@@ -142,29 +142,31 @@
     ]
   },
   {
-    "encounterId": "",
+    "encounterId": "corrupted_gauntlet",
     "displayName": "Corrupted Gauntlet",
-    "imageUrl": "",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Corrupted_Hunllef.png",
     "lootSourceNames": [
       "Corrupted Hunllef"
     ],
     "trackedDropIds": [
-      0
+      23956, 4207, 25859
     ],
     "petDropIds": [
+      23759, 23757
     ]
   },
   {
     "encounterId": "gauntlet",
     "displayName": "Gauntlet",
-    "imageUrl": "",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Crystalline_Hunllef.png",
     "lootSourceNames": [
       "Crystalline Hunllef"
     ],
     "trackedDropIds": [
-      0
+      23956, 4207, 25859
     ],
     "petDropIds": [
+      23757, 23759
     ]
   }
 ]
