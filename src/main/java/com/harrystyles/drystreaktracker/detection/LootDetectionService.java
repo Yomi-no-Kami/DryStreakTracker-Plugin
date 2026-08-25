@@ -614,11 +614,12 @@ public class LootDetectionService
                                 itemId
                         );
 
-                if (itemImage == null)
-                {
-                    continue;
-                }
-
+                /*
+                 * Store the item name even if the sprite has not
+                 * finished loading yet.
+                 *
+                 * DropItemPanel handles a null image asynchronously.
+                 */
                 result.put(
                         itemId,
 

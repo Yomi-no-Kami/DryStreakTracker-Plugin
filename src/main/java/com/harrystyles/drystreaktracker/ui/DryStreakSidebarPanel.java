@@ -247,14 +247,11 @@ public class DryStreakSidebarPanel extends PluginPanel
      */
     public void refreshItemDisplayData()
     {
-        /*
-         * Never resolve item data while logged out.
-         */
-        if (!loggedIn
-                || !trackerManager.isActive())
+        
+        if (!trackerManager.isActive())
         {
             log.debug(
-                    "Skipping item display resolution: player is not logged in"
+                    "Skipping item display resolution: tracker is not active"
             );
 
             return;
@@ -582,11 +579,13 @@ public class DryStreakSidebarPanel extends PluginPanel
                             itemId
                     );
 
-            if (itemImage == null)
-            {
-                return null;
-            }
-
+            /*
+             * Keep the item name even if the sprite is not
+             * available yet.
+             *
+             * DropItemPanel will request the sprite asynchronously
+             * when itemImage is null.
+             */
             return new ItemDisplayData(
                     itemName,
                     itemImage
