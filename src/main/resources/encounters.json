@@ -492,7 +492,7 @@
       12191, 12192
     ],
     "trackedDropIds": [
-      26241, 26243, 26245, 28276, 28281, 28321
+      26241, 26243, 26245, 28276, 28281, 28321, 1635
     ],
     "petDropIds": [
     ]
@@ -505,7 +505,7 @@
       12214
     ],
     "trackedDropIds": [
-      26241, 26243, 26245, 28276, 28283, 28325
+      26241, 26243, 26245, 28276, 28283, 28325, 1635
     ],
     "petDropIds": [
     ]
@@ -518,7 +518,7 @@
       12204
     ],
     "trackedDropIds": [
-      26241, 26243, 26245, 28276, 28279, 28323
+      26241, 26243, 26245, 28276, 28279, 28323, 1635
     ],
     "petDropIds": [
     ]
@@ -531,7 +531,7 @@
       12223
     ],
     "trackedDropIds": [
-      26241, 26243, 26245, 28276, 28285, 28319
+      26241, 26243, 26245, 28276, 28285, 28319, 1635
     ],
     "petDropIds": [
     ]
@@ -651,6 +651,42 @@
       6573
     ],
     "petDropIds": [
+    ]
+  },
+  {
+    "encounterId": "jad",
+    "displayName": "TzTok-Jad",
+    "imageUrl": "https://oldschool.runescape.wiki/images/TzTok-Jad.png",
+    "npcIds": [
+      3127
+    ],
+    "trackedDropIds": [],
+    "petDropIds": [
+      13225
+    ]
+  },
+  {
+    "encounterId": "zuk",
+    "displayName": "TzKal-Zuk",
+    "imageUrl": "https://oldschool.runescape.wiki/images/TzKal-Zuk.png",
+    "npcIds": [
+      7706
+    ],
+    "trackedDropIds": [],
+    "petDropIds": [
+      22319
+    ]
+  },
+  {
+    "encounterId": "demonic_brutus",
+    "displayName": "Dmeonic Brutus",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Demonic_Brutus.png",
+    "npcIds": [
+      15628
+    ],
+    "trackedDropIds": [],
+    "petDropIds": [
+      33124
     ]
   },
   {

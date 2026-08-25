@@ -191,10 +191,24 @@
       "Fortis Colosseum"
     ],
     "trackedDropIds": [
-    28933, 28936, 28939, 28919, 28942
+      28933, 28936, 28939, 28919, 28942
     ],
     "petDropIds": [
       28960
     ]
-  }
+  },
+  {
+  "encounterId": "guardians_of_the_rift",
+  "displayName": "Guardians of the Rift",
+  "imageUrl": "https://oldschool.runescape.wiki/images/Rewards_Guardian.png",
+  "lootSourceNames": [
+    "Guardians of the Rift"
+  ],
+  "trackedDropIds": [
+    26807, 26809, 26811, 26813, 26822
+  ],
+  "petDropIds": [
+    26901
+  ]
+}
 ]
