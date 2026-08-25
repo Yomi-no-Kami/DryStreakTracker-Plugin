@@ -10,7 +10,9 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.ColorScheme;
+import net.runelite.client.util.AsyncBufferedImage;
 
 /**
  * Displays a tracked drop as an item sprite.
@@ -24,6 +26,7 @@ public class DropItemPanel extends JPanel
     private static final int ICON_SIZE = 36;
 
     public DropItemPanel(
+            ItemManager itemManager,
             int itemId,
             int quantity,
             String itemName,
@@ -114,6 +117,9 @@ public class DropItemPanel extends JPanel
 
         if (itemImage != null)
         {
+            /*
+             * Cached image is already available.
+             */
             Image scaledImage =
                     itemImage.getScaledInstance(
                             ICON_SIZE,
@@ -129,17 +135,30 @@ public class DropItemPanel extends JPanel
         }
         else
         {
-            icon.setText(
-                    "?"
-            );
+            /*
+             * Cached image was not available yet.
+             *
+             * Ask RuneLite for the sprite asynchronously.
+             * addTo(icon) will update the JLabel automatically
+             * when the sprite finishes loading.
+             */
+            AsyncBufferedImage asyncImage =
+                    itemManager.getImage(
+                            itemId
+                    );
 
-            icon.setHorizontalAlignment(
-                    SwingConstants.CENTER
-            );
-
-            icon.setVerticalAlignment(
-                    SwingConstants.CENTER
-            );
+            if (asyncImage != null)
+            {
+                asyncImage.addTo(
+                        icon
+                );
+            }
+            else
+            {
+                icon.setText(
+                        "?"
+                );
+            }
         }
 
         layeredPane.add(

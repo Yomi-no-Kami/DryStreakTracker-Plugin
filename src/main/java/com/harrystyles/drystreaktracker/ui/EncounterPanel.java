@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.ColorScheme;
 
 public class EncounterPanel extends JPanel
@@ -32,6 +33,7 @@ public class EncounterPanel extends JPanel
     private final EncounterDefinition encounter;
     private final EncounterStats stats;
     private final Map<Integer, ItemDisplayData> itemDisplayData;
+    private final ItemManager itemManager;
 
     private final JPanel detailsPanel;
 
@@ -43,12 +45,14 @@ public class EncounterPanel extends JPanel
             EncounterDefinition encounter,
             EncounterStats stats,
             Map<Integer, ItemDisplayData> itemDisplayData,
+            ItemManager itemManager,
             boolean expanded,
             Consumer<Boolean> expandedStateListener)
     {
         this.encounter = encounter;
         this.stats = stats;
         this.itemDisplayData = itemDisplayData;
+        this.itemManager = itemManager;
         this.expanded = expanded;
         this.expandedStateListener = expandedStateListener;
 
@@ -559,6 +563,7 @@ public class EncounterPanel extends JPanel
 
             DropItemPanel dropItemPanel =
                     new DropItemPanel(
+                            itemManager,
                             itemId,
                             quantity,
                             itemName,

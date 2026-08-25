@@ -471,13 +471,9 @@ public class DryStreakSidebarPanel extends PluginPanel
                             encounter,
                             stats,
                             displayData,
+                            itemManager,
                             expanded,
-                            isExpanded ->
-                                    expandedStates.put(
-                                            encounter.getEncounterId(),
-                                            isExpanded
-                                    )
-                    );
+                            isExpanded -> expandedStates.put(encounter.getEncounterId(), isExpanded));
 
             encounterContainer.add(
                     encounterPanel
