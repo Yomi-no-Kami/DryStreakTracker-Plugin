@@ -56,6 +56,19 @@ public class EncounterStats
      */
     private int lastDropTotalKillcount;
 
+    /**
+     * Length of the dry streak that ended when the most
+     * recent tracked drop was received.
+     *
+     * This is captured immediately before currentDryStreak
+     * is reset to 0.
+     *
+     * Example:
+     * A tracked drop is received after 684 dry kills.
+     * lastCompletedDryStreak = 684
+     */
+    private int lastCompletedDryStreak;
+
     private int longestDryStreak;
 
     /**
@@ -71,8 +84,6 @@ public class EncounterStats
     /**
      * Indicates that the most recently recorded kill was the
      * kill that surpassed the player's previous dry streak record.
-     *
-     * This is runtime-only and does not need to be persisted.
      */
     private transient boolean newDryRecordThisKill;
 
@@ -150,6 +161,8 @@ public class EncounterStats
     }
 
     public int getLastDropTotalKillcount() { return lastDropTotalKillcount; }
+
+    public int getLastCompletedDryStreak() { return lastCompletedDryStreak; }
 
     public int getLongestDryStreak()
     {
@@ -310,6 +323,13 @@ public class EncounterStats
         lastDropKillcount = currentKillcount;
 
         lastDropTotalKillcount = totalKillcount;
+
+        /*
+         * Capture the dry streak that just ended before
+         * resetting it back to 0.
+         */
+        lastCompletedDryStreak =
+                currentDryStreak;
 
         /*
          * A tracked drop ended the current dry streak.

@@ -439,18 +439,34 @@ public class LootDetectionService
                         qualifyingDrop.getId()
                 );
 
+        EncounterStats stats =
+                trackerManager.getStats(
+                        encounter.getEncounterId()
+                );
+
+        String notificationText =
+                encounter.getDisplayName()
+                        + "<br>"
+                        + itemName
+                        + " x"
+                        + qualifyingDrop.getQuantity();
+
+        if (stats != null
+                && stats.getLastCompletedDryStreak() > 0)
+        {
+            notificationText +=
+                    "<br>"
+                            + "Dry streak ended at "
+                            + stats.getLastCompletedDryStreak()
+                            + " kills. Dry streak reset";
+        }
+
         notificationManager.notify(
                 pet
                         ? "PET RECEIVED"
                         : "DROP RECEIVED",
 
-                encounter.getDisplayName()
-                        + "<br>"
-                        + itemName
-                        + " x"
-                        + qualifyingDrop.getQuantity()
-                        + "<br>"
-                        + "Dry streak reset",
+                notificationText,
 
                 0x00FF00
         );
@@ -461,7 +477,8 @@ public class LootDetectionService
                     encounter,
                     itemName,
                     qualifyingDrop.getQuantity(),
-                    pet
+                    pet,
+                    stats
             );
         }
     }
@@ -748,11 +765,16 @@ public class LootDetectionService
             EncounterDefinition encounter,
             String itemName,
             int quantity,
-            boolean pet)
+            boolean pet,
+            EncounterStats stats)
     {
-        String dropType = pet ? "Pet" : "Drop";
+        String dropType =
+                pet
+                        ? "Pet"
+                        : "Drop";
 
-        String message = "<col=FF0000>[Dry Streak]</col> "
+        String message =
+                "<col=FF0000>[Dry Streak]</col> "
                         + "<col=FFFF00>["
                         + encounter.getDisplayName()
                         + "]</col>: "
@@ -761,8 +783,19 @@ public class LootDetectionService
                         + " received: "
                         + itemName
                         + " x"
-                        + quantity
-                        + ". Dry streak reset.</col>";
+                        + quantity;
+
+        if (stats != null
+                && stats.getLastCompletedDryStreak() > 0)
+        {
+            message +=
+                    ". Dry streak ended at "
+                            + stats.getLastCompletedDryStreak()
+                            + " kills.";
+        }
+
+        message +=
+                " Dry streak reset.</col>";
 
         client.addChatMessage(
                 ChatMessageType.GAMEMESSAGE,
