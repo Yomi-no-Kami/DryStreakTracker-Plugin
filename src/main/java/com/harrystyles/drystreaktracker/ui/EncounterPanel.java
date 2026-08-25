@@ -247,6 +247,21 @@ public class EncounterPanel extends JPanel {
         expandIndicator.setToolTipText(
                 expanded ? "Collapse encounter" : "Expand encounter");
 
+
+        /**
+         * Add a mouse listener so we can click the expand/collapsed label and have it
+         * open/close the encounters too
+         */
+        expandIndicator.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        expandIndicator.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent event) {
+                        toggleExpanded();
+                    }
+                }
+        );
+
         panel.add(expandIndicator, BorderLayout.EAST);
 
         return panel;
