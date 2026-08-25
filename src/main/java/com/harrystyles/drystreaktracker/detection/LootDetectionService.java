@@ -445,11 +445,12 @@ public class LootDetectionService
                         : "DROP RECEIVED",
 
                 encounter.getDisplayName()
-                        + " - "
+                        + "<br>"
                         + itemName
                         + " x"
                         + qualifyingDrop.getQuantity()
-                        + " - Dry streak reset",
+                        + "<br>"
+                        + "Dry streak reset",
 
                 0x00FF00
         );
