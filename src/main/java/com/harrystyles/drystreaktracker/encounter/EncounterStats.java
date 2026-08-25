@@ -59,6 +59,24 @@ public class EncounterStats
     private int longestDryStreak;
 
     /**
+     * Prevents repeated record notifications during the same
+     * dry streak.
+     *
+     * Once the current streak surpasses the previous record,
+     * the notification toast is only sent once. This resets when
+     * a tracked drop is received.
+     */
+    private boolean dryRecordNotificationSent;
+
+    /**
+     * Indicates that the most recently recorded kill was the
+     * kill that surpassed the player's previous dry streak record.
+     *
+     * This is runtime-only and does not need to be persisted.
+     */
+    private transient boolean newDryRecordThisKill;
+
+    /**
      * Time this encounter was most recently completed.
      *
      * Used to sort the sidebar so the most recently
@@ -137,6 +155,8 @@ public class EncounterStats
     {
         return longestDryStreak;
     }
+
+    public boolean isNewDryRecordThisKill() { return newDryRecordThisKill; }
 
     public long getLastActivityTime() { return lastActivityTime; }
 
@@ -238,51 +258,68 @@ public class EncounterStats
     public void recordDryKill(
             int currentKillcount)
     {
-        lastActivityTime =
-                System.currentTimeMillis();
 
-        lastKnownKillcount =
-                currentKillcount;
+        /*
+         * This flag only represents the kill currently
+         * being processed.
+         */
+        newDryRecordThisKill = false;
+
+        lastActivityTime = System.currentTimeMillis();
+
+        lastKnownKillcount = currentKillcount;
 
         totalKillsTracked++;
 
         currentDryStreak++;
 
+        /*
+         * Check whether this kill beats the existing record
+         * before updating longestDryStreak.
+         *
+         * Require at least one previous tracked drop so the
+         * player's very first dry streak does not constantly
+         * create a record with nothing meaningful to beat.
+         */
         if (currentDryStreak > longestDryStreak)
         {
-            longestDryStreak =
-                    currentDryStreak;
+            if (!dryRecordNotificationSent
+                    && totalTrackedDrops > 0)
+            {
+                newDryRecordThisKill =
+                        true;
+
+                dryRecordNotificationSent =
+                        true;
+            }
+
+            longestDryStreak = currentDryStreak;
         }
     }
 
-    public void recordDrop(
-            int currentKillcount,
-            int totalKillcount,
-            int itemId,
-            int quantity)
+    public void recordDrop(int currentKillcount, int totalKillcount, int itemId, int quantity)
     {
         lastActivityTime =
                 System.currentTimeMillis();
 
-        lastKnownKillcount =
-                currentKillcount;
+        lastKnownKillcount = currentKillcount;
 
         totalKillsTracked++;
-
         totalTrackedDrops++;
 
-        lastDropKillcount =
-                currentKillcount;
+        lastDropKillcount = currentKillcount;
 
-        lastDropTotalKillcount =
-                totalKillcount;
+        lastDropTotalKillcount = totalKillcount;
+
+        /*
+         * A tracked drop ended the current dry streak.
+         * The next dry streak may establish a new record.
+         */
+        dryRecordNotificationSent = false;
+        newDryRecordThisKill = false;
 
         currentDryStreak = 0;
 
-        receivedDrops.merge(
-                itemId,
-                quantity,
-                Integer::sum
-        );
+        receivedDrops.merge(itemId, quantity, Integer::sum);
     }
 }

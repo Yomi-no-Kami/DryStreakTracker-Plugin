@@ -348,6 +348,33 @@ public class LootDetectionService
 
         if (qualifyingDrop == null)
         {
+            /*
+             * If this kill surpassed the player's previous
+             * longest dry streak, show the record notification.
+             */
+            if (stats != null
+                    && stats.isNewDryRecordThisKill())
+            {
+                sendDryRecordNotification(
+                        encounter,
+                        stats
+                );
+
+                /*
+                 * Chatbox messages still respect the plugin
+                 * configuration setting.
+                 */
+                if (config.showChatboxMessages())
+                {
+                    sendDryRecordChatboxMessage(
+                            encounter,
+                            stats
+                    );
+                }
+
+                return;
+            }
+
             if (config.showChatboxMessages())
             {
                 sendDryKillChatboxMessage(
@@ -664,6 +691,57 @@ public class LootDetectionService
                 + itemId;
     }
 
+    /**
+     * Displays an in-game notification when the player
+     * surpasses their previous longest dry streak.
+     */
+    private void sendDryRecordNotification(
+            EncounterDefinition encounter,
+            EncounterStats stats)
+    {
+        if (encounter == null || stats == null)
+        {
+            return;
+        }
+
+        String text = "<col=FF0000>"
+                        + encounter.getDisplayName()
+                        + "</col>"
+                        + "<br>"
+                        + "<col=FFFFFF>"
+                        + stats.getCurrentDryStreak()
+                        + " KC Dry"
+                        + "</col>";
+
+        notificationManager.notify(
+                "DRY STREAK RECORD",
+                text,
+                0xFF0000
+        );
+    }
+
+    /**
+     * Sends a chatbox message when the player surpasses
+     * their previous longest dry streak.
+     */
+    private void sendDryRecordChatboxMessage(EncounterDefinition encounter, EncounterStats stats)
+    {
+        if (encounter == null || stats == null)
+        {
+            return;
+        }
+
+        String message = "<col=FF0000>[Dry Streak]</col> "
+                        + "<col=FFFF00>["
+                        + encounter.getDisplayName()
+                        + "]</col>: "
+                        + "<col=FFFFFF>New dry streak record! "
+                        + stats.getCurrentDryStreak()
+                        + " KC dry"
+                        + "</col>";
+
+        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", message, null);
+    }
 
     private void sendDropChatboxMessage(
             EncounterDefinition encounter,
@@ -671,13 +749,9 @@ public class LootDetectionService
             int quantity,
             boolean pet)
     {
-        String dropType =
-                pet
-                        ? "Pet"
-                        : "Drop";
+        String dropType = pet ? "Pet" : "Drop";
 
-        String message =
-                "<col=FF0000>[Dry Streak]</col> "
+        String message = "<col=FF0000>[Dry Streak]</col> "
                         + "<col=FFFF00>["
                         + encounter.getDisplayName()
                         + "]</col>: "
