@@ -14,13 +14,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,11 +38,9 @@ public class DryStreakSidebarPanel extends PluginPanel
 
     private final JPanel encounterContainer;
 
-    private final Map<String, Boolean> expandedStates =
-            new HashMap<>();
+    private final Map<String, Boolean> expandedStates = new HashMap<>();
 
-    private final Map<Integer, ItemDisplayData> resolvedItemDisplayData =
-            new HashMap<>();
+    private final Map<Integer, ItemDisplayData> resolvedItemDisplayData = new HashMap<>();
 
     /**
      * Whether a RuneScape account is currently logged in.
@@ -56,109 +48,145 @@ public class DryStreakSidebarPanel extends PluginPanel
     private boolean loggedIn;
 
     @Inject
-    public DryStreakSidebarPanel(
-            EncounterRegistry encounterRegistry,
-            EncounterTrackerManager trackerManager,
-            ItemManager itemManager)
+    public DryStreakSidebarPanel(EncounterRegistry encounterRegistry, EncounterTrackerManager trackerManager, ItemManager itemManager)
     {
         super();
 
-        this.encounterRegistry =
-                encounterRegistry;
+        this.encounterRegistry = encounterRegistry;
+        this.trackerManager = trackerManager;
+        this.itemManager = itemManager;
 
-        this.trackerManager =
-                trackerManager;
+        setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
+        setBackground(ColorScheme.DARK_GRAY_COLOR);
+        setLayout(new BorderLayout());
 
-        this.itemManager =
-                itemManager;
+        JLabel title = new JLabel("Dry Streak Tracker" );
 
-        setLayout(
-                new BorderLayout()
+        title.setForeground(Color.WHITE);
+
+        title.setFont(title.getFont().deriveFont(Font.BOLD, 16f));
+
+
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+
+        title.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JButton clearAllButton = new JButton("Clear All Data");
+
+        clearAllButton.setFocusPainted(false);
+        clearAllButton.setBorderPainted(false);
+        clearAllButton.setOpaque(true);
+
+        clearAllButton.setForeground(new Color(220, 90, 90));
+        clearAllButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
+
+        clearAllButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        clearAllButton.setBorder(BorderFactory.createEmptyBorder(6, 14, 6, 14));
+
+        clearAllButton.setToolTipText("Clear all Dry Streak Tracker data for this account");
+
+        clearAllButton.addChangeListener(event ->
+        {
+            ButtonModel model = clearAllButton.getModel();
+
+            if (model.isPressed())
+            {
+                clearAllButton.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+            }
+            else if (model.isRollover())
+            {
+                clearAllButton.setBackground(ColorScheme.DARK_GRAY_HOVER_COLOR);
+            }
+            else
+            {
+                clearAllButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
+            }
+        });
+
+        clearAllButton.addActionListener(
+                event ->
+                {
+                    if (!trackerManager.isActive())
+                    {
+                        return;
+                    }
+
+                    int result = JOptionPane.showConfirmDialog(
+                                    this,
+                                    "Clear ALL Dry Streak Tracker data for this account?\n\n"
+                                            + "This cannot be undone.",
+                                    "Clear All Tracker Data",
+                                    JOptionPane.YES_NO_OPTION,
+                                    JOptionPane.WARNING_MESSAGE
+                            );
+
+                    if (result != JOptionPane.YES_OPTION)
+                    {
+                        return;
+                    }
+
+                    trackerManager.clearAllData();
+
+                    expandedStates.clear();
+
+                    synchronized (resolvedItemDisplayData)
+                    {
+                        resolvedItemDisplayData.clear();
+                    }
+
+                    refresh();
+                }
         );
 
-        setBackground(
-                ColorScheme.DARK_GRAY_COLOR
-        );
+        JPanel headerPanel = new JPanel();
 
-        setMinimumSize(
-                new Dimension(
-                        150,
-                        100
-                )
-        );
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
 
-        JLabel title =
-                new JLabel(
-                        "Dry Streak Tracker"
-                );
+        headerPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
 
-        title.setForeground(
-                Color.WHITE
-        );
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0,0,1,0,ColorScheme.MEDIUM_GRAY_COLOR),
+                        BorderFactory.createEmptyBorder(8,10,10,10)));
 
-        title.setHorizontalAlignment(
-                SwingConstants.CENTER
-        );
+        headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        headerPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, headerPanel.getPreferredSize().height));
 
-        title.setBorder(
-                BorderFactory.createEmptyBorder(
-                        10,
-                        10,
-                        10,
-                        10
-                )
-        );
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        add(
-                title,
-                BorderLayout.NORTH
-        );
+        clearAllButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        encounterContainer =
-                new JPanel();
+        headerPanel.add(title);
 
-        encounterContainer.setLayout(
-                new BoxLayout(
-                        encounterContainer,
-                        BoxLayout.Y_AXIS
-                )
-        );
+        headerPanel.add(Box.createVerticalStrut(6));
 
-        encounterContainer.setBackground(
-                ColorScheme.DARK_GRAY_COLOR
-        );
+        headerPanel.add(clearAllButton);
 
-        encounterContainer.setBorder(
-                BorderFactory.createEmptyBorder(
-                        5,
-                        5,
-                        5,
-                        5
-                )
-        );
+        encounterContainer = new JPanel();
 
-        JPanel layoutPanel =
-                new JPanel();
+        encounterContainer.setLayout(new BoxLayout(encounterContainer, BoxLayout.Y_AXIS));
 
-        layoutPanel.setLayout(
-                new BoxLayout(
-                        layoutPanel,
-                        BoxLayout.Y_AXIS
-                )
-        );
+        encounterContainer.setBackground(ColorScheme.DARK_GRAY_COLOR);
 
-        layoutPanel.setBackground(
-                ColorScheme.DARK_GRAY_COLOR
-        );
+        encounterContainer.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        layoutPanel.add(
-                encounterContainer
-        );
+        encounterContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
+        encounterContainer.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 
-        add(
-                layoutPanel,
-                BorderLayout.NORTH
-        );
+        JPanel layoutPanel = new JPanel();
+
+        layoutPanel.setLayout(new BoxLayout(layoutPanel, BoxLayout.Y_AXIS));
+
+        layoutPanel.setBackground(ColorScheme.DARK_GRAY_COLOR);
+
+        layoutPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        layoutPanel.add(headerPanel);
+
+        layoutPanel.add(Box.createVerticalStrut(5));
+
+        layoutPanel.add(encounterContainer);
+
+        add(layoutPanel, BorderLayout.NORTH);
 
         /*
          * Plugin starts logged out.
@@ -169,12 +197,9 @@ public class DryStreakSidebarPanel extends PluginPanel
     }
 
     @Override
-    public void setVisible(
-            boolean visible)
+    public void setVisible(boolean visible)
     {
-        super.setVisible(
-                visible
-        );
+        super.setVisible(visible);
 
         if (!visible)
         {
@@ -190,16 +215,11 @@ public class DryStreakSidebarPanel extends PluginPanel
      * When false, encounter panels are completely hidden
      * and the user sees the login message instead.
      */
-    public void setLoggedIn(
-            boolean loggedIn)
+    public void setLoggedIn(boolean loggedIn)
     {
-        this.loggedIn =
-                loggedIn;
+        this.loggedIn = loggedIn;
 
-        log.debug(
-                "Sidebar login state changed: {}",
-                loggedIn
-        );
+        log.debug("Sidebar login state changed: {}", loggedIn);
 
         refresh();
     }
@@ -372,17 +392,13 @@ public class DryStreakSidebarPanel extends PluginPanel
     /**
      * Performs the actual Swing UI rebuild.
      */
-    private void refreshOnSwingThread(
-            Map<Integer, ItemDisplayData> displayData)
+    private void refreshOnSwingThread(Map<Integer, ItemDisplayData> displayData)
     {
         if (!SwingUtilities.isEventDispatchThread())
         {
             SwingUtilities.invokeLater(
                     () ->
-                            refreshOnSwingThread(
-                                    displayData
-                            )
-            );
+                            refreshOnSwingThread(displayData));
 
             return;
         }
@@ -392,40 +408,22 @@ public class DryStreakSidebarPanel extends PluginPanel
         /**
          * LOGGED OUT
          */
-        if (!loggedIn
-                || !trackerManager.isActive())
+        if (!loggedIn || !trackerManager.isActive())
         {
-            JLabel loginLabel =
-                    new JLabel(
-                            "<html><center>"
-                                    + "Log in to view tracker!"
-                                    + "</center></html>"
-                    );
+            JLabel loginLabel = new JLabel("<html><center>" + "Log in to view tracker!" + "</center></html>");
 
             loginLabel.setHorizontalAlignment(
-                    SwingConstants.CENTER
-            );
+                    SwingConstants.CENTER);
 
             loginLabel.setVerticalAlignment(
-                    SwingConstants.CENTER
-            );
+                    SwingConstants.CENTER);
 
             loginLabel.setForeground(
-                    ColorScheme.LIGHT_GRAY_COLOR
-            );
+                    ColorScheme.LIGHT_GRAY_COLOR);
 
-            loginLabel.setBorder(
-                    BorderFactory.createEmptyBorder(
-                            25,
-                            10,
-                            25,
-                            10
-                    )
-            );
+            loginLabel.setBorder(BorderFactory.createEmptyBorder(25,10,25,10));
 
-            encounterContainer.add(
-                    loginLabel
-            );
+            encounterContainer.add(loginLabel);
 
             encounterContainer.revalidate();
             encounterContainer.repaint();
@@ -448,23 +446,14 @@ public class DryStreakSidebarPanel extends PluginPanel
          * The encounter killed most recently appears at
          * the top of the sidebar.
          */
-        List<EncounterDefinition> sortedEncounters =
-                new ArrayList<>(
-                        encounterRegistry.getAll()
-                );
+        List<EncounterDefinition> sortedEncounters = new ArrayList<>(encounterRegistry.getAll());
 
         sortedEncounters.sort(
-                Comparator.comparingLong(
-                        (EncounterDefinition encounter) ->
+                Comparator.comparingLong((EncounterDefinition encounter) ->
                         {
-                            EncounterStats stats =
-                                    trackerManager.getStats(
-                                            encounter.getEncounterId()
-                                    );
+                            EncounterStats stats = trackerManager.getStats(encounter.getEncounterId());
 
-                            return stats != null
-                                    ? stats.getLastActivityTime()
-                                    : 0L;
+                            return stats != null ? stats.getLastActivityTime() : 0L;
                         }
                 ).reversed()
         );
@@ -472,22 +461,14 @@ public class DryStreakSidebarPanel extends PluginPanel
         for (EncounterDefinition encounter
                 : sortedEncounters)
         {
-            EncounterStats stats =
-                    trackerManager.getStats(
-                            encounter.getEncounterId()
-                    );
+            EncounterStats stats = trackerManager.getStats(encounter.getEncounterId());
 
-            if (stats == null
-                    || stats.getTotalKillsTracked() <= 0)
+            if (stats == null || stats.getTotalKillsTracked() <= 0)
             {
                 continue;
             }
 
-            boolean expanded =
-                    expandedStates.getOrDefault(
-                            encounter.getEncounterId(),
-                            false
-                    );
+            boolean expanded = expandedStates.getOrDefault(encounter.getEncounterId(), false);
 
             EncounterPanel encounterPanel =
                     new EncounterPanel(
@@ -496,72 +477,45 @@ public class DryStreakSidebarPanel extends PluginPanel
                             displayData,
                             itemManager,
                             expanded,
-                            isExpanded -> expandedStates.put(encounter.getEncounterId(), isExpanded));
+                            isExpanded ->
+                                    expandedStates.put(encounter.getEncounterId(), isExpanded),
+                            () ->
+                            {
+                                trackerManager.clearEncounterData(encounter.getEncounterId());
 
-            encounterContainer.add(
-                    encounterPanel
-            );
+                                expandedStates.remove(encounter.getEncounterId());
 
-            JPanel spacer =
-                    new JPanel();
+                                refresh();
+                            }
+                    );
 
-            spacer.setOpaque(
-                    false
-            );
+            encounterContainer.add(encounterPanel);
 
-            spacer.setPreferredSize(
-                    new Dimension(
-                            1,
-                            5
-                    )
-            );
+            JPanel spacer = new JPanel();
 
-            spacer.setMinimumSize(
-                    new Dimension(
-                            1,
-                            5
-                    )
-            );
+            spacer.setOpaque(false);
 
-            spacer.setMaximumSize(
-                    new Dimension(
-                            Integer.MAX_VALUE,
-                            5
-                    )
-            );
+            spacer.setPreferredSize(new Dimension(1,5));
 
-            encounterContainer.add(
-                    spacer
-            );
+            spacer.setMinimumSize(new Dimension(1,5));
+
+            spacer.setMaximumSize(new Dimension(Integer.MAX_VALUE,5));
+
+            encounterContainer.add(spacer);
 
             panelCount++;
         }
 
         if (panelCount == 0)
         {
-            JLabel emptyLabel =
-                    new JLabel(
-                            "<html><center>"
-                                    + "No encounters tracked yet."
-                                    + "</center></html>"
+            JLabel emptyLabel = new JLabel("<html><center>"+ "No encounters tracked yet." + "</center></html>"
                     );
 
-            emptyLabel.setHorizontalAlignment(
-                    SwingConstants.CENTER
-            );
+            emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-            emptyLabel.setBorder(
-                    BorderFactory.createEmptyBorder(
-                            10,
-                            10,
-                            10,
-                            10
-                    )
-            );
+            emptyLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-            encounterContainer.add(
-                    emptyLabel
-            );
+            encounterContainer.add(emptyLabel);
         }
 
         encounterContainer.revalidate();

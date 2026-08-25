@@ -79,6 +79,22 @@ public class PlayerTrackingData
         );
     }
 
+    /**
+     * Removes all saved statistics for one encounter.
+     *
+     * @param encounterId encounter to remove
+     */
+    public void removeEncounter(
+            String encounterId)
+    {
+        if (encounterId == null || encounters == null)
+        {
+            return;
+        }
+
+        encounters.remove(encounterId);
+    }
+
     public Collection<EncounterStats> getAllEncounters()
     {
         return encounters.values();

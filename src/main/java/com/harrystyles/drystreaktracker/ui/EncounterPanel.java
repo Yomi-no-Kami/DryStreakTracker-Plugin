@@ -17,13 +17,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.ColorScheme;
@@ -37,6 +31,7 @@ public class EncounterPanel extends JPanel {
     private final JPanel detailsPanel;
 
     private final Consumer<Boolean> expandedStateListener;
+    private final Runnable clearEncounterListener;
 
     private JLabel expandIndicator;
     private boolean expanded;
@@ -47,13 +42,15 @@ public class EncounterPanel extends JPanel {
             Map<Integer, ItemDisplayData> itemDisplayData,
             ItemManager itemManager,
             boolean expanded,
-            Consumer<Boolean> expandedStateListener) {
+            Consumer<Boolean> expandedStateListener,
+            Runnable clearEncounterListener) {
         this.encounter = encounter;
         this.stats = stats;
         this.itemDisplayData = itemDisplayData;
         this.itemManager = itemManager;
         this.expanded = expanded;
         this.expandedStateListener = expandedStateListener;
+        this.clearEncounterListener = clearEncounterListener;
 
         setAlignmentX(
                 Component.LEFT_ALIGNMENT
@@ -95,11 +92,27 @@ public class EncounterPanel extends JPanel {
         );
 
         summary.addMouseListener(
-                new MouseAdapter() {
+                new MouseAdapter()
+                {
                     @Override
-                    public void mouseClicked(
-                            MouseEvent event) {
-                        toggleExpanded();
+                    public void mouseClicked(MouseEvent event)
+                    {
+                        if (SwingUtilities.isLeftMouseButton(event))
+                        {
+                            toggleExpanded();
+                        }
+                    }
+
+                    @Override
+                    public void mousePressed(MouseEvent event)
+                    {
+                        showPopupMenuIfNeeded(event);
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent event)
+                    {
+                        showPopupMenuIfNeeded(event);
                     }
                 }
         );
@@ -253,11 +266,29 @@ public class EncounterPanel extends JPanel {
          * open/close the encounters too
          */
         expandIndicator.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         expandIndicator.addMouseListener(
-                new MouseAdapter() {
+                new MouseAdapter()
+                {
                     @Override
-                    public void mouseClicked(MouseEvent event) {
-                        toggleExpanded();
+                    public void mouseClicked(MouseEvent event)
+                    {
+                        if (SwingUtilities.isLeftMouseButton(event))
+                        {
+                            toggleExpanded();
+                        }
+                    }
+
+                    @Override
+                    public void mousePressed(MouseEvent event)
+                    {
+                        showPopupMenuIfNeeded(event);
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent event)
+                    {
+                        showPopupMenuIfNeeded(event);
                     }
                 }
         );
@@ -453,9 +484,7 @@ public class EncounterPanel extends JPanel {
 
         if (stats.getLastDropTotalKillcount() > 0) {
             lastDropText +=
-                    " ("
-                            + stats.getLastDropTotalKillcount()
-                            + ")";
+                    " (" + stats.getLastDropTotalKillcount() + ")";
         }
 
         statisticsPanel.add(
@@ -596,6 +625,53 @@ public class EncounterPanel extends JPanel {
         );
 
         return panel;
+    }
+
+    /**
+     * Displays the encounter context menu when the user
+     * right-clicks the encounter header.
+     */
+    private void showPopupMenuIfNeeded(
+            MouseEvent event)
+    {
+        if (!event.isPopupTrigger())
+        {
+            return;
+        }
+
+        JPopupMenu popupMenu =
+                new JPopupMenu();
+
+        JMenuItem clearItem = new JMenuItem("Clear encounter data");
+
+        clearItem.addActionListener(
+                actionEvent ->
+                {
+                    int result =
+                            JOptionPane.showConfirmDialog(
+                                    this,
+                                    "Clear all Dry Streak Tracker data for "
+                                            + encounter.getDisplayName()
+                                            + "?",
+                                    "Clear Encounter Data",
+                                    JOptionPane.YES_NO_OPTION,
+                                    JOptionPane.WARNING_MESSAGE);
+
+                    if (result != JOptionPane.YES_OPTION)
+                    {
+                        return;
+                    }
+
+                    if (clearEncounterListener != null)
+                    {
+                        clearEncounterListener.run();
+                    }
+                }
+        );
+
+        popupMenu.add(clearItem);
+
+        popupMenu.show(event.getComponent(), event.getX(), event.getY());
     }
 
     private void toggleExpanded() {

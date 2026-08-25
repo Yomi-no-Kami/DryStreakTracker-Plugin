@@ -471,52 +471,68 @@ public class EncounterTrackerManager
         );
     }
 
+    /**
+     * Clears all saved tracking data for one encounter.
+     *
+     * The rest of the player's tracked encounters remain
+     * unchanged.
+     *
+     * @param encounterId encounter to clear
+     */
+    public void clearEncounterData(
+            String encounterId)
+    {
+        if (!isActive())
+        {
+            log.debug("Cannot clear encounter data: no player is logged in");
+
+            return;
+        }
+
+        if (encounterId == null || encounterId.trim().isEmpty())
+        {
+            return;
+        }
+
+        trackingData.removeEncounter(encounterId);
+
+        /*
+         * Save immediately so the cleared encounter does not
+         * return after restarting RuneLite.
+         */
+        save();
+
+        log.info("Cleared tracking data for encounter {}", encounterId);
+    }
+
     private int getRuneLiteKillcount(
             EncounterDefinition definition)
     {
-        if (definition == null
-                || definition.getDisplayName() == null)
+        if (definition == null || definition.getDisplayName() == null)
         {
             return 0;
         }
 
-        String bossKey =
-                definition.getDisplayName()
+        String bossKey = definition.getDisplayName()
                         .trim()
                         .replace(":", "")
-                        .toLowerCase(
-                                Locale.ROOT
-                        );
+                        .toLowerCase(Locale.ROOT);
 
         if (bossKey.isEmpty())
         {
             return 0;
         }
 
-        Integer killcount =
-                configManager.getRSProfileConfiguration(
-                        "killcount",
-                        bossKey,
-                        int.class
-                );
+        Integer killcount = configManager.getRSProfileConfiguration("killcount", bossKey, int.class);
 
         if (killcount == null)
         {
-            log.debug(
-                    "No RuneLite Boss killcount found for {} using key '{}'",
-                    definition.getDisplayName(),
-                    bossKey
-            );
+            log.debug("No RuneLite Boss killcount found for {} using key '{}'", definition.getDisplayName(), bossKey);
 
             return 0;
         }
 
-        log.debug(
-                "RuneLite Boss killcount for {} using key '{}': {}",
-                definition.getDisplayName(),
-                bossKey,
-                killcount
-        );
+        log.debug("RuneLite Boss killcount for {} using key '{}': {}", definition.getDisplayName(), bossKey, killcount);
 
         return killcount;
     }

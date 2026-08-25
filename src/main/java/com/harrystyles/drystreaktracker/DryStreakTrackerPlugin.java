@@ -47,7 +47,6 @@ public class DryStreakTrackerPlugin extends Plugin
 	@Inject
 	private EncounterTrackerManager trackerManager;
 
-	@Inject
 	private LootDetectionService lootDetectionService;
 
 	@Inject
@@ -56,7 +55,6 @@ public class DryStreakTrackerPlugin extends Plugin
 	@Inject
 	private ClientToolbar clientToolbar;
 
-	@Inject
 	private DryStreakSidebarPanel sidebarPanel;
 
 	@Inject
@@ -79,21 +77,16 @@ public class DryStreakTrackerPlugin extends Plugin
 	@Override
 	protected void startUp()
 	{
-		log.info(
-				"========================================"
-		);
+		log.info("Dry Streak Tracker starting...");
 
-		log.info(
-				"Dry Streak Tracker starting..."
-		);
+		/*
+		 * Create Swing-dependent components after RuneLite's
+		 * UI/look-and-feel has been initialized.
+		 */
+		sidebarPanel = injector.getInstance(DryStreakSidebarPanel.class);
+		lootDetectionService = injector.getInstance(LootDetectionService.class);
 
-		log.info(
-				"========================================"
-		);
-
-		definitionLoader.loadInto(
-				encounterRegistry
-		);
+		definitionLoader.loadInto(encounterRegistry);
 
 		log.info(
 				"Loaded {} encounter definitions",
