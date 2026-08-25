@@ -6,6 +6,9 @@ import com.harrystyles.drystreaktracker.encounter.EncounterStats;
 import com.harrystyles.drystreaktracker.encounter.tracking.EncounterTrackerManager;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -247,7 +250,7 @@ public class DryStreakSidebarPanel extends PluginPanel
      */
     public void refreshItemDisplayData()
     {
-        
+
         if (!trackerManager.isActive())
         {
             log.debug(
@@ -386,10 +389,8 @@ public class DryStreakSidebarPanel extends PluginPanel
 
         encounterContainer.removeAll();
 
-        /*
-         * ---------------------------------------------------------
+        /**
          * LOGGED OUT
-         * ---------------------------------------------------------
          */
         if (!loggedIn
                 || !trackerManager.isActive())
@@ -435,16 +436,41 @@ public class DryStreakSidebarPanel extends PluginPanel
             return;
         }
 
-        /*
-         * ---------------------------------------------------------
+        /**
          * LOGGED IN
-         * ---------------------------------------------------------
          */
 
         int panelCount = 0;
 
+        /*
+         * Sort tracked encounters by most recent activity.
+         *
+         * The encounter killed most recently appears at
+         * the top of the sidebar.
+         */
+        List<EncounterDefinition> sortedEncounters =
+                new ArrayList<>(
+                        encounterRegistry.getAll()
+                );
+
+        sortedEncounters.sort(
+                Comparator.comparingLong(
+                        (EncounterDefinition encounter) ->
+                        {
+                            EncounterStats stats =
+                                    trackerManager.getStats(
+                                            encounter.getEncounterId()
+                                    );
+
+                            return stats != null
+                                    ? stats.getLastActivityTime()
+                                    : 0L;
+                        }
+                ).reversed()
+        );
+
         for (EncounterDefinition encounter
-                : encounterRegistry.getAll())
+                : sortedEncounters)
         {
             EncounterStats stats =
                     trackerManager.getStats(

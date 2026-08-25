@@ -59,6 +59,14 @@ public class EncounterStats
     private int longestDryStreak;
 
     /**
+     * Time this encounter was most recently completed.
+     *
+     * Used to sort the sidebar so the most recently
+     * killed encounter appears at the top.
+     */
+    private long lastActivityTime;
+
+    /**
      * Item ID -> total quantity received.
      */
     private Map<Integer, Integer> receivedDrops =
@@ -129,6 +137,9 @@ public class EncounterStats
     {
         return longestDryStreak;
     }
+
+    public long getLastActivityTime() { return lastActivityTime; }
+
 
     public Map<Integer, Integer> getReceivedDrops()
     {
@@ -208,6 +219,13 @@ public class EncounterStats
                 longestDryStreak;
     }
 
+    public void setLastActivityTime(
+            long lastActivityTime)
+    {
+        this.lastActivityTime =
+                lastActivityTime;
+    }
+
     public void setReceivedDrops(
             Map<Integer, Integer> receivedDrops)
     {
@@ -220,6 +238,9 @@ public class EncounterStats
     public void recordDryKill(
             int currentKillcount)
     {
+        lastActivityTime =
+                System.currentTimeMillis();
+
         lastKnownKillcount =
                 currentKillcount;
 
@@ -240,6 +261,9 @@ public class EncounterStats
             int itemId,
             int quantity)
     {
+        lastActivityTime =
+                System.currentTimeMillis();
+
         lastKnownKillcount =
                 currentKillcount;
 
