@@ -40,7 +40,6 @@ public class DryStreakSidebarPanel extends PluginPanel
     private final ItemManager itemManager;
 
     private final JPanel encounterContainer;
-    private final JScrollPane scrollPane;
 
     private final Map<String, Boolean> expandedStates =
             new HashMap<>();
@@ -135,36 +134,27 @@ public class DryStreakSidebarPanel extends PluginPanel
                 )
         );
 
-        scrollPane =
-                new JScrollPane(
-                        encounterContainer
-                );
+        JPanel layoutPanel =
+                new JPanel();
 
-        scrollPane.setBorder(
-                BorderFactory.createEmptyBorder()
+        layoutPanel.setLayout(
+                new BoxLayout(
+                        layoutPanel,
+                        BoxLayout.Y_AXIS
+                )
         );
 
-        scrollPane.setHorizontalScrollBarPolicy(
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        layoutPanel.setBackground(
+                ColorScheme.DARK_GRAY_COLOR
         );
 
-        scrollPane.setVerticalScrollBarPolicy(
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+        layoutPanel.add(
+                encounterContainer
         );
-
-        scrollPane.getVerticalScrollBar()
-                .setUnitIncrement(
-                        16
-                );
-
-        scrollPane.getViewport()
-                .setBackground(
-                        ColorScheme.DARK_GRAY_COLOR
-                );
 
         add(
-                scrollPane,
-                BorderLayout.CENTER
+                layoutPanel,
+                BorderLayout.NORTH
         );
 
         /*
@@ -442,9 +432,6 @@ public class DryStreakSidebarPanel extends PluginPanel
             encounterContainer.revalidate();
             encounterContainer.repaint();
 
-            scrollPane.revalidate();
-            scrollPane.repaint();
-
             revalidate();
             repaint();
 
@@ -560,9 +547,6 @@ public class DryStreakSidebarPanel extends PluginPanel
 
         encounterContainer.revalidate();
         encounterContainer.repaint();
-
-        scrollPane.revalidate();
-        scrollPane.repaint();
 
         revalidate();
         repaint();

@@ -27,7 +27,34 @@ public class EncounterStats
 
     private int totalTrackedDrops;
 
+    /**
+     * Dry Streak Tracker's kill number when the most recent
+     * tracked drop was received.
+     *
+     * This is based only on kills recorded while the plugin
+     * is tracking the encounter, not the player's actual boss KC.
+     *
+     * Example:
+     * The plugin has tracked 10 General Graardor kills and a
+     * unique is received on the 10th tracked kill.
+     * lastDropKillcount = 10
+     */
     private int lastDropKillcount;
+
+    /**
+     * Player's actual boss KC when the most recent tracked
+     * drop was received.
+     *
+     * This value is obtained from RuneLite's stored boss
+     * killcount and is saved as a snapshot when the drop occurs.
+     * It does not continue increasing as the player gets more kills.
+     *
+     * Example:
+     * The plugin's 10th tracked General Graardor kill occurs
+     * at the player's actual KC of 2,500 and a unique is received.
+     * lastDropTotalKillcount = 2500
+     */
+    private int lastDropTotalKillcount;
 
     private int longestDryStreak;
 
@@ -95,6 +122,8 @@ public class EncounterStats
     {
         return lastDropKillcount;
     }
+
+    public int getLastDropTotalKillcount() { return lastDropTotalKillcount; }
 
     public int getLongestDryStreak()
     {
@@ -165,6 +194,13 @@ public class EncounterStats
                 lastDropKillcount;
     }
 
+    public void setLastDropTotalKillcount(
+            int lastDropTotalKillcount)
+    {
+        this.lastDropTotalKillcount =
+                lastDropTotalKillcount;
+    }
+
     public void setLongestDryStreak(
             int longestDryStreak)
     {
@@ -200,6 +236,7 @@ public class EncounterStats
 
     public void recordDrop(
             int currentKillcount,
+            int totalKillcount,
             int itemId,
             int quantity)
     {
@@ -212,6 +249,9 @@ public class EncounterStats
 
         lastDropKillcount =
                 currentKillcount;
+
+        lastDropTotalKillcount =
+                totalKillcount;
 
         currentDryStreak = 0;
 

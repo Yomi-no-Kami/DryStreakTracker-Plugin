@@ -120,9 +120,6 @@ public class EncounterPanel extends JPanel
                 BorderLayout.CENTER
         );
 
-        SwingUtilities.invokeLater(
-                this::updateMaximumHeight
-        );
     }
 
     private JPanel createSummaryPanel()
@@ -426,10 +423,21 @@ public class EncounterPanel extends JPanel
                 )
         );
 
+        String lastDropText =
+                "Last Drop KC: "
+                        + stats.getLastDropKillcount();
+
+        if (stats.getLastDropTotalKillcount() > 0)
+        {
+            lastDropText +=
+                    " ("
+                            + stats.getLastDropTotalKillcount()
+                            + ")";
+        }
+
         statisticsPanel.add(
                 new JLabel(
-                        "Last Drop KC: "
-                                + stats.getLastDropKillcount()
+                        lastDropText
                 )
         );
 
@@ -586,37 +594,6 @@ public class EncounterPanel extends JPanel
 
         revalidate();
         repaint();
-
-        SwingUtilities.invokeLater(
-                () ->
-                {
-                    updateMaximumHeight();
-
-                    java.awt.Container parent =
-                            getParent();
-
-                    while (parent != null)
-                    {
-                        parent.revalidate();
-                        parent.repaint();
-
-                        parent =
-                                parent.getParent();
-                    }
-                }
-        );
     }
 
-    private void updateMaximumHeight()
-    {
-        Dimension preferred =
-                super.getPreferredSize();
-
-        setMaximumSize(
-                new Dimension(
-                        Integer.MAX_VALUE,
-                        preferred.height
-                )
-        );
-    }
 }

@@ -6,12 +6,14 @@ import com.harrystyles.drystreaktracker.encounter.EncounterStats;
 import com.harrystyles.drystreaktracker.storage.DryStreakStorage;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.config.ConfigManager;
 
 /**
  * Handles all player encounter tracking.
@@ -32,6 +34,8 @@ public class EncounterTrackerManager
 
     private final EncounterRegistry encounterRegistry;
     private final DryStreakStorage storage;
+
+    private final ConfigManager configManager;
 
     /**
      * Tracking data for the currently logged-in player.
@@ -56,12 +60,10 @@ public class EncounterTrackerManager
             new HashSet<>();
 
     @Inject
-    public EncounterTrackerManager(
-            EncounterRegistry encounterRegistry,
-            DryStreakStorage storage)
-    {
+    public EncounterTrackerManager( EncounterRegistry encounterRegistry, DryStreakStorage storage, ConfigManager configManager) {
         this.encounterRegistry = encounterRegistry;
         this.storage = storage;
+        this.configManager = configManager;
     }
 
     /**
@@ -286,8 +288,14 @@ public class EncounterTrackerManager
 
         if (dropItemId != null)
         {
+            int totalKillcount =
+                    getRuneLiteKillcount(
+                            definition
+                    );
+
             stats.recordDrop(
                     newKillcount,
+                    totalKillcount,
                     dropItemId,
                     dropQuantity
             );
@@ -461,5 +469,55 @@ public class EncounterTrackerManager
                 "Cleared all tracking data for account {}",
                 playerName
         );
+    }
+
+    private int getRuneLiteKillcount(
+            EncounterDefinition definition)
+    {
+        if (definition == null
+                || definition.getDisplayName() == null)
+        {
+            return 0;
+        }
+
+        String bossKey =
+                definition.getDisplayName()
+                        .trim()
+                        .replace(":", "")
+                        .toLowerCase(
+                                Locale.ROOT
+                        );
+
+        if (bossKey.isEmpty())
+        {
+            return 0;
+        }
+
+        Integer killcount =
+                configManager.getRSProfileConfiguration(
+                        "killcount",
+                        bossKey,
+                        int.class
+                );
+
+        if (killcount == null)
+        {
+            log.debug(
+                    "No RuneLite Boss killcount found for {} using key '{}'",
+                    definition.getDisplayName(),
+                    bossKey
+            );
+
+            return 0;
+        }
+
+        log.debug(
+                "RuneLite Boss killcount for {} using key '{}': {}",
+                definition.getDisplayName(),
+                bossKey,
+                killcount
+        );
+
+        return killcount;
     }
 }
