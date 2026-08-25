@@ -28,8 +28,7 @@ import javax.swing.SwingUtilities;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.ColorScheme;
 
-public class EncounterPanel extends JPanel
-{
+public class EncounterPanel extends JPanel {
     private final EncounterDefinition encounter;
     private final EncounterStats stats;
     private final Map<Integer, ItemDisplayData> itemDisplayData;
@@ -39,6 +38,7 @@ public class EncounterPanel extends JPanel
 
     private final Consumer<Boolean> expandedStateListener;
 
+    private JLabel expandIndicator;
     private boolean expanded;
 
     public EncounterPanel(
@@ -47,8 +47,7 @@ public class EncounterPanel extends JPanel
             Map<Integer, ItemDisplayData> itemDisplayData,
             ItemManager itemManager,
             boolean expanded,
-            Consumer<Boolean> expandedStateListener)
-    {
+            Consumer<Boolean> expandedStateListener) {
         this.encounter = encounter;
         this.stats = stats;
         this.itemDisplayData = itemDisplayData;
@@ -96,12 +95,10 @@ public class EncounterPanel extends JPanel
         );
 
         summary.addMouseListener(
-                new MouseAdapter()
-                {
+                new MouseAdapter() {
                     @Override
                     public void mouseClicked(
-                            MouseEvent event)
-                    {
+                            MouseEvent event) {
                         toggleExpanded();
                     }
                 }
@@ -126,8 +123,7 @@ public class EncounterPanel extends JPanel
 
     }
 
-    private JPanel createSummaryPanel()
-    {
+    private JPanel createSummaryPanel() {
         JPanel panel =
                 new JPanel(
                         new BorderLayout(
@@ -237,11 +233,26 @@ public class EncounterPanel extends JPanel
                 BorderLayout.CENTER
         );
 
+        expandIndicator =
+                new JLabel(expanded ? "▲" : "▼");
+
+        expandIndicator.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+
+        expandIndicator.setHorizontalAlignment(SwingConstants.CENTER);
+
+        expandIndicator.setVerticalAlignment(SwingConstants.TOP);
+
+        expandIndicator.setPreferredSize(new Dimension(18, 18));
+
+        expandIndicator.setToolTipText(
+                expanded ? "Collapse encounter" : "Expand encounter");
+
+        panel.add(expandIndicator, BorderLayout.EAST);
+
         return panel;
     }
 
-    private JLabel createEncounterImageLabel()
-    {
+    private JLabel createEncounterImageLabel() {
         JLabel imageLabel =
                 new JLabel();
 
@@ -278,8 +289,7 @@ public class EncounterPanel extends JPanel
                 encounter.getImageUrl();
 
         if (imageUrl == null
-                || imageUrl.trim().isEmpty())
-        {
+                || imageUrl.trim().isEmpty()) {
             imageLabel.setText(
                     "?"
             );
@@ -291,8 +301,7 @@ public class EncounterPanel extends JPanel
                 new Thread(
                         () ->
                         {
-                            try
-                            {
+                            try {
                                 URL url =
                                         new URL(
                                                 imageUrl
@@ -303,8 +312,7 @@ public class EncounterPanel extends JPanel
                                                 url
                                         );
 
-                                if (image == null)
-                                {
+                                if (image == null) {
                                     SwingUtilities.invokeLater(
                                             () ->
                                                     imageLabel.setText(
@@ -342,9 +350,7 @@ public class EncounterPanel extends JPanel
                                             repaint();
                                         }
                                 );
-                            }
-                            catch (Exception e)
-                            {
+                            } catch (Exception e) {
                                 SwingUtilities.invokeLater(
                                         () ->
                                                 imageLabel.setText(
@@ -365,8 +371,7 @@ public class EncounterPanel extends JPanel
         return imageLabel;
     }
 
-    private JPanel createDetailsPanel()
-    {
+    private JPanel createDetailsPanel() {
         JPanel panel =
                 new JPanel(
                         new BorderLayout()
@@ -431,8 +436,7 @@ public class EncounterPanel extends JPanel
                 "Last Drop KC: "
                         + stats.getLastDropKillcount();
 
-        if (stats.getLastDropTotalKillcount() > 0)
-        {
+        if (stats.getLastDropTotalKillcount() > 0) {
             lastDropText +=
                     " ("
                             + stats.getLastDropTotalKillcount()
@@ -458,8 +462,7 @@ public class EncounterPanel extends JPanel
         return panel;
     }
 
-    private JPanel createDropsPanel()
-    {
+    private JPanel createDropsPanel() {
         JPanel panel =
                 new JPanel();
 
@@ -509,8 +512,7 @@ public class EncounterPanel extends JPanel
                 stats.getReceivedDrops();
 
         if (receivedDrops == null
-                || receivedDrops.isEmpty())
-        {
+                || receivedDrops.isEmpty()) {
             panel.add(
                     new JLabel(
                             "No tracked drops received yet."
@@ -538,8 +540,7 @@ public class EncounterPanel extends JPanel
         );
 
         for (Map.Entry<Integer, Integer> entry
-                : receivedDrops.entrySet())
-        {
+                : receivedDrops.entrySet()) {
             int itemId =
                     entry.getKey();
 
@@ -582,16 +583,29 @@ public class EncounterPanel extends JPanel
         return panel;
     }
 
-    private void toggleExpanded()
-    {
+    private void toggleExpanded() {
         expanded = !expanded;
 
         detailsPanel.setVisible(
                 expanded
         );
 
-        if (expandedStateListener != null)
+        if (expandIndicator != null)
         {
+            expandIndicator.setText(
+                    expanded
+                            ? "▲"
+                            : "▼"
+            );
+
+            expandIndicator.setToolTipText(
+                    expanded
+                            ? "Collapse encounter"
+                            : "Expand encounter"
+            );
+        }
+
+        if (expandedStateListener != null) {
             expandedStateListener.accept(
                     expanded
             );
