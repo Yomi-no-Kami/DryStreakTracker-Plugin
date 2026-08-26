@@ -6,26 +6,20 @@ import java.awt.Image;
  * Client-thread-resolved item information used by
  * Swing components.
  */
-public class ItemDisplayData
-{
+public class ItemDisplayData {
     private final String name;
     private final Image image;
 
-    public ItemDisplayData(
-            String name,
-            Image image)
-    {
+    public ItemDisplayData(String name, Image image) {
         this.name = name;
         this.image = image;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public Image getImage()
-    {
+    public Image getImage() {
         return image;
     }
 }

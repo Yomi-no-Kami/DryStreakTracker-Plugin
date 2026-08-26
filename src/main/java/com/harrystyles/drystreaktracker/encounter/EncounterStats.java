@@ -10,14 +10,12 @@ import java.util.Set;
  *
  * @author Harry Styles
  */
-public class EncounterStats
-{
+public class EncounterStats {
     private String encounterId;
 
     private String displayName;
 
-    private Set<Integer> npcIds =
-            new HashSet<>();
+    private Set<Integer> npcIds = new HashSet<>();
 
     private int lastKnownKillcount;
 
@@ -30,10 +28,10 @@ public class EncounterStats
     /**
      * Dry Streak Tracker's kill number when the most recent
      * tracked drop was received.
-     *
+     * <p>
      * This is based only on kills recorded while the plugin
      * is tracking the encounter, not the player's actual boss KC.
-     *
+     * <p>
      * Example:
      * The plugin has tracked 10 General Graardor kills and a
      * unique is received on the 10th tracked kill.
@@ -44,11 +42,11 @@ public class EncounterStats
     /**
      * Player's actual boss KC when the most recent tracked
      * drop was received.
-     *
+     * <p>
      * This value is obtained from RuneLite's stored boss
      * killcount and is saved as a snapshot when the drop occurs.
      * It does not continue increasing as the player gets more kills.
-     *
+     * <p>
      * Example:
      * The plugin's 10th tracked General Graardor kill occurs
      * at the player's actual KC of 2,500 and a unique is received.
@@ -59,10 +57,10 @@ public class EncounterStats
     /**
      * Length of the dry streak that ended when the most
      * recent tracked drop was received.
-     *
+     * <p>
      * This is captured immediately before currentDryStreak
      * is reset to 0.
-     *
+     * <p>
      * Example:
      * A tracked drop is received after 684 dry kills.
      * lastCompletedDryStreak = 684
@@ -74,7 +72,7 @@ public class EncounterStats
     /**
      * Prevents repeated record notifications during the same
      * dry streak.
-     *
+     * <p>
      * Once the current streak surpasses the previous record,
      * the notification toast is only sent once. This resets when
      * a tracked drop is received.
@@ -89,7 +87,7 @@ public class EncounterStats
 
     /**
      * Time this encounter was most recently completed.
-     *
+     * <p>
      * Used to sort the sidebar so the most recently
      * killed encounter appears at the top.
      */
@@ -98,181 +96,132 @@ public class EncounterStats
     /**
      * Item ID -> total quantity received.
      */
-    private Map<Integer, Integer> receivedDrops =
-            new HashMap<>();
+    private Map<Integer, Integer> receivedDrops = new HashMap<>();
 
-    public EncounterStats()
-    {
+    public EncounterStats() {
     }
 
-    public EncounterStats(
-            String encounterId,
-            String displayName,
-            Set<Integer> npcIds)
-    {
+    public EncounterStats(String encounterId, String displayName, Set<Integer> npcIds) {
         this.encounterId = encounterId;
         this.displayName = displayName;
 
-        if (npcIds != null)
-        {
-            this.npcIds =
-                    new HashSet<>(npcIds);
+        if (npcIds != null) {
+            this.npcIds = new HashSet<>(npcIds);
         }
     }
 
-    public String getEncounterId()
-    {
+    public String getEncounterId() {
         return encounterId;
     }
 
-    public String getDisplayName()
-    {
+    public String getDisplayName() {
         return displayName;
     }
 
-    public Set<Integer> getNpcIds()
-    {
+    public Set<Integer> getNpcIds() {
         return npcIds;
     }
 
-    public int getLastKnownKillcount()
-    {
+    public int getLastKnownKillcount() {
         return lastKnownKillcount;
     }
 
-    public int getTotalKillsTracked()
-    {
+    public int getTotalKillsTracked() {
         return totalKillsTracked;
     }
 
-    public int getCurrentDryStreak()
-    {
+    public int getCurrentDryStreak() {
         return currentDryStreak;
     }
 
-    public int getTotalTrackedDrops()
-    {
+    public int getTotalTrackedDrops() {
         return totalTrackedDrops;
     }
 
-    public int getLastDropKillcount()
-    {
+    public int getLastDropKillcount() {
         return lastDropKillcount;
     }
 
-    public int getLastDropTotalKillcount() { return lastDropTotalKillcount; }
+    public int getLastDropTotalKillcount() {
+        return lastDropTotalKillcount;
+    }
 
-    public int getLastCompletedDryStreak() { return lastCompletedDryStreak; }
+    public int getLastCompletedDryStreak() {
+        return lastCompletedDryStreak;
+    }
 
-    public int getLongestDryStreak()
-    {
+    public int getLongestDryStreak() {
         return longestDryStreak;
     }
 
-    public boolean isNewDryRecordThisKill() { return newDryRecordThisKill; }
+    public boolean isNewDryRecordThisKill() {
+        return newDryRecordThisKill;
+    }
 
-    public long getLastActivityTime() { return lastActivityTime; }
+    public long getLastActivityTime() {
+        return lastActivityTime;
+    }
 
 
-    public Map<Integer, Integer> getReceivedDrops()
-    {
-        if (receivedDrops == null)
-        {
-            receivedDrops =
-                    new HashMap<>();
+    public Map<Integer, Integer> getReceivedDrops() {
+        if (receivedDrops == null) {
+            receivedDrops = new HashMap<>();
         }
 
         return receivedDrops;
     }
 
-    public void setEncounterId(String encounterId)
-    {
+    public void setEncounterId(String encounterId) {
         this.encounterId = encounterId;
     }
 
-    public void setDisplayName(String displayName)
-    {
+    public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
-    public void setNpcIds(Set<Integer> npcIds)
-    {
-        this.npcIds =
-                npcIds == null
-                        ? new HashSet<>()
-                        : new HashSet<>(npcIds);
+    public void setNpcIds(Set<Integer> npcIds) {
+        this.npcIds = npcIds == null ? new HashSet<>() : new HashSet<>(npcIds);
     }
 
-    public void setLastKnownKillcount(
-            int lastKnownKillcount)
-    {
-        this.lastKnownKillcount =
-                lastKnownKillcount;
+    public void setLastKnownKillcount(int lastKnownKillcount) {
+        this.lastKnownKillcount = lastKnownKillcount;
     }
 
-    public void setTotalKillsTracked(
-            int totalKillsTracked)
-    {
-        this.totalKillsTracked =
-                totalKillsTracked;
+    public void setTotalKillsTracked(int totalKillsTracked) {
+        this.totalKillsTracked = totalKillsTracked;
     }
 
-    public void setCurrentDryStreak(
-            int currentDryStreak)
-    {
-        this.currentDryStreak =
-                currentDryStreak;
+    public void setCurrentDryStreak(int currentDryStreak) {
+        this.currentDryStreak = currentDryStreak;
     }
 
-    public void setTotalTrackedDrops(
-            int totalTrackedDrops)
-    {
-        this.totalTrackedDrops =
-                totalTrackedDrops;
+    public void setTotalTrackedDrops(int totalTrackedDrops) {
+        this.totalTrackedDrops = totalTrackedDrops;
     }
 
-    public void setLastDropKillcount(
-            int lastDropKillcount)
-    {
-        this.lastDropKillcount =
-                lastDropKillcount;
+    public void setLastDropKillcount(int lastDropKillcount) {
+        this.lastDropKillcount = lastDropKillcount;
     }
 
-    public void setLastDropTotalKillcount(
-            int lastDropTotalKillcount)
-    {
-        this.lastDropTotalKillcount =
-                lastDropTotalKillcount;
+    public void setLastDropTotalKillcount(int lastDropTotalKillcount) {
+        this.lastDropTotalKillcount = lastDropTotalKillcount;
     }
 
-    public void setLongestDryStreak(
-            int longestDryStreak)
-    {
-        this.longestDryStreak =
-                longestDryStreak;
+    public void setLongestDryStreak(int longestDryStreak) {
+        this.longestDryStreak = longestDryStreak;
     }
 
-    public void setLastActivityTime(
-            long lastActivityTime)
-    {
-        this.lastActivityTime =
-                lastActivityTime;
+    public void setLastActivityTime(long lastActivityTime) {
+        this.lastActivityTime = lastActivityTime;
     }
 
-    public void setReceivedDrops(
-            Map<Integer, Integer> receivedDrops)
-    {
-        this.receivedDrops =
-                receivedDrops == null
-                        ? new HashMap<>()
-                        : new HashMap<>(receivedDrops);
+    public void setReceivedDrops(Map<Integer, Integer> receivedDrops) {
+        this.receivedDrops = receivedDrops == null ? new HashMap<>() : new HashMap<>(receivedDrops);
     }
 
-    public void recordDryKill(
-            int currentKillcount)
-    {
+    public void recordDryKill(int currentKillcount) {
 
-        /*
+        /**
          * This flag only represents the kill currently
          * being processed.
          */
@@ -294,26 +243,19 @@ public class EncounterStats
          * player's very first dry streak does not constantly
          * create a record with nothing meaningful to beat.
          */
-        if (currentDryStreak > longestDryStreak)
-        {
-            if (!dryRecordNotificationSent
-                    && totalTrackedDrops > 0)
-            {
-                newDryRecordThisKill =
-                        true;
+        if (currentDryStreak > longestDryStreak) {
+            if (!dryRecordNotificationSent && totalTrackedDrops > 0) {
+                newDryRecordThisKill = true;
 
-                dryRecordNotificationSent =
-                        true;
+                dryRecordNotificationSent = true;
             }
 
             longestDryStreak = currentDryStreak;
         }
     }
 
-    public void recordDrop(int currentKillcount, int totalKillcount, int itemId, int quantity)
-    {
-        lastActivityTime =
-                System.currentTimeMillis();
+    public void recordDrop(int currentKillcount, int totalKillcount, int itemId, int quantity) {
+        lastActivityTime = System.currentTimeMillis();
 
         lastKnownKillcount = currentKillcount;
 
@@ -324,14 +266,13 @@ public class EncounterStats
 
         lastDropTotalKillcount = totalKillcount;
 
-        /*
+        /**
          * Capture the dry streak that just ended before
          * resetting it back to 0.
          */
-        lastCompletedDryStreak =
-                currentDryStreak;
+        lastCompletedDryStreak = currentDryStreak;
 
-        /*
+        /**
          * A tracked drop ended the current dry streak.
          * The next dry streak may establish a new record.
          */

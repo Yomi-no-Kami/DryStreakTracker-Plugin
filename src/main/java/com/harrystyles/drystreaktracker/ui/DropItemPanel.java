@@ -16,13 +16,12 @@ import net.runelite.client.util.AsyncBufferedImage;
 
 /**
  * Displays a tracked drop as an item sprite.
- *
+ * <p>
  * The total quantity is displayed in the top-right
  * corner and the item name is shown as a tooltip
  * when hovering over the sprite.
  */
-public class DropItemPanel extends JPanel
-{
+public class DropItemPanel extends JPanel {
     private static final int ICON_SIZE = 36;
 
     public DropItemPanel(
@@ -30,204 +29,99 @@ public class DropItemPanel extends JPanel
             int itemId,
             int quantity,
             String itemName,
-            Image itemImage)
-    {
+            Image itemImage) {
         setLayout(null);
 
         setOpaque(false);
 
-        setPreferredSize(
-                new Dimension(
-                        ICON_SIZE,
-                        ICON_SIZE
-                )
-        );
+        setPreferredSize(new Dimension(ICON_SIZE, ICON_SIZE));
 
-        setMinimumSize(
-                new Dimension(
-                        ICON_SIZE,
-                        ICON_SIZE
-                )
-        );
+        setMinimumSize(new Dimension(ICON_SIZE, ICON_SIZE));
 
-        setMaximumSize(
-                new Dimension(
-                        ICON_SIZE,
-                        ICON_SIZE
-                )
-        );
+        setMaximumSize(new Dimension(ICON_SIZE, ICON_SIZE));
 
-        setToolTipText(
-                itemName
-        );
+        setToolTipText(itemName);
 
-        /*
+        /**
          * Layered pane allows the quantity text to be
-         * explicitly placed ABOVE the item sprite.
+         * explicitly placed above the item sprite.
          */
-        JLayeredPane layeredPane =
-                new JLayeredPane();
+        JLayeredPane layeredPane = new JLayeredPane();
 
         layeredPane.setLayout(null);
 
-        layeredPane.setBounds(
-                0,
-                0,
-                ICON_SIZE,
-                ICON_SIZE
-        );
+        layeredPane.setBounds(0, 0, ICON_SIZE, ICON_SIZE);
 
-        layeredPane.setPreferredSize(
-                new Dimension(
-                        ICON_SIZE,
-                        ICON_SIZE
-                )
-        );
+        layeredPane.setPreferredSize(new Dimension(ICON_SIZE, ICON_SIZE));
 
-        layeredPane.setToolTipText(
-                itemName
-        );
+        layeredPane.setToolTipText(itemName);
 
-        /*
-         * ---------------------------------------------------------
+        /**
          * ITEM SPRITE
-         * ---------------------------------------------------------
          */
-        JLabel icon =
-                new JLabel();
+        JLabel icon = new JLabel();
 
-        icon.setBounds(
-                0,
-                0,
-                ICON_SIZE,
-                ICON_SIZE
-        );
+        icon.setBounds(0, 0, ICON_SIZE, ICON_SIZE);
 
-        icon.setHorizontalAlignment(
-                SwingConstants.CENTER
-        );
+        icon.setHorizontalAlignment(SwingConstants.CENTER);
 
-        icon.setVerticalAlignment(
-                SwingConstants.CENTER
-        );
+        icon.setVerticalAlignment(SwingConstants.CENTER);
 
-        icon.setToolTipText(
-                itemName
-        );
+        icon.setToolTipText(itemName);
 
-        if (itemImage != null)
-        {
-            /*
+        if (itemImage != null) {
+            /**
              * Cached image is already available.
              */
-            Image scaledImage =
-                    itemImage.getScaledInstance(
-                            ICON_SIZE,
-                            ICON_SIZE,
-                            Image.SCALE_SMOOTH
-                    );
+            Image scaledImage = itemImage.getScaledInstance(ICON_SIZE, ICON_SIZE, Image.SCALE_SMOOTH);
 
-            icon.setIcon(
-                    new ImageIcon(
-                            scaledImage
-                    )
-            );
-        }
-        else
-        {
-            /*
+            icon.setIcon(new ImageIcon(scaledImage));
+        } else {
+            /**
              * Cached image was not available yet.
              *
              * Ask RuneLite for the sprite asynchronously.
              * addTo(icon) will update the JLabel automatically
              * when the sprite finishes loading.
              */
-            AsyncBufferedImage asyncImage =
-                    itemManager.getImage(
-                            itemId
-                    );
+            AsyncBufferedImage asyncImage = itemManager.getImage(itemId);
 
-            if (asyncImage != null)
-            {
-                asyncImage.addTo(
-                        icon
-                );
-            }
-            else
-            {
-                icon.setText(
-                        "?"
-                );
+            if (asyncImage != null) {
+                asyncImage.addTo(icon);
+            } else {
+                icon.setText("?");
             }
         }
 
-        layeredPane.add(
-                icon,
-                Integer.valueOf(
-                        JLayeredPane.DEFAULT_LAYER
-                )
-        );
+        layeredPane.add(icon, JLayeredPane.DEFAULT_LAYER);
 
-        /*
-         * ---------------------------------------------------------
-         * QUANTITY OVERLAY
-         * ---------------------------------------------------------
+        /**
+         * Quantity Overlay
          */
-        if (quantity > 1)
-        {
-            JLabel quantityLabel =
-                    new JLabel(
-                            "x" + quantity
-                    );
+        if (quantity > 1) {
+            JLabel quantityLabel = new JLabel("x" + quantity);
 
-            quantityLabel.setHorizontalAlignment(
-                    SwingConstants.RIGHT
-            );
+            quantityLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
-            quantityLabel.setVerticalAlignment(
-                    SwingConstants.TOP
-            );
+            quantityLabel.setVerticalAlignment(SwingConstants.TOP);
 
-            quantityLabel.setForeground(
-                    ColorScheme.LIGHT_GRAY_COLOR
-            );
+            quantityLabel.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
 
-            quantityLabel.setBorder(
-                    BorderFactory.createEmptyBorder(
-                            0,
-                            1,
-                            0,
-                            1
-                    )
-            );
+            quantityLabel.setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 1));
 
-            /*
-             * Top-right corner.
+            /**
+             * Top right corner
              */
-            quantityLabel.setBounds(
-                    12,
-                    0,
-                    24,
-                    14
-            );
+            quantityLabel.setBounds(12, 0, 24, 14);
 
-            quantityLabel.setToolTipText(
-                    itemName
-            );
+            quantityLabel.setToolTipText(itemName);
 
-            /*
-             * Put the quantity explicitly ABOVE the sprite.
+            /**
+             * Put the quantity above the sprite
              */
-            layeredPane.add(
-                    quantityLabel,
-                    Integer.valueOf(
-                            JLayeredPane.PALETTE_LAYER
-                    )
-            );
+            layeredPane.add(quantityLabel, JLayeredPane.PALETTE_LAYER);
         }
 
-        add(
-                layeredPane
-        );
+        add(layeredPane);
     }
 }

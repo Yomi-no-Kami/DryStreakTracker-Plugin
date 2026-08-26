@@ -18,20 +18,20 @@ import javax.swing.*;
 
 import lombok.extern.slf4j.Slf4j;
 
+import net.runelite.api.ItemComposition;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.PluginPanel;
 
 /**
  * Main Dry Streak Tracker sidebar.
- *
+ * <p>
  * The tracker is only displayed while a RuneScape account
  * is logged in.
  */
 @Slf4j
 @Singleton
-public class DryStreakSidebarPanel extends PluginPanel
-{
+public class DryStreakSidebarPanel extends PluginPanel {
     private final EncounterRegistry encounterRegistry;
     private final EncounterTrackerManager trackerManager;
     private final ItemManager itemManager;
@@ -48,8 +48,7 @@ public class DryStreakSidebarPanel extends PluginPanel
     private boolean loggedIn;
 
     @Inject
-    public DryStreakSidebarPanel(EncounterRegistry encounterRegistry, EncounterTrackerManager trackerManager, ItemManager itemManager)
-    {
+    public DryStreakSidebarPanel(EncounterRegistry encounterRegistry, EncounterTrackerManager trackerManager, ItemManager itemManager) {
         super();
 
         this.encounterRegistry = encounterRegistry;
@@ -60,7 +59,7 @@ public class DryStreakSidebarPanel extends PluginPanel
         setBackground(ColorScheme.DARK_GRAY_COLOR);
         setLayout(new BorderLayout());
 
-        JLabel title = new JLabel("Dry Streak Tracker" );
+        JLabel title = new JLabel("Dry Streak Tracker");
 
         title.setForeground(Color.WHITE);
 
@@ -90,16 +89,11 @@ public class DryStreakSidebarPanel extends PluginPanel
         {
             ButtonModel model = clearAllButton.getModel();
 
-            if (model.isPressed())
-            {
+            if (model.isPressed()) {
                 clearAllButton.setBackground(ColorScheme.DARKER_GRAY_COLOR);
-            }
-            else if (model.isRollover())
-            {
+            } else if (model.isRollover()) {
                 clearAllButton.setBackground(ColorScheme.DARK_GRAY_HOVER_COLOR);
-            }
-            else
-            {
+            } else {
                 clearAllButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
             }
         });
@@ -107,22 +101,18 @@ public class DryStreakSidebarPanel extends PluginPanel
         clearAllButton.addActionListener(
                 event ->
                 {
-                    if (!trackerManager.isActive())
-                    {
+                    if (!trackerManager.isActive()) {
                         return;
                     }
 
                     int result = JOptionPane.showConfirmDialog(
-                                    this,
-                                    "Clear ALL Dry Streak Tracker data for this account?\n\n"
-                                            + "This cannot be undone.",
-                                    "Clear All Tracker Data",
-                                    JOptionPane.YES_NO_OPTION,
-                                    JOptionPane.WARNING_MESSAGE
-                            );
+                            this,
+                            "Clear ALL Dry Streak Tracker data for this account?\n\n"
+                                    + "This cannot be undone.",
+                            "Clear All Tracker Data",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
-                    if (result != JOptionPane.YES_OPTION)
-                    {
+                    if (result != JOptionPane.YES_OPTION) {
                         return;
                     }
 
@@ -130,8 +120,7 @@ public class DryStreakSidebarPanel extends PluginPanel
 
                     expandedStates.clear();
 
-                    synchronized (resolvedItemDisplayData)
-                    {
+                    synchronized (resolvedItemDisplayData) {
                         resolvedItemDisplayData.clear();
                     }
 
@@ -145,8 +134,8 @@ public class DryStreakSidebarPanel extends PluginPanel
 
         headerPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
 
-        headerPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0,0,1,0,ColorScheme.MEDIUM_GRAY_COLOR),
-                        BorderFactory.createEmptyBorder(8,10,10,10)));
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, ColorScheme.MEDIUM_GRAY_COLOR),
+                BorderFactory.createEmptyBorder(8, 10, 10, 10)));
 
         headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         headerPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, headerPanel.getPreferredSize().height));
@@ -197,12 +186,10 @@ public class DryStreakSidebarPanel extends PluginPanel
     }
 
     @Override
-    public void setVisible(boolean visible)
-    {
+    public void setVisible(boolean visible) {
         super.setVisible(visible);
 
-        if (!visible)
-        {
+        if (!visible) {
             return;
         }
 
@@ -211,12 +198,11 @@ public class DryStreakSidebarPanel extends PluginPanel
 
     /**
      * Sets whether the tracker should currently be visible.
-     *
+     * <p>
      * When false, encounter panels are completely hidden
      * and the user sees the login message instead.
      */
-    public void setLoggedIn(boolean loggedIn)
-    {
+    public void setLoggedIn(boolean loggedIn) {
         this.loggedIn = loggedIn;
 
         log.debug("Sidebar login state changed: {}", loggedIn);
@@ -228,128 +214,80 @@ public class DryStreakSidebarPanel extends PluginPanel
      * Returns whether the sidebar considers the player
      * logged in.
      */
-    public boolean isLoggedIn()
-    {
+    public boolean isLoggedIn() {
         return loggedIn;
     }
 
     /**
      * Rebuilds the sidebar.
      */
-    public void refresh()
-    {
+    public void refresh() {
         final Map<Integer, ItemDisplayData> displayData;
 
-        synchronized (resolvedItemDisplayData)
-        {
-            displayData =
-                    new HashMap<>(
-                            resolvedItemDisplayData
-                    );
+        synchronized (resolvedItemDisplayData) {
+            displayData = new HashMap<>(resolvedItemDisplayData);
         }
 
-        if (!SwingUtilities.isEventDispatchThread())
-        {
-            SwingUtilities.invokeLater(
-                    () ->
-                            refreshOnSwingThread(
-                                    displayData
-                            )
-            );
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(() -> refreshOnSwingThread(displayData));
 
             return;
         }
 
-        refreshOnSwingThread(
-                displayData
-        );
+        refreshOnSwingThread(displayData);
     }
 
     /**
      * Resolves item data on the RuneLite client thread.
      */
-    public void refreshItemDisplayData()
-    {
+    public void refreshItemDisplayData() {
 
-        if (!trackerManager.isActive())
-        {
-            log.debug(
-                    "Skipping item display resolution: tracker is not active"
-            );
+        if (!trackerManager.isActive()) {
+            log.debug("Skipping item display resolution: tracker is not active");
 
             return;
         }
 
-        Map<Integer, ItemDisplayData> newlyResolved =
-                new HashMap<>();
+        Map<Integer, ItemDisplayData> newlyResolved = new HashMap<>();
 
-        for (EncounterDefinition encounter
-                : encounterRegistry.getAll())
-        {
-            EncounterStats stats =
-                    trackerManager.getStats(
-                            encounter.getEncounterId()
-                    );
+        for (EncounterDefinition encounter : encounterRegistry.getAll()) {
+            EncounterStats stats = trackerManager.getStats(encounter.getEncounterId());
 
-            if (stats == null)
-            {
+            if (stats == null) {
                 continue;
             }
 
-            Map<Integer, Integer> receivedDrops =
-                    stats.getReceivedDrops();
+            Map<Integer, Integer> receivedDrops = stats.getReceivedDrops();
 
-            if (receivedDrops == null
-                    || receivedDrops.isEmpty())
-            {
+            if (receivedDrops == null || receivedDrops.isEmpty()) {
                 continue;
             }
 
-            for (Integer itemId
-                    : receivedDrops.keySet())
-            {
-                if (itemId == null)
-                {
+            for (Integer itemId : receivedDrops.keySet()) {
+                if (itemId == null) {
                     continue;
                 }
 
-                synchronized (resolvedItemDisplayData)
-                {
-                    if (resolvedItemDisplayData.containsKey(
-                            itemId))
-                    {
+                synchronized (resolvedItemDisplayData) {
+                    if (resolvedItemDisplayData.containsKey(itemId)) {
                         continue;
                     }
                 }
 
-                ItemDisplayData data =
-                        resolveItemDisplayData(
-                                itemId
-                        );
+                ItemDisplayData data = resolveItemDisplayData(itemId);
 
-                if (data != null)
-                {
-                    newlyResolved.put(
-                            itemId,
-                            data
-                    );
+                if (data != null) {
+                    newlyResolved.put(itemId, data);
                 }
             }
         }
 
-        if (!newlyResolved.isEmpty())
-        {
-            synchronized (resolvedItemDisplayData)
-            {
-                resolvedItemDisplayData.putAll(
-                        newlyResolved
-                );
+        if (!newlyResolved.isEmpty()) {
+            synchronized (resolvedItemDisplayData) {
+                resolvedItemDisplayData.putAll(newlyResolved);
             }
 
-            log.debug(
-                    "Resolved {} item display entries",
-                    newlyResolved.size()
-            );
+            log.debug("Resolved {} item display entries", newlyResolved.size());
         }
 
         refresh();
@@ -358,32 +296,20 @@ public class DryStreakSidebarPanel extends PluginPanel
     /**
      * Updates the sidebar with externally resolved item data.
      */
-    public void updateItemDisplayData(
-            Map<Integer, ItemDisplayData> itemDisplayData)
-    {
-        /*
+    public void updateItemDisplayData(Map<Integer, ItemDisplayData> itemDisplayData) {
+        /**
          * Do not update the UI while logged out.
          */
-        if (!loggedIn
-                || !trackerManager.isActive())
-        {
+        if (!loggedIn || !trackerManager.isActive()) {
             return;
         }
 
-        if (itemDisplayData != null
-                && !itemDisplayData.isEmpty())
-        {
-            synchronized (resolvedItemDisplayData)
-            {
-                resolvedItemDisplayData.putAll(
-                        itemDisplayData
-                );
+        if (itemDisplayData != null && !itemDisplayData.isEmpty()) {
+            synchronized (resolvedItemDisplayData) {
+                resolvedItemDisplayData.putAll(itemDisplayData);
             }
 
-            log.debug(
-                    "Updated sidebar with {} item display entries",
-                    itemDisplayData.size()
-            );
+            log.debug("Updated sidebar with {} item display entries", itemDisplayData.size());
         }
 
         refresh();
@@ -392,13 +318,9 @@ public class DryStreakSidebarPanel extends PluginPanel
     /**
      * Performs the actual Swing UI rebuild.
      */
-    private void refreshOnSwingThread(Map<Integer, ItemDisplayData> displayData)
-    {
-        if (!SwingUtilities.isEventDispatchThread())
-        {
-            SwingUtilities.invokeLater(
-                    () ->
-                            refreshOnSwingThread(displayData));
+    private void refreshOnSwingThread(Map<Integer, ItemDisplayData> displayData) {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(() -> refreshOnSwingThread(displayData));
 
             return;
         }
@@ -408,20 +330,16 @@ public class DryStreakSidebarPanel extends PluginPanel
         /**
          * LOGGED OUT
          */
-        if (!loggedIn || !trackerManager.isActive())
-        {
+        if (!loggedIn || !trackerManager.isActive()) {
             JLabel loginLabel = new JLabel("<html><center>" + "Log in to view tracker!" + "</center></html>");
 
-            loginLabel.setHorizontalAlignment(
-                    SwingConstants.CENTER);
+            loginLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-            loginLabel.setVerticalAlignment(
-                    SwingConstants.CENTER);
+            loginLabel.setVerticalAlignment(SwingConstants.CENTER);
 
-            loginLabel.setForeground(
-                    ColorScheme.LIGHT_GRAY_COLOR);
+            loginLabel.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
 
-            loginLabel.setBorder(BorderFactory.createEmptyBorder(25,10,25,10));
+            loginLabel.setBorder(BorderFactory.createEmptyBorder(25, 10, 25, 10));
 
             encounterContainer.add(loginLabel);
 
@@ -440,7 +358,7 @@ public class DryStreakSidebarPanel extends PluginPanel
 
         int panelCount = 0;
 
-        /*
+        /**
          * Sort tracked encounters by most recent activity.
          *
          * The encounter killed most recently appears at
@@ -448,8 +366,7 @@ public class DryStreakSidebarPanel extends PluginPanel
          */
         List<EncounterDefinition> sortedEncounters = new ArrayList<>(encounterRegistry.getAll());
 
-        sortedEncounters.sort(
-                Comparator.comparingLong((EncounterDefinition encounter) ->
+        sortedEncounters.sort(Comparator.comparingLong((EncounterDefinition encounter) ->
                         {
                             EncounterStats stats = trackerManager.getStats(encounter.getEncounterId());
 
@@ -458,35 +375,24 @@ public class DryStreakSidebarPanel extends PluginPanel
                 ).reversed()
         );
 
-        for (EncounterDefinition encounter
-                : sortedEncounters)
-        {
+        for (EncounterDefinition encounter : sortedEncounters) {
             EncounterStats stats = trackerManager.getStats(encounter.getEncounterId());
 
-            if (stats == null || stats.getTotalKillsTracked() <= 0)
-            {
+            if (stats == null || stats.getTotalKillsTracked() <= 0) {
                 continue;
             }
 
             boolean expanded = expandedStates.getOrDefault(encounter.getEncounterId(), false);
 
             EncounterPanel encounterPanel =
-                    new EncounterPanel(
-                            encounter,
-                            stats,
-                            displayData,
-                            itemManager,
-                            expanded,
-                            isExpanded ->
-                                    expandedStates.put(encounter.getEncounterId(), isExpanded),
-                            () ->
-                            {
-                                trackerManager.clearEncounterData(encounter.getEncounterId());
+                    new EncounterPanel(encounter, stats, displayData, itemManager, expanded, isExpanded -> expandedStates.put(encounter.getEncounterId(), isExpanded), () ->
+                    {
+                        trackerManager.clearEncounterData(encounter.getEncounterId());
 
-                                expandedStates.remove(encounter.getEncounterId());
+                        expandedStates.remove(encounter.getEncounterId());
 
-                                refresh();
-                            }
+                        refresh();
+                    }
                     );
 
             encounterContainer.add(encounterPanel);
@@ -495,21 +401,20 @@ public class DryStreakSidebarPanel extends PluginPanel
 
             spacer.setOpaque(false);
 
-            spacer.setPreferredSize(new Dimension(1,5));
+            spacer.setPreferredSize(new Dimension(1, 5));
 
-            spacer.setMinimumSize(new Dimension(1,5));
+            spacer.setMinimumSize(new Dimension(1, 5));
 
-            spacer.setMaximumSize(new Dimension(Integer.MAX_VALUE,5));
+            spacer.setMaximumSize(new Dimension(Integer.MAX_VALUE, 5));
 
             encounterContainer.add(spacer);
 
             panelCount++;
         }
 
-        if (panelCount == 0)
-        {
-            JLabel emptyLabel = new JLabel("<html><center>"+ "No encounters tracked yet." + "</center></html>"
-                    );
+        if (panelCount == 0) {
+            JLabel emptyLabel = new JLabel("<html><center>" + "No encounters tracked yet." + "</center></html>"
+            );
 
             emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -527,37 +432,26 @@ public class DryStreakSidebarPanel extends PluginPanel
 
     /**
      * Resolves an item's display name and sprite.
-     *
+     * <p>
      * Must be called from the RuneLite client thread.
      */
-    private ItemDisplayData resolveItemDisplayData(
-            int itemId)
-    {
-        try
-        {
-            net.runelite.api.ItemComposition composition =
-                    itemManager.getItemComposition(
-                            itemId
-                    );
+    private ItemDisplayData resolveItemDisplayData(int itemId) {
+        try {
+            ItemComposition composition = itemManager.getItemComposition(
+                    itemId
+            );
 
-            if (composition == null)
-            {
+            if (composition == null) {
                 return null;
             }
 
-            String itemName =
-                    composition.getName();
+            String itemName = composition.getName();
 
-            if (itemName == null
-                    || itemName.isEmpty())
-            {
+            if (itemName == null || itemName.isEmpty()) {
                 return null;
             }
 
-            Image itemImage =
-                    itemManager.getImage(
-                            itemId
-                    );
+            Image itemImage = itemManager.getImage(itemId);
 
             /*
              * Keep the item name even if the sprite is not
@@ -566,25 +460,15 @@ public class DryStreakSidebarPanel extends PluginPanel
              * DropItemPanel will request the sprite asynchronously
              * when itemImage is null.
              */
-            return new ItemDisplayData(
-                    itemName,
-                    itemImage
-            );
-        }
-        catch (Exception e)
-        {
-            log.debug(
-                    "Unable to resolve item display data for {}",
-                    itemId,
-                    e
-            );
+            return new ItemDisplayData(itemName, itemImage);
+        } catch (Exception e) {
+            log.debug("Unable to resolve item display data for {}", itemId, e);
 
             return null;
         }
     }
 
-    public JPanel getEncounterContainer()
-    {
+    public JPanel getEncounterContainer() {
         return encounterContainer;
     }
 }

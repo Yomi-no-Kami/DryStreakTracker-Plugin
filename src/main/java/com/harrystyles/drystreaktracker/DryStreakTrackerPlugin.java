@@ -32,260 +32,173 @@ import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.ImageUtil;
 
 @Slf4j
-@PluginDescriptor(
-		name = "Dry Streak Tracker",
-		description = "Tracks your dry streaks at bosses and raids"
+@PluginDescriptor(name = "Dry Streak Tracker", description = "Tracks your dry streaks at Pvm/Skilling content."
 )
-public class DryStreakTrackerPlugin extends Plugin
-{
-	@Inject
-	private EncounterRegistry encounterRegistry;
+public class DryStreakTrackerPlugin extends Plugin {
+    @Inject
+    private EncounterRegistry encounterRegistry;
 
-	@Inject
-	private EncounterDefinitionLoader definitionLoader;
+    @Inject
+    private EncounterDefinitionLoader definitionLoader;
 
-	@Inject
-	private EncounterTrackerManager trackerManager;
+    @Inject
+    private EncounterTrackerManager trackerManager;
 
-	private LootDetectionService lootDetectionService;
+    private LootDetectionService lootDetectionService;
 
-	@Inject
-	private DryStreakNotificationManager notificationManager;
+    @Inject
+    private DryStreakNotificationManager notificationManager;
 
-	@Inject
-	private ClientToolbar clientToolbar;
+    @Inject
+    private ClientToolbar clientToolbar;
 
-	private DryStreakSidebarPanel sidebarPanel;
+    private DryStreakSidebarPanel sidebarPanel;
 
-	@Inject
-	private Client client;
+    @Inject
+    private Client client;
 
-	@Inject
-	private ClientThread clientThread;
+    @Inject
+    private ClientThread clientThread;
 
-	private NavigationButton navigationButton;
+    private NavigationButton navigationButton;
 
-	@Provides
-	DryStreakTrackerConfig provideConfig(
-			ConfigManager configManager)
-	{
-		return configManager.getConfig(
-				DryStreakTrackerConfig.class
-		);
-	}
+    @Provides
+    DryStreakTrackerConfig provideConfig(ConfigManager configManager) {
+        return configManager.getConfig(DryStreakTrackerConfig.class);
+    }
 
-	@Override
-	protected void startUp()
-	{
-		log.info("Dry Streak Tracker starting...");
+    @Override
+    protected void startUp() {
+        log.info("Dry Streak Tracker starting...");
 
-		/*
-		 * Create Swing-dependent components after RuneLite's
-		 * UI/look-and-feel has been initialized.
-		 */
-		sidebarPanel = injector.getInstance(DryStreakSidebarPanel.class);
-		lootDetectionService = injector.getInstance(LootDetectionService.class);
+        /*
+         * Create Swing-dependent components after RuneLite's
+         * UI/look-and-feel has been initialized.
+         */
+        sidebarPanel = injector.getInstance(DryStreakSidebarPanel.class);
+        lootDetectionService = injector.getInstance(LootDetectionService.class);
 
-		definitionLoader.loadInto(encounterRegistry);
+        definitionLoader.loadInto(encounterRegistry);
 
-		log.info(
-				"Loaded {} encounter definitions",
-				encounterRegistry.size()
-		);
+        log.info("Loaded {} encounter definitions", encounterRegistry.size());
 
-		trackerManager.start();
+        trackerManager.start();
 
-		BufferedImage icon =
-				ImageUtil.loadImageResource(
-						getClass(),
-						"/icon.png"
-				);
+        BufferedImage icon = ImageUtil.loadImageResource(getClass(), "/icon.png");
 
-		navigationButton =
-				NavigationButton.builder()
-						.tooltip(
-								"Dry Streak Tracker"
-						)
-						.icon(
-								icon
-						)
-						.priority(
-								5
-						)
-						.panel(
-								sidebarPanel
-						)
-						.build();
+        navigationButton = NavigationButton.builder()
+                .tooltip("Dry Streak Tracker")
+                .icon(icon)
+                .priority(5)
+                .panel(sidebarPanel)
+                .build();
 
-		clientToolbar.addNavigation(
-				navigationButton
-		);
+        clientToolbar.addNavigation(navigationButton);
 
-		notificationManager.start();
+        notificationManager.start();
 
-		sidebarPanel.setLoggedIn(
-				false
-		);
+        sidebarPanel.setLoggedIn(false
+        );
 
-		if (client.getGameState()
-				== GameState.LOGGED_IN)
-		{
-			startCurrentPlayer();
-		}
-		else
-		{
-			SwingUtilities.invokeLater(
-					() ->
-							sidebarPanel.setLoggedIn(
-									false
-							)
-			);
-		}
+        if (client.getGameState() == GameState.LOGGED_IN) {
+            startCurrentPlayer();
+        } else {
+            SwingUtilities.invokeLater(() -> sidebarPanel.setLoggedIn(false));
+        }
 
-		log.info(
-				"Dry Streak Tracker started"
-		);
-	}
+        log.info("Dry Streak Tracker started");
+    }
 
-	@Override
-	protected void shutDown()
-	{
-		log.info(
-				"Dry Streak Tracker shutting down..."
-		);
+    @Override
+    protected void shutDown() {
+        log.info("Dry Streak Tracker shutting down...");
 
-		if (navigationButton != null)
-		{
-			clientToolbar.removeNavigation(
-					navigationButton
-			);
+        if (navigationButton != null) {
+            clientToolbar.removeNavigation(navigationButton);
 
-			navigationButton =
-					null;
-		}
+            navigationButton = null;
+        }
 
-		notificationManager.stop();
+        notificationManager.stop();
 
-		trackerManager.stop();
+        trackerManager.stop();
 
-		encounterRegistry.clear();
+        encounterRegistry.clear();
 
-		log.info(
-				"Dry Streak Tracker stopped"
-		);
-	}
+        log.info("Dry Streak Tracker stopped");
+    }
 
-	@Subscribe
-	public void onGameStateChanged(
-			GameStateChanged event)
-	{
-		if (event == null)
-		{
-			return;
-		}
+    @Subscribe
+    public void onGameStateChanged(GameStateChanged event) {
+        if (event == null) {
+            return;
+        }
 
-		GameState gameState =
-				event.getGameState();
+        GameState gameState = event.getGameState();
 
-		if (gameState == GameState.LOGGED_IN)
-		{
-			startCurrentPlayer();
+        if (gameState == GameState.LOGGED_IN) {
+            startCurrentPlayer();
 
-			return;
-		}
+            return;
+        }
 
-		if (gameState == GameState.LOGIN_SCREEN)
-		{
-			trackerManager.stopForPlayer();
+        if (gameState == GameState.LOGIN_SCREEN) {
+            trackerManager.stopForPlayer();
 
-			SwingUtilities.invokeLater(
-					() ->
-							sidebarPanel.setLoggedIn(
-									false
-							)
-			);
-		}
-	}
+            SwingUtilities.invokeLater(() -> sidebarPanel.setLoggedIn(false));
+        }
+    }
 
-	private void startCurrentPlayer()
-	{
-		clientThread.invokeLater(
-				() ->
-				{
-					if (client.getLocalPlayer()
-							== null)
-					{
-						clientThread.invokeLater(
-								this::startCurrentPlayer
-						);
+    private void startCurrentPlayer() {
+        clientThread.invokeLater(() ->
+                {
+                    if (client.getLocalPlayer() == null) {
+                        clientThread.invokeLater(this::startCurrentPlayer);
 
-						return;
-					}
+                        return;
+                    }
 
-					String playerName =
-							client.getLocalPlayer()
-									.getName();
+                    String playerName = client.getLocalPlayer().getName();
 
-					if (playerName == null
-							|| playerName.trim()
-							.isEmpty())
-					{
-						clientThread.invokeLater(
-								this::startCurrentPlayer
-						);
+                    if (playerName == null || playerName.trim().isEmpty()) {
+                        clientThread.invokeLater(this::startCurrentPlayer);
 
-						return;
-					}
+                        return;
+                    }
 
-					log.info(
-							"Logged in as {}",
-							playerName
-					);
+                    log.info("Logged in as {}", playerName);
 
-					trackerManager.startForPlayer(
-							playerName
-					);
+                    trackerManager.startForPlayer(playerName);
 
-					SwingUtilities.invokeLater(
-							() ->
-							{
-								sidebarPanel.setLoggedIn(
-										true
-								);
+                    SwingUtilities.invokeLater(() ->
+                            {
+                                sidebarPanel.setLoggedIn(true);
 
-								sidebarPanel.refresh();
-							}
-					);
+                                sidebarPanel.refresh();
+                            }
+                    );
 
-					sidebarPanel.refreshItemDisplayData();
-				}
-		);
-	}
+                    sidebarPanel.refreshItemDisplayData();
+                }
+        );
+    }
 
-	/**
-	 * NPC loot.
-	 */
-	@Subscribe
-	public void onNpcLootReceived(
-			NpcLootReceived event)
-	{
-		lootDetectionService.handleNpcLootReceived(
-				event
-		);
-	}
+    /**
+     * NPC loot.
+     */
+    @Subscribe
+    public void onNpcLootReceived(NpcLootReceived event) {
+        lootDetectionService.handleNpcLootReceived(event);
+    }
 
-	/**
-	 * Generic non-NPC loot.
-	 *
-	 * The detection service ignores LootRecordType.NPC
-	 * to prevent duplicate processing.
-	 */
-	@Subscribe
-	public void onLootReceived(
-			LootReceived event)
-	{
-		lootDetectionService.handleLootReceived(
-				event
-		);
-	}
+    /**
+     * Generic non-NPC loot.
+     * <p>
+     * The detection service ignores LootRecordType.NPC
+     * to prevent duplicate processing.
+     */
+    @Subscribe
+    public void onLootReceived(LootReceived event) {
+        lootDetectionService.handleLootReceived(event);
+    }
 }

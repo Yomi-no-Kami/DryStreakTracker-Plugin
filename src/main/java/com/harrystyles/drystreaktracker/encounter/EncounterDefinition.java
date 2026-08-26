@@ -5,21 +5,19 @@ import java.util.Set;
 
 /**
  * Static definition of an encounter.
- *
  * Definitions may be loaded from:
- *
+ * <p>
  * encounters.json
  * -> NpcLootReceived encounters
- *
+ * <p>
  * loot-received-encounters.json
  * -> LootReceived encounters
- *
+ * <p>
  * The JSON itself does not need to contain lootType.
  * EncounterDefinitionLoader assigns it automatically depending
- * on which resource the definition came from.
+ * on which resource the definition came from
  */
-public class EncounterDefinition
-{
+public class EncounterDefinition {
     private String encounterId;
 
     private String displayName;
@@ -28,175 +26,127 @@ public class EncounterDefinition
 
     /**
      * Assigned internally by EncounterDefinitionLoader.
-     *
+     * <p>
      * This does NOT need to appear in JSON.
      */
     private EncounterLootType lootType;
 
     /**
      * NPC IDs belonging to this encounter.
-     *
+     * <p>
      * Used by encounters.json / NpcLootReceived.
      */
-    private Set<Integer> npcIds =
-            new HashSet<>();
+    private Set<Integer> npcIds = new HashSet<>();
 
     /**
      * Names supplied by LootReceived.getName().
-     *
+     * <p>
      * Used by loot-received-encounters.json.
      */
-    private Set<String> lootSourceNames =
-            new HashSet<>();
+    private Set<String> lootSourceNames = new HashSet<>();
 
     /**
      * Item IDs which reset the dry streak.
      */
-    private Set<Integer> trackedDropIds =
-            new HashSet<>();
+    private Set<Integer> trackedDropIds = new HashSet<>();
 
     /**
      * Pet item IDs.
-     *
+     * <p>
      * These count only when trackPets is enabled.
      */
-    private Set<Integer> petDropIds =
-            new HashSet<>();
+    private Set<Integer> petDropIds = new HashSet<>();
 
 
-    public EncounterDefinition()
-    {
+    public EncounterDefinition() {
     }
 
 
-    public String getEncounterId()
-    {
+    public String getEncounterId() {
         return encounterId;
     }
 
 
-    public void setEncounterId(
-            String encounterId)
-    {
-        this.encounterId =
-                encounterId;
+    public void setEncounterId(String encounterId) {
+        this.encounterId = encounterId;
     }
 
 
-    public String getDisplayName()
-    {
+    public String getDisplayName() {
         return displayName;
     }
 
 
-    public void setDisplayName(
-            String displayName)
-    {
-        this.displayName =
-                displayName;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
 
-    public String getImageUrl()
-    {
+    public String getImageUrl() {
         return imageUrl;
     }
 
 
-    public void setImageUrl(
-            String imageUrl)
-    {
-        this.imageUrl =
-                imageUrl;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
 
-    public EncounterLootType getLootType()
-    {
+    public EncounterLootType getLootType() {
         return lootType;
     }
 
 
-    public void setLootType(
-            EncounterLootType lootType)
-    {
-        this.lootType =
-                lootType;
+    public void setLootType(EncounterLootType lootType) {
+        this.lootType = lootType;
     }
 
 
-    public Set<Integer> getNpcIds()
-    {
-        if (npcIds == null)
-        {
-            npcIds =
-                    new HashSet<>();
+    public Set<Integer> getNpcIds() {
+        if (npcIds == null) {
+            npcIds = new HashSet<>();
         }
 
         return npcIds;
     }
 
 
-    public void setNpcIds(
-            Set<Integer> npcIds)
-    {
-        this.npcIds =
-                npcIds == null
-                        ? new HashSet<>()
-                        : new HashSet<>(npcIds);
+    public void setNpcIds(Set<Integer> npcIds) {
+        this.npcIds = npcIds == null ? new HashSet<>() : new HashSet<>(npcIds);
     }
 
 
-    public Set<String> getLootSourceNames()
-    {
-        if (lootSourceNames == null)
-        {
-            lootSourceNames =
-                    new HashSet<>();
+    public Set<String> getLootSourceNames() {
+        if (lootSourceNames == null) {
+            lootSourceNames = new HashSet<>();
         }
 
         return lootSourceNames;
     }
 
 
-    public void setLootSourceNames(
-            Set<String> lootSourceNames)
-    {
-        this.lootSourceNames =
-                lootSourceNames == null
-                        ? new HashSet<>()
-                        : new HashSet<>(lootSourceNames);
+    public void setLootSourceNames(Set<String> lootSourceNames) {
+        this.lootSourceNames = lootSourceNames == null ? new HashSet<>() : new HashSet<>(lootSourceNames);
     }
 
 
-    public Set<Integer> getTrackedDropIds()
-    {
-        if (trackedDropIds == null)
-        {
-            trackedDropIds =
-                    new HashSet<>();
+    public Set<Integer> getTrackedDropIds() {
+        if (trackedDropIds == null) {
+            trackedDropIds = new HashSet<>();
         }
 
         return trackedDropIds;
     }
 
 
-    public void setTrackedDropIds(
-            Set<Integer> trackedDropIds)
-    {
-        this.trackedDropIds =
-                trackedDropIds == null
-                        ? new HashSet<>()
-                        : new HashSet<>(trackedDropIds);
+    public void setTrackedDropIds(Set<Integer> trackedDropIds) {
+        this.trackedDropIds = trackedDropIds == null ? new HashSet<>() : new HashSet<>(trackedDropIds);
     }
 
 
-    public Set<Integer> getPetDropIds()
-    {
-        if (petDropIds == null)
-        {
-            petDropIds =
-                    new HashSet<>();
+    public Set<Integer> getPetDropIds() {
+        if (petDropIds == null) {
+            petDropIds = new HashSet<>();
         }
 
         return petDropIds;
@@ -204,44 +154,25 @@ public class EncounterDefinition
 
 
     public void setPetDropIds(
-            Set<Integer> petDropIds)
-    {
-        this.petDropIds =
-                petDropIds == null
-                        ? new HashSet<>()
-                        : new HashSet<>(petDropIds);
+            Set<Integer> petDropIds) {
+        this.petDropIds = petDropIds == null ? new HashSet<>() : new HashSet<>(petDropIds);
     }
 
 
-    public boolean matchesNpc(
-            int npcId)
-    {
-        return getNpcIds().contains(
-                npcId
-        );
+    public boolean matchesNpc(int npcId) {
+        return getNpcIds().contains(npcId);
     }
 
 
-    public boolean matchesLootSource(
-            String sourceName)
-    {
-        if (sourceName == null)
-        {
+    public boolean matchesLootSource(String sourceName) {
+        if (sourceName == null) {
             return false;
         }
 
-        String normalized =
-                sourceName
-                        .trim();
+        String normalized = sourceName.trim();
 
-        for (String configuredSource
-                : getLootSourceNames())
-        {
-            if (configuredSource != null
-                    && configuredSource
-                    .trim()
-                    .equalsIgnoreCase(normalized))
-            {
+        for (String configuredSource : getLootSourceNames()) {
+            if (configuredSource != null && configuredSource.trim().equalsIgnoreCase(normalized)) {
                 return true;
             }
         }
@@ -250,41 +181,27 @@ public class EncounterDefinition
     }
 
 
-    public boolean isTrackedDrop(
-            int itemId)
-    {
-        return getTrackedDropIds().contains(
-                itemId
-        );
+    public boolean isTrackedDrop(int itemId) {
+        return getTrackedDropIds().contains(itemId);
     }
 
 
-    public boolean isPetDrop(
-            int itemId)
-    {
-        return getPetDropIds().contains(
-                itemId
-        );
+    public boolean isPetDrop(int itemId) {
+        return getPetDropIds().contains(itemId);
     }
 
 
-    public boolean isQualifyingDrop(
-            int itemId,
-            boolean trackPets)
-    {
-        if (isTrackedDrop(itemId))
-        {
+    public boolean isQualifyingDrop(int itemId, boolean trackPets) {
+        if (isTrackedDrop(itemId)) {
             return true;
         }
 
-        return trackPets
-                && isPetDrop(itemId);
+        return trackPets && isPetDrop(itemId);
     }
 
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "EncounterDefinition{" +
                 "encounterId='" + encounterId + '\'' +
                 ", displayName='" + displayName + '\'' +

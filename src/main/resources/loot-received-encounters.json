@@ -1,18 +1,5 @@
 [
   {
-    "encounterId": "martin_master_farmer_pickpocket",
-    "displayName": "Martin the Master Gardener",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Martin_the_Master_Gardener.png",
-    "lootSourceNames": [
-      "Martin"
-    ],
-    "trackedDropIds": [
-      5318
-    ],
-    "petDropIds": [
-    ]
-  },
-  {
     "encounterId": "branda_royal_titans",
     "displayName": "Branda the Fire Queen",
     "imageUrl": "https://oldschool.runescape.wiki/images/Branda_the_Fire_Queen.png",
@@ -237,6 +224,20 @@
     ],
     "petDropIds": [
       20693
+    ]
+  },
+  {
+    "encounterId": "tombs_of_amascut",
+    "displayName": "Tombs of Amascut",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Tumeken%27s_Warden_%28level-544%29.png",
+    "lootSourceNames": [
+      "Tombs of Amascut"
+    ],
+    "trackedDropIds": [
+      26219, 25975, 25985, 27226, 27229, 27232, 27277
+    ],
+    "petDropIds": [
+      27352
     ]
   }
 ]

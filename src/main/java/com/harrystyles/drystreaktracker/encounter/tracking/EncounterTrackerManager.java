@@ -17,15 +17,14 @@ import net.runelite.client.config.ConfigManager;
 
 /**
  * Handles all player encounter tracking.
- *
+ * <p>
  * Tracking data is loaded and saved per RuneScape account.
  *
  * @author Harry Styles
  */
 @Slf4j
 @Singleton
-public class EncounterTrackerManager
-{
+public class EncounterTrackerManager {
     /**
      * Maximum number of recently processed kill events
      * kept in memory to prevent duplicate event handling.
@@ -56,11 +55,10 @@ public class EncounterTrackerManager
     /**
      * Recently processed kill event fingerprints.
      */
-    private final Set<String> processedKillEvents =
-            new HashSet<>();
+    private final Set<String> processedKillEvents = new HashSet<>();
 
     @Inject
-    public EncounterTrackerManager( EncounterRegistry encounterRegistry, DryStreakStorage storage, ConfigManager configManager) {
+    public EncounterTrackerManager(EncounterRegistry encounterRegistry, DryStreakStorage storage, ConfigManager configManager) {
         this.encounterRegistry = encounterRegistry;
         this.storage = storage;
         this.configManager = configManager;
@@ -68,19 +66,14 @@ public class EncounterTrackerManager
 
     /**
      * Starts tracking for a specific RuneScape account.
-     *
+     * <p>
      * If the same account is already active, nothing happens.
      *
      * @param playerName RuneScape character name.
      */
-    public void startForPlayer(String playerName)
-    {
-        if (playerName == null
-                || playerName.trim().isEmpty())
-        {
-            log.warn(
-                    "Cannot start tracker: player name is empty"
-            );
+    public void startForPlayer(String playerName) {
+        if (playerName == null || playerName.trim().isEmpty()) {
+            log.warn("Cannot start tracker: player name is empty");
 
             return;
         }
@@ -91,36 +84,25 @@ public class EncounterTrackerManager
          * Avoid reloading the same account if RuneLite
          * sends LOGGED_IN more than once.
          */
-        if (active
-                && currentPlayerName != null
-                && currentPlayerName.equalsIgnoreCase(
-                normalizedName))
-        {
-            log.debug(
-                    "Tracker already active for {}",
-                    normalizedName
-            );
+        if (active && currentPlayerName != null && currentPlayerName.equalsIgnoreCase(normalizedName)) {
+            log.debug("Tracker already active for {}", normalizedName);
 
             return;
         }
 
-        /*
+        /**
          * If another account was active, save that account
          * before switching.
          */
-        if (active)
-        {
+        if (active) {
             stopForPlayer();
         }
 
         currentPlayerName = normalizedName;
 
-        trackingData = storage.load(
-                currentPlayerName
-        );
+        trackingData = storage.load(currentPlayerName);
 
-        if (trackingData == null)
-        {
+        if (trackingData == null) {
             trackingData = new PlayerTrackingData();
         }
 
@@ -132,31 +114,21 @@ public class EncounterTrackerManager
 
         active = true;
 
-        log.info(
-                "Started tracking for account {}. " +
-                        "Loaded {} tracked encounters.",
-                currentPlayerName,
-                trackingData.getEncounters().size()
-        );
+        log.info("Started tracking for account {}. " + "Loaded {} tracked encounters.", currentPlayerName, trackingData.getEncounters().size());
     }
 
     /**
      * Stops tracking the currently logged-in account.
-     *
+     * <p>
      * The account's data is saved before the tracker
      * becomes inactive.
      */
-    public void stopForPlayer()
-    {
-        if (!active)
-        {
+    public void stopForPlayer() {
+        if (!active) {
             return;
         }
 
-        log.info(
-                "Stopping tracker for account {}",
-                currentPlayerName
-        );
+        log.info("Stopping tracker for account {}", currentPlayerName);
 
         save();
 
@@ -169,29 +141,24 @@ public class EncounterTrackerManager
 
     /**
      * Called when the plugin itself starts.
-     *
+     * <p>
      * Tracking is intentionally NOT started here because
      * the player may not be logged in yet.
      */
-    public void start()
-    {
+    public void start() {
         trackingData = null;
         currentPlayerName = null;
         active = false;
 
         processedKillEvents.clear();
 
-        log.info(
-                "Encounter tracker initialized. " +
-                        "Waiting for player login."
-        );
+        log.info("Encounter tracker initialized. " + "Waiting for player login.");
     }
 
     /**
      * Called when the plugin shuts down.
      */
-    public void stop()
-    {
+    public void stop() {
         stopForPlayer();
         processedKillEvents.clear();
     }
@@ -199,128 +166,68 @@ public class EncounterTrackerManager
     /**
      * Saves the currently active player's data.
      */
-    public void save()
-    {
-        if (!isActive())
-        {
+    public void save() {
+        if (!isActive()) {
             return;
         }
 
-        storage.save(
-                currentPlayerName,
-                trackingData
-        );
+        storage.save(currentPlayerName, trackingData);
     }
 
     /**
      * Records a completed encounter kill.
-     *
+     * <p>
      * A kill may either have a tracked drop or be dry.
      *
-     * @param encounterId encounter being tracked
+     * @param encounterId  encounter being tracked
      * @param killEventKey unique fingerprint for this kill event
-     * @param dropItemId tracked drop item ID, or null if dry
+     * @param dropItemId   tracked drop item ID, or null if dry
      * @param dropQuantity quantity received from the drop
-     *
      * @return true if the kill was recorded
      */
-    public boolean recordKill(
-            String encounterId,
-            String killEventKey,
-            Integer dropItemId,
-            int dropQuantity)
-    {
-        if (!isActive())
-        {
-            log.debug(
-                    "Ignoring kill because no player is logged in"
-            );
+    public boolean recordKill(String encounterId, String killEventKey, Integer dropItemId, int dropQuantity) {
+        if (!isActive()) {
+            log.debug("Ignoring kill because no player is logged in");
 
             return false;
         }
 
-        if (encounterId == null
-                || encounterId.trim().isEmpty())
-        {
-            log.warn(
-                    "Cannot record kill: encounter ID is null or empty"
-            );
+        if (encounterId == null || encounterId.trim().isEmpty()) {
+            log.warn("Cannot record kill: encounter ID is null or empty");
 
             return false;
         }
 
-        EncounterDefinition definition =
-                encounterRegistry.getById(
-                        encounterId
-                );
+        EncounterDefinition definition = encounterRegistry.getById(encounterId);
 
-        if (definition == null)
-        {
-            log.warn(
-                    "Cannot record kill: unknown encounter {}",
-                    encounterId
-            );
+        if (definition == null) {
+            log.warn("Cannot record kill: unknown encounter {}", encounterId);
 
             return false;
         }
 
-        if (killEventKey != null
-                && !killEventKey.isEmpty())
-        {
-            if (!registerKillEvent(killEventKey))
-            {
-                log.debug(
-                        "Duplicate kill event ignored: {}",
-                        killEventKey
-                );
+        if (killEventKey != null && !killEventKey.isEmpty()) {
+            if (!registerKillEvent(killEventKey)) {
+                log.debug("Duplicate kill event ignored: {}", killEventKey);
 
                 return false;
             }
         }
 
-        EncounterStats stats =
-                trackingData.getOrCreateEncounter(
-                        definition
-                );
+        EncounterStats stats = trackingData.getOrCreateEncounter(definition);
 
-        int newKillcount =
-                stats.getLastKnownKillcount() + 1;
+        int newKillcount = stats.getLastKnownKillcount() + 1;
 
-        if (dropItemId != null)
-        {
-            int totalKillcount =
-                    getRuneLiteKillcount(
-                            definition
-                    );
+        if (dropItemId != null) {
+            int totalKillcount = getRuneLiteKillcount(definition);
 
-            stats.recordDrop(
-                    newKillcount,
-                    totalKillcount,
-                    dropItemId,
-                    dropQuantity
-            );
+            stats.recordDrop(newKillcount, totalKillcount, dropItemId, dropQuantity);
 
-            log.info(
-                    "{} kill #{} recorded with tracked drop. " +
-                            "Current dry streak: {}",
-                    definition.getDisplayName(),
-                    newKillcount,
-                    stats.getCurrentDryStreak()
-            );
-        }
-        else
-        {
-            stats.recordDryKill(
-                    newKillcount
-            );
+            log.info("{} kill #{} recorded with tracked drop. " + "Current dry streak: {}", definition.getDisplayName(), newKillcount, stats.getCurrentDryStreak());
+        } else {
+            stats.recordDryKill(newKillcount);
 
-            log.debug(
-                    "{} kill #{} recorded as dry. " +
-                            "Current dry streak: {}",
-                    definition.getDisplayName(),
-                    newKillcount,
-                    stats.getCurrentDryStreak()
-            );
+            log.debug("{} kill #{} recorded as dry. " + "Current dry streak: {}", definition.getDisplayName(), newKillcount, stats.getCurrentDryStreak());
         }
 
         save();
@@ -331,15 +238,13 @@ public class EncounterTrackerManager
     /**
      * Registers a kill event so the same event cannot
      * immediately be processed twice.
-     *
+     * <p>
      * The set uses a rolling window. Once the maximum size
      * is reached, the oldest information is discarded by
      * clearing the set.
      */
-    private boolean registerKillEvent(String killEventKey)
-    {
-        if (processedKillEvents.contains(killEventKey))
-        {
+    private boolean registerKillEvent(String killEventKey) {
+        if (processedKillEvents.contains(killEventKey)) {
             return false;
         }
 
@@ -349,9 +254,7 @@ public class EncounterTrackerManager
          * Do this BEFORE adding the new event so the set
          * never grows beyond the configured limit.
          */
-        if (processedKillEvents.size()
-                >= MAX_PROCESSED_KILL_EVENTS)
-        {
+        if (processedKillEvents.size() >= MAX_PROCESSED_KILL_EVENTS) {
             processedKillEvents.clear();
         }
 
@@ -364,13 +267,10 @@ public class EncounterTrackerManager
      * Gets statistics for an encounter.
      *
      * @param encounterId encounter ID
-     *
      * @return encounter statistics, or null if none exist
      */
-    public EncounterStats getStats(String encounterId)
-    {
-        if (!isActive())
-        {
+    public EncounterStats getStats(String encounterId) {
+        if (!isActive()) {
             return null;
         }
 
@@ -385,8 +285,7 @@ public class EncounterTrackerManager
      * @return current player's tracking data, or null
      * if nobody is logged in
      */
-    public PlayerTrackingData getTrackingData()
-    {
+    public PlayerTrackingData getTrackingData() {
         return trackingData;
     }
 
@@ -395,58 +294,47 @@ public class EncounterTrackerManager
      *
      * @return player name, or null if nobody is logged in
      */
-    public String getCurrentPlayerName()
-    {
+    public String getCurrentPlayerName() {
         return currentPlayerName;
     }
 
     /**
      * Returns whether a player is currently being tracked.
      */
-    public boolean isActive()
-    {
-        return active
-                && currentPlayerName != null
-                && trackingData != null;
+    public boolean isActive() {
+        return active && currentPlayerName != null && trackingData != null;
     }
 
     /**
      * Clears duplicate-event tracking.
-     *
+     * <p>
      * This does NOT clear any saved encounter statistics.
      */
-    public void clearProcessedKillEvents()
-    {
+    public void clearProcessedKillEvents() {
         processedKillEvents.clear();
     }
 
     /**
      * Clears all saved data for the currently logged-in
      * account.
-     *
+     * <p>
      * The player remains logged in and tracking remains active,
      * but all encounter statistics are reset.
      */
-    public void clearAllData()
-    {
-        if (!isActive())
-        {
-            log.debug(
-                    "Cannot clear account data: no player is logged in"
-            );
+    public void clearAllData() {
+        if (!isActive()) {
+            log.debug("Cannot clear account data: no player is logged in");
 
             return;
         }
 
-        String playerName =
-                currentPlayerName;
+        String playerName = currentPlayerName;
 
         /*
          * Replace the current in-memory data with a completely
          * fresh data object.
          */
-        trackingData =
-                new PlayerTrackingData();
+        trackingData = new PlayerTrackingData();
 
         /*
          * Old kill event fingerprints must also be removed.
@@ -456,41 +344,33 @@ public class EncounterTrackerManager
         /*
          * Remove the persisted account data.
          */
-        storage.clear(
-                playerName
-        );
+        storage.clear(playerName);
 
         /*
          * Save the fresh empty data immediately.
          */
         save();
 
-        log.info(
-                "Cleared all tracking data for account {}",
-                playerName
-        );
+        log.info("Cleared all tracking data for account {}", playerName);
     }
 
     /**
      * Clears all saved tracking data for one encounter.
-     *
+     * <p>
      * The rest of the player's tracked encounters remain
      * unchanged.
      *
      * @param encounterId encounter to clear
      */
     public void clearEncounterData(
-            String encounterId)
-    {
-        if (!isActive())
-        {
+            String encounterId) {
+        if (!isActive()) {
             log.debug("Cannot clear encounter data: no player is logged in");
 
             return;
         }
 
-        if (encounterId == null || encounterId.trim().isEmpty())
-        {
+        if (encounterId == null || encounterId.trim().isEmpty()) {
             return;
         }
 
@@ -505,28 +385,20 @@ public class EncounterTrackerManager
         log.info("Cleared tracking data for encounter {}", encounterId);
     }
 
-    private int getRuneLiteKillcount(
-            EncounterDefinition definition)
-    {
-        if (definition == null || definition.getDisplayName() == null)
-        {
+    private int getRuneLiteKillcount(EncounterDefinition definition) {
+        if (definition == null || definition.getDisplayName() == null) {
             return 0;
         }
 
-        String bossKey = definition.getDisplayName()
-                        .trim()
-                        .replace(":", "")
-                        .toLowerCase(Locale.ROOT);
+        String bossKey = definition.getDisplayName().trim().replace(":", "").toLowerCase(Locale.ROOT);
 
-        if (bossKey.isEmpty())
-        {
+        if (bossKey.isEmpty()) {
             return 0;
         }
 
         Integer killcount = configManager.getRSProfileConfiguration("killcount", bossKey, int.class);
 
-        if (killcount == null)
-        {
+        if (killcount == null) {
             log.debug("No RuneLite Boss killcount found for {} using key '{}'", definition.getDisplayName(), bossKey);
 
             return 0;

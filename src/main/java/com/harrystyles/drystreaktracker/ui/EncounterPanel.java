@@ -23,6 +23,7 @@ import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.ColorScheme;
 
 public class EncounterPanel extends JPanel {
+
     private final EncounterDefinition encounter;
     private final EncounterStats stats;
     private final Map<Integer, ItemDisplayData> itemDisplayData;
@@ -52,202 +53,97 @@ public class EncounterPanel extends JPanel {
         this.expandedStateListener = expandedStateListener;
         this.clearEncounterListener = clearEncounterListener;
 
-        setAlignmentX(
-                Component.LEFT_ALIGNMENT
+        setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        setLayout(new BorderLayout());
+
+        setOpaque(true);
+
+        setBackground(ColorScheme.DARKER_GRAY_COLOR);
+
+        setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(ColorScheme.MEDIUM_GRAY_COLOR),
+                BorderFactory.createEmptyBorder(8, 8, 8, 8)));
+
+        JPanel summary = createSummaryPanel();
+
+        summary.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        summary.addMouseListener(new MouseAdapter() {
+                                     @Override
+                                     public void mouseClicked(MouseEvent event) {
+                                         if (SwingUtilities.isLeftMouseButton(event)) {
+                                             toggleExpanded();
+                                         }
+                                     }
+
+                                     @Override
+                                     public void mousePressed(MouseEvent event) {
+                                         showPopupMenuIfNeeded(event);
+                                     }
+
+                                     @Override
+                                     public void mouseReleased(MouseEvent event) {
+                                         showPopupMenuIfNeeded(event);
+                                     }
+                                 }
         );
 
-        setLayout(
-                new BorderLayout()
-        );
+        add(summary, BorderLayout.NORTH);
 
-        setOpaque(
-                true
-        );
+        detailsPanel = createDetailsPanel();
 
-        setBackground(
-                ColorScheme.DARKER_GRAY_COLOR
-        );
+        detailsPanel.setVisible(expanded);
 
-        setBorder(
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(
-                                ColorScheme.MEDIUM_GRAY_COLOR
-                        ),
-                        BorderFactory.createEmptyBorder(
-                                8,
-                                8,
-                                8,
-                                8
-                        )
-                )
-        );
-
-        JPanel summary =
-                createSummaryPanel();
-
-        summary.setCursor(
-                Cursor.getPredefinedCursor(
-                        Cursor.HAND_CURSOR
-                )
-        );
-
-        summary.addMouseListener(
-                new MouseAdapter()
-                {
-                    @Override
-                    public void mouseClicked(MouseEvent event)
-                    {
-                        if (SwingUtilities.isLeftMouseButton(event))
-                        {
-                            toggleExpanded();
-                        }
-                    }
-
-                    @Override
-                    public void mousePressed(MouseEvent event)
-                    {
-                        showPopupMenuIfNeeded(event);
-                    }
-
-                    @Override
-                    public void mouseReleased(MouseEvent event)
-                    {
-                        showPopupMenuIfNeeded(event);
-                    }
-                }
-        );
-
-        add(
-                summary,
-                BorderLayout.NORTH
-        );
-
-        detailsPanel =
-                createDetailsPanel();
-
-        detailsPanel.setVisible(
-                expanded
-        );
-
-        add(
-                detailsPanel,
-                BorderLayout.CENTER
-        );
+        add(detailsPanel, BorderLayout.CENTER);
 
     }
 
     private JPanel createSummaryPanel() {
-        JPanel panel =
-                new JPanel(
-                        new BorderLayout(
-                                10,
-                                0
-                        )
-                );
+        JPanel panel = new JPanel(new BorderLayout(10, 0));
 
-        panel.setOpaque(
-                false
-        );
+        panel.setOpaque(false);
 
-        JLabel imageLabel =
-                createEncounterImageLabel();
+        JLabel imageLabel = createEncounterImageLabel();
 
-        panel.add(
-                imageLabel,
-                BorderLayout.WEST
-        );
+        panel.add(imageLabel, BorderLayout.WEST);
 
-        JPanel informationPanel =
-                new JPanel(
-                        new GridLayout(
-                                0,
-                                1,
-                                0,
-                                4
-                        )
-                );
+        JPanel informationPanel = new JPanel(new GridLayout(0, 1, 0, 4));
 
-        informationPanel.setOpaque(
-                false
-        );
+        informationPanel.setOpaque(false);
 
-        JLabel nameLabel =
-                new JLabel(
-                        encounter.getDisplayName()
-                );
+        JLabel nameLabel = new JLabel(encounter.getDisplayName());
 
-        nameLabel.setForeground(
-                ColorScheme.LIGHT_GRAY_COLOR
-        );
+        nameLabel.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
 
-        nameLabel.setFont(
-                nameLabel.getFont().deriveFont(
-                        15f
-                )
-        );
+        nameLabel.setFont(nameLabel.getFont().deriveFont(15f));
 
-        informationPanel.add(
-                nameLabel
-        );
+        nameLabel.setToolTipText(encounter.getDisplayName());
 
-        JPanel statsPanel =
-                new JPanel(
-                        new FlowLayout(
-                                FlowLayout.LEFT,
-                                0,
-                                0
-                        )
-                );
+        informationPanel.add(nameLabel);
 
-        statsPanel.setOpaque(
-                false
-        );
+        JPanel statsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
-        JLabel kcLabel =
-                new JLabel(
-                        "KC: "
-                                + stats.getTotalKillsTracked()
-                );
+        statsPanel.setOpaque(false);
 
-        kcLabel.setForeground(
-                ColorScheme.LIGHT_GRAY_COLOR
-        );
+        JLabel kcLabel = new JLabel("KC: " + stats.getTotalKillsTracked());
 
-        JLabel dryLabel =
-                new JLabel(
-                        "Dry: "
-                                + stats.getCurrentDryStreak()
-                );
+        kcLabel.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
 
-        dryLabel.setForeground(
-                ColorScheme.LIGHT_GRAY_COLOR
-        );
+        JLabel dryLabel = new JLabel("Dry: " + stats.getCurrentDryStreak());
 
-        statsPanel.add(
-                kcLabel
-        );
+        dryLabel.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
 
-        statsPanel.add(
-                new JLabel(
-                        "    "
-                )
-        );
+        statsPanel.add(kcLabel);
 
-        statsPanel.add(
-                dryLabel
-        );
+        statsPanel.add(new JLabel("    "));
 
-        informationPanel.add(
-                statsPanel
-        );
+        statsPanel.add(dryLabel);
 
-        panel.add(
-                informationPanel,
-                BorderLayout.CENTER
-        );
+        informationPanel.add(statsPanel);
 
-        expandIndicator =
-                new JLabel(expanded ? "▲" : "▼");
+        panel.add(informationPanel, BorderLayout.CENTER);
+
+        expandIndicator = new JLabel(expanded ? "▲" : "▼");
 
         expandIndicator.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
 
@@ -257,8 +153,7 @@ public class EncounterPanel extends JPanel {
 
         expandIndicator.setPreferredSize(new Dimension(18, 18));
 
-        expandIndicator.setToolTipText(
-                expanded ? "Collapse encounter" : "Expand encounter");
+        expandIndicator.setToolTipText(expanded ? "Collapse encounter" : "Expand encounter");
 
 
         /**
@@ -268,26 +163,21 @@ public class EncounterPanel extends JPanel {
         expandIndicator.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         expandIndicator.addMouseListener(
-                new MouseAdapter()
-                {
+                new MouseAdapter() {
                     @Override
-                    public void mouseClicked(MouseEvent event)
-                    {
-                        if (SwingUtilities.isLeftMouseButton(event))
-                        {
+                    public void mouseClicked(MouseEvent event) {
+                        if (SwingUtilities.isLeftMouseButton(event)) {
                             toggleExpanded();
                         }
                     }
 
                     @Override
-                    public void mousePressed(MouseEvent event)
-                    {
+                    public void mousePressed(MouseEvent event) {
                         showPopupMenuIfNeeded(event);
                     }
 
                     @Override
-                    public void mouseReleased(MouseEvent event)
-                    {
+                    public void mouseReleased(MouseEvent event) {
                         showPopupMenuIfNeeded(event);
                     }
                 }
@@ -299,118 +189,63 @@ public class EncounterPanel extends JPanel {
     }
 
     private JLabel createEncounterImageLabel() {
-        JLabel imageLabel =
-                new JLabel();
+        JLabel imageLabel = new JLabel();
 
-        imageLabel.setHorizontalAlignment(
-                SwingConstants.CENTER
-        );
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        imageLabel.setVerticalAlignment(
-                SwingConstants.CENTER
-        );
+        imageLabel.setVerticalAlignment(SwingConstants.CENTER);
 
-        imageLabel.setPreferredSize(
-                new Dimension(
-                        64,
-                        64
-                )
-        );
+        imageLabel.setPreferredSize(new Dimension(64, 64));
 
-        imageLabel.setMinimumSize(
-                new Dimension(
-                        64,
-                        64
-                )
-        );
+        imageLabel.setMinimumSize(new Dimension(64, 64));
 
-        imageLabel.setMaximumSize(
-                new Dimension(
-                        64,
-                        64
-                )
-        );
+        imageLabel.setMaximumSize(new Dimension(64, 64));
 
-        String imageUrl =
-                encounter.getImageUrl();
+        String imageUrl = encounter.getImageUrl();
 
-        if (imageUrl == null
-                || imageUrl.trim().isEmpty()) {
-            imageLabel.setText(
-                    "?"
-            );
+        if (imageUrl == null || imageUrl.trim().isEmpty()) {
+            imageLabel.setText("?");
 
             return imageLabel;
         }
 
-        Thread imageThread =
-                new Thread(
-                        () ->
+        Thread imageThread = new Thread(() ->
+        {
+            try {
+                URL url = new URL(imageUrl);
+
+                Image image = ImageIO.read(url);
+
+                if (image == null) {
+                    SwingUtilities.invokeLater(() ->
+                            imageLabel.setText("?"));
+
+                    return;
+                }
+
+                Image scaled = image.getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+
+                SwingUtilities.invokeLater(() ->
                         {
-                            try {
-                                URL url =
-                                        new URL(
-                                                imageUrl
-                                        );
+                            imageLabel.setIcon(new ImageIcon(scaled));
 
-                                Image image =
-                                        ImageIO.read(
-                                                url
-                                        );
+                            imageLabel.setText("");
 
-                                if (image == null) {
-                                    SwingUtilities.invokeLater(
-                                            () ->
-                                                    imageLabel.setText(
-                                                            "?"
-                                                    )
-                                    );
+                            imageLabel.revalidate();
+                            imageLabel.repaint();
 
-                                    return;
-                                }
-
-                                Image scaled =
-                                        image.getScaledInstance(
-                                                64,
-                                                64,
-                                                Image.SCALE_SMOOTH
-                                        );
-
-                                SwingUtilities.invokeLater(
-                                        () ->
-                                        {
-                                            imageLabel.setIcon(
-                                                    new ImageIcon(
-                                                            scaled
-                                                    )
-                                            );
-
-                                            imageLabel.setText(
-                                                    ""
-                                            );
-
-                                            imageLabel.revalidate();
-                                            imageLabel.repaint();
-
-                                            revalidate();
-                                            repaint();
-                                        }
-                                );
-                            } catch (Exception e) {
-                                SwingUtilities.invokeLater(
-                                        () ->
-                                                imageLabel.setText(
-                                                        "?"
-                                                )
-                                );
-                            }
-                        },
-                        "DryStreak-EncounterImage"
+                            revalidate();
+                            repaint();
+                        }
                 );
+            } catch (Exception e) {
+                SwingUtilities.invokeLater(() ->
+                        imageLabel.setText("?"));
+            }
+        },
+                "DryStreak-EncounterImage");
 
-        imageThread.setDaemon(
-                true
-        );
+        imageThread.setDaemon(true);
 
         imageThread.start();
 
@@ -418,211 +253,89 @@ public class EncounterPanel extends JPanel {
     }
 
     private JPanel createDetailsPanel() {
-        JPanel panel =
-                new JPanel(
-                        new BorderLayout()
-                );
+        JPanel panel = new JPanel(new BorderLayout());
 
-        panel.setOpaque(
-                false
-        );
+        panel.setOpaque(false);
 
-        panel.setBorder(
-                BorderFactory.createEmptyBorder(
-                        10,
-                        0,
-                        0,
-                        0
-                )
-        );
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-        JPanel statisticsPanel =
-                new JPanel();
+        JPanel statisticsPanel = new JPanel();
 
-        statisticsPanel.setLayout(
-                new BoxLayout(
-                        statisticsPanel,
-                        BoxLayout.Y_AXIS
-                )
-        );
+        statisticsPanel.setLayout(new BoxLayout(statisticsPanel, BoxLayout.Y_AXIS));
 
-        statisticsPanel.setOpaque(
-                false
-        );
+        statisticsPanel.setOpaque(false);
 
-        statisticsPanel.add(
-                new JLabel(
-                        "Total Kills: "
-                                + stats.getTotalKillsTracked()
-                )
-        );
+        statisticsPanel.add(new JLabel("Total Kills: " + stats.getTotalKillsTracked()));
 
-        statisticsPanel.add(
-                new JLabel(
-                        "Current Dry Streak: "
-                                + stats.getCurrentDryStreak()
-                )
-        );
+        statisticsPanel.add(new JLabel("Current Dry Streak: " + stats.getCurrentDryStreak()));
 
-        statisticsPanel.add(
-                new JLabel(
-                        "Longest Dry Streak: "
-                                + stats.getLongestDryStreak()
-                )
-        );
+        statisticsPanel.add(new JLabel("Longest Dry Streak: " + stats.getLongestDryStreak()));
 
-        statisticsPanel.add(
-                new JLabel(
-                        "Tracked Drops: "
-                                + stats.getTotalTrackedDrops()
-                )
-        );
+        statisticsPanel.add(new JLabel("Tracked Drops: " + stats.getTotalTrackedDrops()));
 
-        String lastDropText =
-                "Last Drop KC: "
-                        + stats.getLastDropKillcount();
+        String lastDropText = "Last Drop KC: " + stats.getLastDropKillcount();
 
         if (stats.getLastDropTotalKillcount() > 0) {
-            lastDropText +=
-                    " (" + stats.getLastDropTotalKillcount() + ")";
+            lastDropText += " (" + stats.getLastDropTotalKillcount() + ")";
         }
 
-        statisticsPanel.add(
-                new JLabel(
-                        lastDropText
-                )
-        );
+        statisticsPanel.add(new JLabel(lastDropText));
 
-        panel.add(
-                statisticsPanel,
-                BorderLayout.NORTH
-        );
+        panel.add(statisticsPanel, BorderLayout.NORTH);
 
-        panel.add(
-                createDropsPanel(),
-                BorderLayout.CENTER
-        );
+        panel.add(createDropsPanel(), BorderLayout.CENTER);
 
         return panel;
     }
 
     private JPanel createDropsPanel() {
-        JPanel panel =
-                new JPanel();
+        JPanel panel = new JPanel();
 
-        panel.setLayout(
-                new BoxLayout(
-                        panel,
-                        BoxLayout.Y_AXIS
-                )
-        );
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        panel.setOpaque(
-                false
-        );
+        panel.setOpaque(false);
 
-        panel.setBorder(
-                BorderFactory.createEmptyBorder(
-                        10,
-                        0,
-                        0,
-                        0
-                )
-        );
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-        JLabel title =
-                new JLabel(
-                        "Tracked Drops"
-                );
+        JLabel title = new JLabel("Tracked Drops");
 
-        title.setForeground(
-                ColorScheme.LIGHT_GRAY_COLOR
-        );
+        title.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
 
-        title.setBorder(
-                BorderFactory.createEmptyBorder(
-                        0,
-                        0,
-                        6,
-                        0
-                )
-        );
+        title.setBorder(BorderFactory.createEmptyBorder(0, 0, 6, 0));
 
-        panel.add(
-                title
-        );
+        panel.add(title);
 
-        Map<Integer, Integer> receivedDrops =
-                stats.getReceivedDrops();
+        Map<Integer, Integer> receivedDrops = stats.getReceivedDrops();
 
-        if (receivedDrops == null
-                || receivedDrops.isEmpty()) {
-            panel.add(
-                    new JLabel(
-                            "No tracked drops received yet."
-                    )
-            );
+        if (receivedDrops == null || receivedDrops.isEmpty()) {
+            panel.add(new JLabel("No tracked drops received yet."));
 
             return panel;
         }
 
-        JPanel itemsPanel =
-                new JPanel(
-                        new FlowLayout(
-                                FlowLayout.LEFT,
-                                4,
-                                4
-                        )
-                );
+        JPanel itemsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
 
-        itemsPanel.setOpaque(
-                false
-        );
+        itemsPanel.setOpaque(false);
 
-        itemsPanel.setAlignmentX(
-                Component.LEFT_ALIGNMENT
-        );
+        itemsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        for (Map.Entry<Integer, Integer> entry
-                : receivedDrops.entrySet()) {
-            int itemId =
-                    entry.getKey();
+        for (Map.Entry<Integer, Integer> entry : receivedDrops.entrySet()) {
+            int itemId = entry.getKey();
 
-            int quantity =
-                    entry.getValue();
+            int quantity = entry.getValue();
 
-            ItemDisplayData data =
-                    itemDisplayData.get(
-                            itemId
-                    );
+            ItemDisplayData data = itemDisplayData.get(itemId);
 
-            String itemName =
-                    data != null
-                            ? data.getName()
-                            : "Item " + itemId;
+            String itemName = data != null ? data.getName() : "Item " + itemId;
 
-            Image itemImage =
-                    data != null
-                            ? data.getImage()
-                            : null;
+            Image itemImage = data != null ? data.getImage() : null;
 
-            DropItemPanel dropItemPanel =
-                    new DropItemPanel(
-                            itemManager,
-                            itemId,
-                            quantity,
-                            itemName,
-                            itemImage
-                    );
+            DropItemPanel dropItemPanel = new DropItemPanel(itemManager, itemId, quantity, itemName, itemImage);
 
-            itemsPanel.add(
-                    dropItemPanel
-            );
+            itemsPanel.add(dropItemPanel);
         }
 
-        panel.add(
-                itemsPanel
-        );
+        panel.add(itemsPanel);
 
         return panel;
     }
@@ -632,38 +345,30 @@ public class EncounterPanel extends JPanel {
      * right-clicks the encounter header.
      */
     private void showPopupMenuIfNeeded(
-            MouseEvent event)
-    {
-        if (!event.isPopupTrigger())
-        {
+            MouseEvent event) {
+        if (!event.isPopupTrigger()) {
             return;
         }
 
-        JPopupMenu popupMenu =
-                new JPopupMenu();
+        JPopupMenu popupMenu = new JPopupMenu();
 
         JMenuItem clearItem = new JMenuItem("Clear encounter data");
 
-        clearItem.addActionListener(
-                actionEvent ->
+        clearItem.addActionListener(actionEvent ->
                 {
-                    int result =
-                            JOptionPane.showConfirmDialog(
-                                    this,
-                                    "Clear all Dry Streak Tracker data for "
-                                            + encounter.getDisplayName()
-                                            + "?",
-                                    "Clear Encounter Data",
-                                    JOptionPane.YES_NO_OPTION,
-                                    JOptionPane.WARNING_MESSAGE);
+                    int result = JOptionPane.showConfirmDialog(
+                            this,
+                            "Clear all Dry Streak Tracker data for "
+                                    + encounter.getDisplayName()
+                                    + "?",
+                            "Clear Encounter Data",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
-                    if (result != JOptionPane.YES_OPTION)
-                    {
+                    if (result != JOptionPane.YES_OPTION) {
                         return;
                     }
 
-                    if (clearEncounterListener != null)
-                    {
+                    if (clearEncounterListener != null) {
                         clearEncounterListener.run();
                     }
                 }
@@ -681,25 +386,14 @@ public class EncounterPanel extends JPanel {
                 expanded
         );
 
-        if (expandIndicator != null)
-        {
-            expandIndicator.setText(
-                    expanded
-                            ? "▲"
-                            : "▼"
-            );
+        if (expandIndicator != null) {
+            expandIndicator.setText(expanded ? "▲" : "▼");
 
-            expandIndicator.setToolTipText(
-                    expanded
-                            ? "Collapse encounter"
-                            : "Expand encounter"
-            );
+            expandIndicator.setToolTipText(expanded ? "Collapse encounter" : "Expand encounter");
         }
 
         if (expandedStateListener != null) {
-            expandedStateListener.accept(
-                    expanded
-            );
+            expandedStateListener.accept(expanded);
         }
 
         revalidate();
