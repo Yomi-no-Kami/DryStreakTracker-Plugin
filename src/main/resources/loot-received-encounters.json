@@ -210,5 +210,33 @@
   "petDropIds": [
     26901
   ]
-}
+},
+  {
+    "encounterId": "tempoross",
+    "displayName": "Tempoross",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Tempoross.png",
+    "lootSourceNames": [
+      "Reward pool (Tempoross)"
+    ],
+    "trackedDropIds": [
+      25582, 25584, 25580, 25559, 25576, 21028
+    ],
+    "petDropIds": [
+      25602
+    ]
+  },
+  {
+    "encounterId": "wintertodt",
+    "displayName": "Wintertodt",
+    "imageUrl": "https://oldschool.runescape.wiki/images/Pyromancer.png",
+    "lootSourceNames": [
+      "Reward cart (Wintertodt)"
+    ],
+    "trackedDropIds": [
+  20704, 20706, 20708, 20710, 20712, 6739, 20716, 20720
+    ],
+    "petDropIds": [
+      20693
+    ]
+  }
 ]

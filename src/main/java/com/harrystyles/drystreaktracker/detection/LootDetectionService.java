@@ -445,29 +445,33 @@ public class LootDetectionService
                 );
 
         String notificationText =
-                encounter.getDisplayName()
+                "<col=FFFF00>"
+                        + encounter.getDisplayName()
+                        + "</col>"
                         + "<br>"
+                        + "<col=FFFFFF>"
                         + itemName
                         + " x"
-                        + qualifyingDrop.getQuantity();
+                        + qualifyingDrop.getQuantity()
+                        + "</col>";
 
         if (stats != null
                 && stats.getLastCompletedDryStreak() > 0)
         {
             notificationText +=
                     "<br>"
+                            + "<col=FFFFFF>"
                             + "Dry streak ended at "
                             + stats.getLastCompletedDryStreak()
-                            + " kills. Dry streak reset";
+                            + " kills. Dry streak reset"
+                            + "</col>";
         }
 
         notificationManager.notify(
                 pet
                         ? "PET RECEIVED"
                         : "DROP RECEIVED",
-
                 notificationText,
-
                 0x00FF00
         );
 
@@ -722,7 +726,8 @@ public class LootDetectionService
             return;
         }
 
-        String text = "<col=FF0000>"
+        String text =
+                "<col=FFFF00>"
                         + encounter.getDisplayName()
                         + "</col>"
                         + "<br>"
@@ -753,7 +758,7 @@ public class LootDetectionService
                         + "<col=FFFF00>["
                         + encounter.getDisplayName()
                         + "]</col>: "
-                        + "<col=FFFFFF>New dry streak record! "
+                        + "<col=800080>New dry streak record! "
                         + stats.getCurrentDryStreak()
                         + " KC dry"
                         + "</col>";
