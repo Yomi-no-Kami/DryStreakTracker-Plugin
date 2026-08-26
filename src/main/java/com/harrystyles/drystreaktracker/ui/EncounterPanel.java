@@ -111,6 +111,8 @@ public class EncounterPanel extends JPanel {
 
         informationPanel.setOpaque(false);
 
+        makeSummaryComponentClickable(informationPanel);
+
         JLabel nameLabel = new JLabel(encounter.getDisplayName());
 
         nameLabel.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
@@ -119,19 +121,27 @@ public class EncounterPanel extends JPanel {
 
         nameLabel.setToolTipText(encounter.getDisplayName());
 
+        makeSummaryComponentClickable(nameLabel);
+
         informationPanel.add(nameLabel);
 
         JPanel statsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
         statsPanel.setOpaque(false);
 
+        makeSummaryComponentClickable(statsPanel);
+
         JLabel kcLabel = new JLabel("KC: " + stats.getTotalKillsTracked());
 
         kcLabel.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
 
+        makeSummaryComponentClickable(kcLabel);
+
         JLabel dryLabel = new JLabel("Dry: " + stats.getCurrentDryStreak());
 
         dryLabel.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+
+        makeSummaryComponentClickable(dryLabel);
 
         statsPanel.add(kcLabel);
 
@@ -398,6 +408,42 @@ public class EncounterPanel extends JPanel {
 
         revalidate();
         repaint();
+    }
+
+    /**
+     * Makes components in the encounter summary behave like
+     * the summary panel itself.
+     *
+     * Left-click expands/collapses the encounter.
+     * Right-click opens the encounter context menu.
+     */
+    private void makeSummaryComponentClickable(JComponent component)
+    {
+        component.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        component.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent event)
+            {
+                if (SwingUtilities.isLeftMouseButton(event))
+                {
+                    toggleExpanded();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent event)
+            {
+                showPopupMenuIfNeeded(event);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent event)
+            {
+                showPopupMenuIfNeeded(event);
+            }
+        });
     }
 
 }
