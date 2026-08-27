@@ -6,6 +6,7 @@ import com.harrystyles.drystreaktracker.encounter.EncounterStats;
 import com.harrystyles.drystreaktracker.encounter.tracking.EncounterTrackerManager;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -22,6 +23,8 @@ import net.runelite.api.ItemComposition;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.PluginPanel;
+import net.runelite.client.util.ImageUtil;
+import net.runelite.client.util.LinkBrowser;
 
 /**
  * Main Dry Streak Tracker sidebar.
@@ -71,6 +74,55 @@ public class DryStreakSidebarPanel extends PluginPanel {
         title.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JButton clearAllButton = new JButton("Clear All Data");
+
+        /**
+         * Discord Button
+         */
+        BufferedImage discordImage = ImageUtil.loadImageResource(
+                getClass(),
+                "/discord-icon.png"
+        );
+
+        Image discordScaledImage = discordImage.getScaledInstance(
+                14,
+                14,
+                Image.SCALE_SMOOTH
+        );
+
+        JButton discordButton = new JButton(
+                "Our Discord",
+                new ImageIcon(discordScaledImage)
+        );
+
+        discordButton.setFocusPainted(false);
+        discordButton.setBorderPainted(false);
+        discordButton.setOpaque(true);
+
+        discordButton.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+        discordButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
+
+        discordButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        discordButton.setBorder(BorderFactory.createEmptyBorder(4, 10, 4, 10));
+
+        discordButton.setIconTextGap(6);
+
+        discordButton.addChangeListener(event ->
+        {
+            ButtonModel model = discordButton.getModel();
+
+            if (model.isPressed()) {
+                discordButton.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+            } else if (model.isRollover()) {
+                discordButton.setBackground(ColorScheme.DARK_GRAY_HOVER_COLOR);
+            } else {
+                discordButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
+            }
+        });
+
+        discordButton.addActionListener(event ->
+                LinkBrowser.browse("https://discord.gg/xyWgaHDmnh")
+        );
 
         clearAllButton.setFocusPainted(false);
         clearAllButton.setBorderPainted(false);
@@ -142,11 +194,17 @@ public class DryStreakSidebarPanel extends PluginPanel {
 
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        discordButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         clearAllButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         headerPanel.add(title);
 
         headerPanel.add(Box.createVerticalStrut(6));
+
+        headerPanel.add(discordButton);
+
+        headerPanel.add(Box.createVerticalStrut(4));
 
         headerPanel.add(clearAllButton);
 

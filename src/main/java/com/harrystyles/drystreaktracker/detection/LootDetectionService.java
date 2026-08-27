@@ -168,6 +168,10 @@ public class LootDetectionService {
 
         EncounterDefinition encounter = encounterRegistry.getByLootSourceName(sourceName);
 
+        if (config.showLootSourceDebug() && encounter == null) {
+            sendLootSourceDebugMessage(sourceName);
+        }
+
         if (encounter == null) {
             log.debug("No encounter registered for LootReceived source '{}'", sourceName);
 
@@ -472,10 +476,10 @@ public class LootDetectionService {
             return;
         }
 
-        String message = "<col=FF0000>[Dry Streak]</col> "
-                + "<col=FFFF00>["
+        String message = "[<col=FF0000>Dry Streak</col>] "
+                + "[<col=FFFF00>"
                 + encounter.getDisplayName()
-                + "]</col>: "
+                + "</col>]: "
                 + "<col=800080>New dry streak record! "
                 + stats.getCurrentDryStreak()
                 + " KC dry"
@@ -488,10 +492,10 @@ public class LootDetectionService {
         String dropType = pet ? "Pet" : "Drop";
 
         String message =
-                "<col=FF0000>[Dry Streak]</col> "
-                        + "<col=FFFF00>["
+                "[<col=FF0000>Dry Streak</col>] "
+                        + "[<col=FFFF00>"
                         + encounter.getDisplayName()
-                        + "]</col>: "
+                        + "</col>]: "
                         + "<col=800080>"
                         + dropType
                         + " received: "
@@ -517,10 +521,10 @@ public class LootDetectionService {
         }
 
         String message =
-                "<col=FF0000>[Dry Streak]</col> "
-                        + "<col=FFFF00>["
+                "[<col=FF0000>Dry Streak</col>] "
+                        + "[<col=FFFF00>"
                         + encounter.getDisplayName()
-                        + "]</col>: "
+                        + "</col>]: "
                         + "<col=800080>Kill #"
                         + stats.getCurrentDryStreak()
                         + " since last unique</col>";
@@ -531,5 +535,25 @@ public class LootDetectionService {
 
     public void clearProcessedLootEvents() {
         trackerManager.clearProcessedKillEvents();
+    }
+
+    /**
+     * Displays internal LootReceived source name
+     * for debugging and reporting missing encounters.
+     */
+    private void sendLootSourceDebugMessage(String sourceName) {
+        if (sourceName == null || sourceName.trim().isEmpty()) {
+            return;
+        }
+
+        String message =
+                "[<col=FF0000>Dry Streak Debug</col>] "
+                        + "Untracked loot source: "
+                        + "<col=FFFF00>"
+                        + sourceName
+                        + "</col>"
+                        + " <col=FFFFFF>- Please report this loot source on our Discord if you would like it added.</col>";
+
+        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", message, null);
     }
 }

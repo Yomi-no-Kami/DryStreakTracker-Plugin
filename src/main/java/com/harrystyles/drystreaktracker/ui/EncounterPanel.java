@@ -288,13 +288,18 @@ public class EncounterPanel extends JPanel {
                 + stats.getTotalKillsTracked()
                 + "</font></html>"));
 
+        boolean isCurrentRecord = stats.getCurrentDryStreak() > 0 &&
+                stats.getCurrentDryStreak() == stats.getLongestDryStreak();
+
+        String currentDryColor = isCurrentRecord ? "#ffff00" : "#ffffff";
+
         statisticsPanel.add(new JLabel("<html><font color='#c8c8c8'>Current Dry Streak: </font>"
-                + "<font color='#ffff00'>"
+                + "<font color='" + currentDryColor + "'>"
                 + stats.getCurrentDryStreak()
                 + "</font></html>"));
 
         statisticsPanel.add(new JLabel("<html><font color='#c8c8c8'>Longest Dry Streak: </font>"
-                + "<font color='#b22222'>"
+                + "<font color='#ffff00'>"
                 + stats.getLongestDryStreak()
                 + "</font></html>"));
 
@@ -446,34 +451,28 @@ public class EncounterPanel extends JPanel {
     /**
      * Makes components in the encounter summary behave like
      * the summary panel itself.
-     *
+     * <p>
      * Left-click expands/collapses the encounter.
      * Right-click opens the encounter context menu.
      */
-    private void makeSummaryComponentClickable(JComponent component)
-    {
+    private void makeSummaryComponentClickable(JComponent component) {
         component.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        component.addMouseListener(new MouseAdapter()
-        {
+        component.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent event)
-            {
-                if (SwingUtilities.isLeftMouseButton(event))
-                {
+            public void mouseClicked(MouseEvent event) {
+                if (SwingUtilities.isLeftMouseButton(event)) {
                     toggleExpanded();
                 }
             }
 
             @Override
-            public void mousePressed(MouseEvent event)
-            {
+            public void mousePressed(MouseEvent event) {
                 showPopupMenuIfNeeded(event);
             }
 
             @Override
-            public void mouseReleased(MouseEvent event)
-            {
+            public void mouseReleased(MouseEvent event) {
                 showPopupMenuIfNeeded(event);
             }
         });
