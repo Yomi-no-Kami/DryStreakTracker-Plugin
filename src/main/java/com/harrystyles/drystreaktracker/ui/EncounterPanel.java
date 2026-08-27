@@ -131,15 +131,21 @@ public class EncounterPanel extends JPanel {
 
         makeSummaryComponentClickable(statsPanel);
 
-        JLabel kcLabel = new JLabel("KC: " + stats.getTotalKillsTracked());
-
-        kcLabel.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+        JLabel kcLabel = new JLabel(
+                "<html><font color='#c8c8c8'>KC: </font>"
+                        + "<font color='#ffffff'>"
+                        + stats.getTotalKillsTracked()
+                        + "</font></html>"
+        );
 
         makeSummaryComponentClickable(kcLabel);
 
-        JLabel dryLabel = new JLabel("Dry: " + stats.getCurrentDryStreak());
-
-        dryLabel.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+        JLabel dryLabel = new JLabel(
+                "<html><font color='#c8c8c8'>Dry: </font>"
+                        + "<font color='#ffffff'>"
+                        + stats.getCurrentDryStreak()
+                        + "</font></html>"
+        );
 
         makeSummaryComponentClickable(dryLabel);
 
@@ -265,9 +271,11 @@ public class EncounterPanel extends JPanel {
     private JPanel createDetailsPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        panel.setOpaque(false);
+        panel.setOpaque(true);
 
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        panel.setBackground(ColorScheme.DARK_GRAY_COLOR);
+
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 8, 8, 8));
 
         JPanel statisticsPanel = new JPanel();
 
@@ -275,19 +283,33 @@ public class EncounterPanel extends JPanel {
 
         statisticsPanel.setOpaque(false);
 
-        statisticsPanel.add(new JLabel("Total Kills: " + stats.getTotalKillsTracked()));
+        statisticsPanel.add(new JLabel("<html><font color='#c8c8c8'>Total Kills: </font>"
+                + "<font color='#ffffff'>"
+                + stats.getTotalKillsTracked()
+                + "</font></html>"));
 
-        statisticsPanel.add(new JLabel("Current Dry Streak: " + stats.getCurrentDryStreak()));
+        statisticsPanel.add(new JLabel("<html><font color='#c8c8c8'>Current Dry Streak: </font>"
+                + "<font color='#ffff00'>"
+                + stats.getCurrentDryStreak()
+                + "</font></html>"));
 
-        statisticsPanel.add(new JLabel("Longest Dry Streak: " + stats.getLongestDryStreak()));
+        statisticsPanel.add(new JLabel("<html><font color='#c8c8c8'>Longest Dry Streak: </font>"
+                + "<font color='#b22222'>"
+                + stats.getLongestDryStreak()
+                + "</font></html>"));
 
-        statisticsPanel.add(new JLabel("Tracked Drops: " + stats.getTotalTrackedDrops()));
-
-        String lastDropText = "Last Drop KC: " + stats.getLastDropKillcount();
+        String lastDropText = "<html><font color='#c8c8c8'>Last Drop KC: </font>"
+                + "<font color='#ffffff'>"
+                + stats.getLastDropKillcount()
+                + "</font>";
 
         if (stats.getLastDropTotalKillcount() > 0) {
-            lastDropText += " (" + stats.getLastDropTotalKillcount() + ")";
+            lastDropText += " <font color='#ffffff'>("
+                    + stats.getLastDropTotalKillcount()
+                    + ")</font>";
         }
+
+        lastDropText += "</html>";
 
         statisticsPanel.add(new JLabel(lastDropText));
 
@@ -307,7 +329,18 @@ public class EncounterPanel extends JPanel {
 
         panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-        JLabel title = new JLabel("Tracked Drops");
+        String trackedDropsTitle = "Tracked Drops";
+
+        if (stats.getTotalTrackedDrops() > 0) {
+            trackedDropsTitle =
+                    "<html>Tracked Drops ("
+                            + "<font color='#ffffff'>"
+                            + stats.getTotalTrackedDrops()
+                            + "</font>"
+                            + ")</html>";
+        }
+
+        JLabel title = new JLabel(trackedDropsTitle);
 
         title.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
 

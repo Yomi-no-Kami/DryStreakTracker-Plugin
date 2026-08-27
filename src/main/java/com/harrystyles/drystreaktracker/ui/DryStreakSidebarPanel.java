@@ -453,12 +453,12 @@ public class DryStreakSidebarPanel extends PluginPanel {
 
             Image itemImage = itemManager.getImage(itemId);
 
-            /*
+            /**
              * Keep the item name even if the sprite is not
-             * available yet.
+             * available yet
              *
              * DropItemPanel will request the sprite asynchronously
-             * when itemImage is null.
+             * when itemImage is null
              */
             return new ItemDisplayData(itemName, itemImage);
         } catch (Exception e) {

@@ -1,7 +1,6 @@
 package com.harrystyles.drystreaktracker.ui;
 
-import java.awt.Dimension;
-import java.awt.Image;
+import java.awt.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -12,6 +11,7 @@ import javax.swing.SwingConstants;
 
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.ColorScheme;
+import net.runelite.client.ui.FontManager;
 import net.runelite.client.util.AsyncBufferedImage;
 
 /**
@@ -23,6 +23,7 @@ import net.runelite.client.util.AsyncBufferedImage;
  */
 public class DropItemPanel extends JPanel {
     private static final int ICON_SIZE = 36;
+    private static final int SLOT_SIZE = 40;
 
     public DropItemPanel(
             ItemManager itemManager,
@@ -32,13 +33,17 @@ public class DropItemPanel extends JPanel {
             Image itemImage) {
         setLayout(null);
 
-        setOpaque(false);
+        setOpaque(true);
 
-        setPreferredSize(new Dimension(ICON_SIZE, ICON_SIZE));
+        setBackground(ColorScheme.DARKER_GRAY_COLOR);
 
-        setMinimumSize(new Dimension(ICON_SIZE, ICON_SIZE));
+        setBorder(BorderFactory.createLineBorder(ColorScheme.MEDIUM_GRAY_COLOR));
 
-        setMaximumSize(new Dimension(ICON_SIZE, ICON_SIZE));
+        setPreferredSize(new Dimension(SLOT_SIZE, SLOT_SIZE));
+
+        setMinimumSize(new Dimension(SLOT_SIZE, SLOT_SIZE));
+
+        setMaximumSize(new Dimension(SLOT_SIZE, SLOT_SIZE));
 
         setToolTipText(itemName);
 
@@ -50,9 +55,9 @@ public class DropItemPanel extends JPanel {
 
         layeredPane.setLayout(null);
 
-        layeredPane.setBounds(0, 0, ICON_SIZE, ICON_SIZE);
+        layeredPane.setBounds(0, 0, SLOT_SIZE, SLOT_SIZE);
 
-        layeredPane.setPreferredSize(new Dimension(ICON_SIZE, ICON_SIZE));
+        layeredPane.setPreferredSize(new Dimension(SLOT_SIZE, SLOT_SIZE));
 
         layeredPane.setToolTipText(itemName);
 
@@ -61,7 +66,7 @@ public class DropItemPanel extends JPanel {
          */
         JLabel icon = new JLabel();
 
-        icon.setBounds(0, 0, ICON_SIZE, ICON_SIZE);
+        icon.setBounds(2, 2, ICON_SIZE, ICON_SIZE);
 
         icon.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -99,27 +104,57 @@ public class DropItemPanel extends JPanel {
          * Quantity Overlay
          */
         if (quantity > 1) {
-            JLabel quantityLabel = new JLabel("x" + quantity);
+            String quantityText = "x" + quantity;
 
-            quantityLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+            /**
+             * Quantity Shadow
+             */
+            JLabel quantityShadow = new JLabel(quantityText);
+
+            quantityShadow.setHorizontalAlignment(SwingConstants.LEFT);
+
+            quantityShadow.setVerticalAlignment(SwingConstants.TOP);
+
+            quantityShadow.setForeground(Color.BLACK);
+
+            quantityShadow.setFont(FontManager.getRunescapeSmallFont());
+
+            /**
+             * 1 px right and 1 px down from the quantity text
+             */
+            quantityShadow.setBounds(3, 2, 35, 14);
+
+            quantityShadow.setToolTipText(itemName);
+
+            /**
+             * Quantity Text
+             */
+            JLabel quantityLabel = new JLabel(quantityText);
+
+            quantityLabel.setHorizontalAlignment(SwingConstants.LEFT);
 
             quantityLabel.setVerticalAlignment(SwingConstants.TOP);
 
-            quantityLabel.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+            quantityLabel.setForeground(Color.YELLOW);
 
-            quantityLabel.setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 1));
+            quantityLabel.setFont(FontManager.getRunescapeSmallFont());
 
             /**
-             * Top right corner
+             * Top left corner
              */
-            quantityLabel.setBounds(12, 0, 24, 14);
+            quantityLabel.setBounds(2, 1, 35, 14);
 
             quantityLabel.setToolTipText(itemName);
 
             /**
-             * Put the quantity above the sprite
+             * Put the shadow behind the quantity
              */
-            layeredPane.add(quantityLabel, JLayeredPane.PALETTE_LAYER);
+            layeredPane.add(quantityShadow, JLayeredPane.PALETTE_LAYER);
+
+            /**
+             * Put the quantity above the shadow
+             */
+            layeredPane.add(quantityLabel, JLayeredPane.MODAL_LAYER);
         }
 
         add(layeredPane);
