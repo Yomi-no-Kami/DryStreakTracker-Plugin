@@ -308,15 +308,16 @@ public class EncounterPanel extends JPanel {
                 + stats.getLongestDryStreak()
                 + "</font></html>"));
 
-        String lastDropText = "<html><font color='#c8c8c8'>Last Drop KC: </font>"
-                + "<font color='#ffffff'>"
-                + stats.getLastDropKillcount()
-                + "</font>";
+        String lastDropText = "<html><font color='#c8c8c8'>Last Drop KC: </font>";
 
-        if (stats.getLastDropTotalKillcount() > 0) {
-            lastDropText += " <font color='#ffffff'>("
-                    + stats.getLastDropTotalKillcount()
-                    + ")</font>";
+        if (stats.getTotalTrackedDrops() == 0) {
+            lastDropText += "<font color='#ffffff'>None</font>";
+        } else {
+            lastDropText += "<font color='#ffffff'>" + stats.getLastDropKillcount() + "</font>";
+
+            if (stats.getLastDropTotalKillcount() > 0) {
+                lastDropText += " <font color='#ffffff'>(" + stats.getLastDropTotalKillcount() + ")</font>";
+            }
         }
 
         lastDropText += "</html>";

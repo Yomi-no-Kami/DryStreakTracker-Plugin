@@ -390,21 +390,50 @@ public class EncounterTrackerManager {
             return 0;
         }
 
-        String bossKey = definition.getDisplayName().trim().replace(":", "").toLowerCase(Locale.ROOT);
+        String displayName = definition.getDisplayName().trim();
 
-        if (bossKey.isEmpty()) {
+        if (displayName.isEmpty()) {
             return 0;
         }
 
-        Integer killcount = configManager.getRSProfileConfiguration("killcount", bossKey, int.class);
+        if (displayName.equalsIgnoreCase("Chambers of Xeric")) {
+            return getStoredKillcount("Chambers of Xeric")
+                    + getStoredKillcount("Chambers of Xeric: Challenge Mode");
+        }
+
+        if (displayName.equalsIgnoreCase("Theatre of Blood")) {
+            return getStoredKillcount("Theatre of Blood")
+                    + getStoredKillcount("Theatre of Blood: Hard Mode");
+        }
+
+        if (displayName.equalsIgnoreCase("Tombs of Amascut")) {
+            return getStoredKillcount("Tombs of Amascut")
+                    + getStoredKillcount("Tombs of Amascut: Expert Mode");
+        }
+
+        return getStoredKillcount(displayName);
+    }
+
+    private int getStoredKillcount(String bossName) {
+        if (bossName == null || bossName.trim().isEmpty()) {
+            return 0;
+        }
+
+        String bossKey = bossName.trim().toLowerCase(Locale.ROOT);
+
+        Integer killcount = configManager.getRSProfileConfiguration(
+                "killcount",
+                bossKey,
+                int.class
+        );
 
         if (killcount == null) {
-            log.debug("No RuneLite Boss killcount found for {} using key '{}'", definition.getDisplayName(), bossKey);
+            log.debug("No RuneLite Boss killcount found using key '{}'", bossKey);
 
             return 0;
         }
 
-        log.debug("RuneLite Boss killcount for {} using key '{}': {}", definition.getDisplayName(), bossKey, killcount);
+        log.debug("RuneLite Boss killcount using key '{}': {}", bossKey, killcount);
 
         return killcount;
     }
