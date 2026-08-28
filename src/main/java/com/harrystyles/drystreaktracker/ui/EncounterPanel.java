@@ -140,9 +140,14 @@ public class EncounterPanel extends JPanel {
 
         makeSummaryComponentClickable(kcLabel);
 
+        boolean isCurrentRecord = stats.getCurrentDryStreak() > 0 &&
+                stats.getCurrentDryStreak() == stats.getLongestDryStreak();
+
+        String currentDryColor = isCurrentRecord ? "#ffff00" : "#ffffff";
+
         JLabel dryLabel = new JLabel(
                 "<html><font color='#c8c8c8'>Dry: </font>"
-                        + "<font color='#ffffff'>"
+                        + "<font color='" + currentDryColor + "'>"
                         + stats.getCurrentDryStreak()
                         + "</font></html>"
         );
