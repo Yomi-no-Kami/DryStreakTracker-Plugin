@@ -46,6 +46,17 @@ public class EncounterDefinition {
     private Set<String> lootSourceNames = new HashSet<>();
 
     /**
+     * RuneLite boss killcount names used when looking up
+     * the player's actual KC.
+     * <p>
+     * If multiple names are supplied, their killcounts are
+     * added together.
+     * <p>
+     * If no names are supplied, displayName is used instead.
+     */
+    private Set<String> killcountNames = new HashSet<>();
+
+    /**
      * Item IDs which reset the dry streak.
      */
     private Set<Integer> trackedDropIds = new HashSet<>();
@@ -94,6 +105,18 @@ public class EncounterDefinition {
 
     public EncounterLootType getLootType() {
         return lootType;
+    }
+
+    public Set<String> getKillcountNames() {
+        if (killcountNames == null) {
+            killcountNames = new HashSet<>();
+        }
+
+        return killcountNames;
+    }
+
+    public void setKillcountNames(Set<String> killcountNames) {
+        this.killcountNames = killcountNames == null ? new HashSet<>() : new HashSet<>(killcountNames);
     }
 
 
@@ -208,6 +231,7 @@ public class EncounterDefinition {
                 ", lootType=" + lootType +
                 ", npcIds=" + npcIds +
                 ", lootSourceNames=" + lootSourceNames +
+                ", killcountNames=" + killcountNames +
                 ", trackedDropIds=" + trackedDropIds +
                 ", petDropIds=" + petDropIds +
                 '}';

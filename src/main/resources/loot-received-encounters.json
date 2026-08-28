@@ -6,6 +6,9 @@
     "lootSourceNames": [
       "Branda the Fire Queen"
     ],
+    "killcountNames": [
+      "Royal Titans"
+    ],
     "trackedDropIds": [
       30631, 30627
     ],
@@ -19,6 +22,9 @@
     "imageUrl": "https://oldschool.runescape.wiki/images/Eldric_the_Ice_King.png",
     "lootSourceNames": [
       "Eldric the Ice King"
+    ],
+    "killcountNames": [
+      "Royal Titans"
     ],
     "trackedDropIds": [
       30628, 30626
@@ -92,6 +98,9 @@
     "displayName": "Moons of Peril",
     "imageUrl": "https://oldschool.runescape.wiki/images/Blood_Moon.png",
     "lootSourceNames": [
+      "Lunar Chest"
+    ],
+    "killcountNames": [
       "Lunar Chest"
     ],
     "trackedDropIds": [
@@ -177,6 +186,9 @@
     "lootSourceNames": [
       "Fortis Colosseum"
     ],
+    "killcountNames": [
+      "Sol Heredit"
+    ],
     "trackedDropIds": [
       28933, 28936, 28939, 28919, 28942
     ],
@@ -232,6 +244,10 @@
     "imageUrl": "https://oldschool.runescape.wiki/images/Tumeken%27s_Warden_%28level-544%29.png",
     "lootSourceNames": [
       "Tombs of Amascut"
+    ],
+    "killcountNames": [
+      "Tombs of Amascut",
+      "Tombs of Amascut: Expert Mode"
     ],
     "trackedDropIds": [
       26219, 25975, 25985, 27226, 27229, 27232, 27277

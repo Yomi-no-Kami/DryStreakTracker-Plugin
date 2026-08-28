@@ -386,32 +386,23 @@ public class EncounterTrackerManager {
     }
 
     private int getRuneLiteKillcount(EncounterDefinition definition) {
-        if (definition == null || definition.getDisplayName() == null) {
+        if (definition == null) {
             return 0;
         }
 
-        String displayName = definition.getDisplayName().trim();
+        Set<String> killcountNames = definition.getKillcountNames();
 
-        if (displayName.isEmpty()) {
+        if (killcountNames == null || killcountNames.isEmpty()) {
             return 0;
         }
 
-        if (displayName.equalsIgnoreCase("Chambers of Xeric")) {
-            return getStoredKillcount("Chambers of Xeric")
-                    + getStoredKillcount("Chambers of Xeric: Challenge Mode");
+        int totalKillcount = 0;
+
+        for (String killcountName : killcountNames) {
+            totalKillcount += getStoredKillcount(killcountName);
         }
 
-        if (displayName.equalsIgnoreCase("Theatre of Blood")) {
-            return getStoredKillcount("Theatre of Blood")
-                    + getStoredKillcount("Theatre of Blood: Hard Mode");
-        }
-
-        if (displayName.equalsIgnoreCase("Tombs of Amascut")) {
-            return getStoredKillcount("Tombs of Amascut")
-                    + getStoredKillcount("Tombs of Amascut: Expert Mode");
-        }
-
-        return getStoredKillcount(displayName);
+        return totalKillcount;
     }
 
     private int getStoredKillcount(String bossName) {

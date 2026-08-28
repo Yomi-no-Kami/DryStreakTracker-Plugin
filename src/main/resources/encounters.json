@@ -176,6 +176,9 @@
     "encounterId": "the_hueycoatl",
     "displayName": "The Hueycoatl",
     "imageUrl": "https://oldschool.runescape.wiki/images/The_Hueycoatl.png",
+    "killcountNames": [
+      "Hueycoatl"
+    ],
     "npcIds": [
       14009
     ],
@@ -449,6 +452,9 @@
     "encounterId": "the_nightmare",
     "displayName": "The Nightmare",
     "imageUrl": "https://oldschool.runescape.wiki/images/The_Nightmare.png",
+    "killcountNames": [
+      "Nightmare"
+    ],
     "npcIds": [
      9433, 378
     ],
@@ -501,6 +507,9 @@
     "encounterId": "the_leviathan",
     "displayName": "The Leviathan",
     "imageUrl": "https://oldschool.runescape.wiki/images/The_Leviathan.png",
+    "killcountNames": [
+      "Leviathan"
+    ],
     "npcIds": [
       12214
     ],
@@ -514,6 +523,9 @@
     "encounterId": "the_whisperer",
     "displayName": "The Whisperer",
     "imageUrl": "https://oldschool.runescape.wiki/images/The_Whisperer.png",
+    "killcountNames": [
+      "Whisperer"
+    ],
     "npcIds": [
       12204
     ],
