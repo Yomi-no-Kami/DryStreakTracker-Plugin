@@ -3,7 +3,6 @@ package com.harrystyles.drystreaktracker.storage;
 import com.harrystyles.drystreaktracker.encounter.tracking.PlayerTrackingData;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -35,10 +34,9 @@ public class DryStreakStorage {
     private final Gson gson;
 
     @Inject
-    public DryStreakStorage(ConfigManager configManager) {
+    public DryStreakStorage(ConfigManager configManager, Gson gson) {
         this.configManager = configManager;
-
-        this.gson = new GsonBuilder().create();
+        this.gson = gson;
     }
 
     /**

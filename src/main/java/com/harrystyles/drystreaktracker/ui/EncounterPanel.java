@@ -322,7 +322,16 @@ public class EncounterPanel extends JPanel {
 
         lastDropText += "</html>";
 
-        statisticsPanel.add(new JLabel(lastDropText));
+        JLabel lastDropLabel = new JLabel(lastDropText);
+
+        if (stats.getLastDropTotalKillcount() > 0) {
+            lastDropLabel.setToolTipText(
+                    stats.getLastDropTotalKillcount()
+                            + " is a snapshot of your total boss KC when your last tracked drop was received."
+            );
+        }
+
+        statisticsPanel.add(lastDropLabel);
 
         panel.add(statisticsPanel, BorderLayout.NORTH);
 

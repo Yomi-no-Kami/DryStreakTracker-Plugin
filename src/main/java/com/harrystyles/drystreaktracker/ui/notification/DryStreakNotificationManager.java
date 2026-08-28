@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.harrystyles.drystreaktracker.DryStreakTrackerConfig;
 import lombok.extern.slf4j.Slf4j;
 
 import net.runelite.api.Client;
@@ -50,6 +51,9 @@ public class DryStreakNotificationManager {
     @Inject
     private EventBus eventBus;
 
+    @Inject
+    private DryStreakTrackerConfig config;
+
     private boolean started;
 
     public void start() {
@@ -83,6 +87,10 @@ public class DryStreakNotificationManager {
     }
 
     public void notify(String title, String text, int color) {
+        if (!config.showNotifications()) {
+            return;
+        }
+
         pendingNotifications.offer(new DryStreakNotification(title, text, color));
     }
 
@@ -103,6 +111,12 @@ public class DryStreakNotificationManager {
     }
 
     private void processNextNotification() {
+        if (!config.showNotifications()) {
+            clearNotifications();
+
+            return;
+        }
+
         if (isNotificationCurrentlyVisible()) {
             return;
         }

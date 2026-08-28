@@ -1,7 +1,6 @@
 package com.harrystyles.drystreaktracker.encounter;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 
 import java.io.InputStream;
@@ -39,8 +38,8 @@ public class EncounterDefinitionLoader {
 
 
     @Inject
-    public EncounterDefinitionLoader() {
-        gson = new GsonBuilder().create();
+    public EncounterDefinitionLoader(Gson gson) {
+        this.gson = gson;
     }
 
 

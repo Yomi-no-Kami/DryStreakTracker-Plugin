@@ -52,7 +52,8 @@ public class EncounterDefinition {
      * If multiple names are supplied, their killcounts are
      * added together.
      * <p>
-     * If no names are supplied, displayName is used instead.
+     * If no names are supplied, RuneLite KC is not tracked
+     * for this encounter.
      */
     private Set<String> killcountNames = new HashSet<>();
 
