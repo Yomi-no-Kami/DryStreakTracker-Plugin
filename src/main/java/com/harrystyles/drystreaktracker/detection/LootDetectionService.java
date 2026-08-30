@@ -1,11 +1,14 @@
 package com.harrystyles.drystreaktracker.detection;
 
 import com.harrystyles.drystreaktracker.DryStreakTrackerConfig;
+import com.harrystyles.drystreaktracker.discord.DiscordWebhookService;
+import com.harrystyles.drystreaktracker.discord.DropScreenshotService;
 import com.harrystyles.drystreaktracker.encounter.EncounterDefinition;
 import com.harrystyles.drystreaktracker.encounter.EncounterLootType;
 import com.harrystyles.drystreaktracker.encounter.EncounterRegistry;
 import com.harrystyles.drystreaktracker.encounter.EncounterStats;
 import com.harrystyles.drystreaktracker.encounter.tracking.EncounterTrackerManager;
+import com.harrystyles.drystreaktracker.encounter.tracking.RecentDrop;
 import com.harrystyles.drystreaktracker.ui.DryStreakSidebarPanel;
 import com.harrystyles.drystreaktracker.ui.ItemDisplayData;
 import com.harrystyles.drystreaktracker.ui.notification.DryStreakNotificationManager;
@@ -49,6 +52,10 @@ public class LootDetectionService {
 
     private final DryStreakSidebarPanel sidebarPanel;
 
+    private final DiscordWebhookService discordWebhookService;
+
+    private final DropScreenshotService dropScreenshotService;
+
 
     @Inject
     public LootDetectionService(
@@ -58,7 +65,9 @@ public class LootDetectionService {
             DryStreakNotificationManager notificationManager,
             DryStreakTrackerConfig config,
             ItemManager itemManager,
-            DryStreakSidebarPanel sidebarPanel) {
+            DryStreakSidebarPanel sidebarPanel,
+            DiscordWebhookService discordWebhookService,
+            DropScreenshotService dropScreenshotService) {
         this.client = client;
 
         this.encounterRegistry = encounterRegistry;
@@ -72,6 +81,10 @@ public class LootDetectionService {
         this.itemManager = itemManager;
 
         this.sidebarPanel = sidebarPanel;
+
+        this.discordWebhookService = discordWebhookService;
+        this.dropScreenshotService = dropScreenshotService;
+
     }
 
 
@@ -224,6 +237,32 @@ public class LootDetectionService {
             return;
         }
 
+        if (qualifyingDrop != null) {
+            int gePrice = itemManager.getItemPrice(qualifyingDrop.getId());
+            int totalGeValue = gePrice * qualifyingDrop.getQuantity();
+
+            trackerManager.recordRecentDrop(encounter.getEncounterId(), qualifyingDrop.getId(), qualifyingDrop.getQuantity(), totalGeValue);
+
+            if (config.discordAutomaticUploads()) {
+                RecentDrop recentDrop = trackerManager.getRecentDrops().isEmpty() ? null : trackerManager.getRecentDrops().get(0);
+
+                if (recentDrop != null) {
+                    boolean pet = encounter.isPetDrop(qualifyingDrop.getId());
+
+                    if (discordWebhookService.canAutomaticallyUpload(recentDrop, pet)) {
+                        String itemName = getItemName(qualifyingDrop.getId());
+
+                        if (config.discordIncludeScreenshot()) {
+                            dropScreenshotService.captureScreenshot(screenshot ->
+                                    discordWebhookService.uploadDrop(recentDrop, itemName, screenshot));
+                        } else {
+                            discordWebhookService.uploadDrop(recentDrop, itemName);
+                        }
+                    }
+                }
+            }
+        }
+
         EncounterStats stats = trackerManager.getStats(encounter.getEncounterId());
 
         if (stats != null) {
@@ -259,6 +298,14 @@ public class LootDetectionService {
         }
 
         handleQualifyingDrop(encounter, qualifyingDrop);
+
+        if (stats != null && stats.isNewDryRecordThisKill()) {
+            sendDryRecordNotification(encounter, stats);
+
+            if (config.showChatboxMessages()) {
+                sendDryRecordChatboxMessage(encounter, stats);
+            }
+        }
     }
 
 
@@ -308,7 +355,7 @@ public class LootDetectionService {
                             + "<col=FFFFFF>"
                             + "Dry streak ended at "
                             + stats.getLastCompletedDryStreak()
-                            + " kills. Dry streak reset"
+                            + " KC. Dry streak reset"
                             + "</col>";
         }
 
@@ -453,13 +500,17 @@ public class LootDetectionService {
             return;
         }
 
+        int recordStreak = stats.getCurrentDryStreak() > 0
+                ? stats.getCurrentDryStreak()
+                : stats.getLastCompletedDryStreak();
+
         String text =
                 "<col=FFFF00>"
                         + encounter.getDisplayName()
                         + "</col>"
                         + "<br>"
                         + "<col=FFFFFF>"
-                        + stats.getCurrentDryStreak()
+                        + recordStreak
                         + " KC Dry"
                         + "</col>";
 
@@ -476,12 +527,16 @@ public class LootDetectionService {
             return;
         }
 
+        int recordStreak = stats.getCurrentDryStreak() > 0
+                ? stats.getCurrentDryStreak()
+                : stats.getLastCompletedDryStreak();
+
         String message = "[<col=FF0000>Dry Streak</col>] "
                 + "[<col=FFFF00>"
                 + encounter.getDisplayName()
                 + "</col>]: "
                 + "<col=800080>New dry streak record! "
-                + stats.getCurrentDryStreak()
+                + recordStreak
                 + " KC dry"
                 + "</col>";
 
@@ -496,15 +551,14 @@ public class LootDetectionService {
                         + "[<col=FFFF00>"
                         + encounter.getDisplayName()
                         + "</col>]: "
-                        + "<col=800080>"
                         + dropType
-                        + " received: "
+                        + " received: <col=800080>"
                         + itemName
-                        + " x"
+                        + "</col> x"
                         + quantity;
 
         if (stats != null && stats.getLastCompletedDryStreak() > 0) {
-            message += ". Dry streak ended at " + stats.getLastCompletedDryStreak() + " kills.";
+            message += ". Dry streak ended at " + stats.getLastCompletedDryStreak() + " KC.";
         }
 
         message += " Dry streak reset.</col>";
@@ -524,10 +578,9 @@ public class LootDetectionService {
                 "[<col=FF0000>Dry Streak</col>] "
                         + "[<col=FFFF00>"
                         + encounter.getDisplayName()
-                        + "</col>]: "
-                        + "<col=800080>Kill #"
+                        + "</col>]: <col=800080>"
                         + stats.getCurrentDryStreak()
-                        + " since last unique</col>";
+                        + "</col> KC since last unique";
 
         client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", message, null);
     }

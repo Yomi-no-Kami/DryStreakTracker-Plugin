@@ -385,6 +385,92 @@ public class EncounterTrackerManager {
         log.info("Cleared tracking data for encounter {}", encounterId);
     }
 
+    public void recordRecentDrop(String encounterId, int itemId, int quantity, int geValue) {
+        if (!isActive()) {
+            return;
+        }
+
+        EncounterDefinition definition = encounterRegistry.getById(encounterId);
+
+        EncounterStats stats = trackingData.getEncounter(encounterId);
+
+        if (definition == null || stats == null) {
+            return;
+        }
+
+        int totalKillcount = stats.getLastDropTotalKillcount();
+
+        if (totalKillcount <= 0) {
+            totalKillcount = stats.getLastDropKillcount();
+        }
+
+        RecentDrop recentDrop = new RecentDrop(
+                currentPlayerName,
+                encounterId,
+                definition.getDisplayName(),
+                itemId,
+                quantity,
+                stats.getLastCompletedDryStreak(),
+                totalKillcount,
+                geValue,
+                System.currentTimeMillis()
+        );
+
+        trackingData.addRecentDrop(recentDrop);
+
+        save();
+    }
+
+    public java.util.List<RecentDrop> getRecentDrops() {
+        if (!isActive()) {
+            return java.util.Collections.emptyList();
+        }
+
+        return trackingData.getRecentDrops();
+    }
+
+    public void clearRecentDrops() {
+        if (!isActive()) {
+            return;
+        }
+
+        trackingData.clearRecentDrops();
+
+        save();
+
+        log.info("Cleared recent drops for account {}", currentPlayerName);
+    }
+
+    public void removeRecentDrop(RecentDrop recentDrop) {
+        if (!isActive() || recentDrop == null) {
+            return;
+        }
+
+        trackingData.removeRecentDrop(recentDrop);
+
+        save();
+
+        log.info(
+                "Removed recent drop {} from {}",
+                recentDrop.getItemId(),
+                recentDrop.getEncounterName()
+        );
+    }
+
+    public void clearTrackerData() {
+        if (!isActive()) {
+            return;
+        }
+
+        trackingData.clearEncounters();
+
+        processedKillEvents.clear();
+
+        save();
+
+        log.info("Cleared tracker data for account {}", currentPlayerName);
+    }
+
     private int getRuneLiteKillcount(EncounterDefinition definition) {
         if (definition == null) {
             return 0;
@@ -410,7 +496,7 @@ public class EncounterTrackerManager {
             return 0;
         }
 
-        String bossKey = bossName.trim().toLowerCase(Locale.ROOT);
+        String bossKey = bossName.trim().replace(":", "").toLowerCase(Locale.ROOT);
 
         Integer killcount = configManager.getRSProfileConfiguration(
                 "killcount",

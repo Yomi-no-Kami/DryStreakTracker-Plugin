@@ -1,11 +1,10 @@
 package com.harrystyles.drystreaktracker.encounter.tracking;
 
+import com.harrystyles.drystreaktracker.Constants;
 import com.harrystyles.drystreaktracker.encounter.EncounterDefinition;
 import com.harrystyles.drystreaktracker.encounter.EncounterStats;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Stores all player-specific dry streak data.
@@ -23,6 +22,8 @@ public class PlayerTrackingData {
      */
     private Map<String, EncounterStats> encounters = new HashMap<>();
 
+    private List<RecentDrop> recentDrops = new ArrayList<>();
+
     public PlayerTrackingData() {
     }
 
@@ -38,9 +39,22 @@ public class PlayerTrackingData {
         return encounters;
     }
 
+    public List<RecentDrop> getRecentDrops() {
+        if (recentDrops == null) {
+            recentDrops = new ArrayList<>();
+        }
+
+        return recentDrops;
+    }
+
     public void setEncounters(Map<String, EncounterStats> encounters) {
         this.encounters = encounters == null ? new HashMap<>() : encounters;
     }
+
+    public void setRecentDrops(List<RecentDrop> recentDrops) {
+        this.recentDrops = recentDrops == null ? new ArrayList<>() : new ArrayList<>(recentDrops);
+    }
+
 
     public EncounterStats getEncounter(String encounterId) {
         if (encounterId == null) {
@@ -97,6 +111,34 @@ public class PlayerTrackingData {
         }
 
         return stats;
+    }
+
+    public void addRecentDrop(RecentDrop recentDrop) {
+        if (recentDrop == null) {
+            return;
+        }
+
+        getRecentDrops().add(0, recentDrop);
+
+        while (recentDrops.size() > Constants.RECENT_DROPS_HISTORY_MAX_AMOUNT) {
+            recentDrops.remove(recentDrops.size() - 1);
+        }
+    }
+
+    public void clearRecentDrops() {
+        getRecentDrops().clear();
+    }
+
+    public void removeRecentDrop(RecentDrop recentDrop) {
+        if (recentDrop == null) {
+            return;
+        }
+
+        getRecentDrops().remove(recentDrop);
+    }
+
+    public void clearEncounters() {
+        encounters.clear();
     }
 
     @Override

@@ -266,18 +266,38 @@ public class EncounterStats {
 
         lastDropTotalKillcount = totalKillcount;
 
-        /**
-         * Capture the dry streak that just ended before
-         * resetting it back to 0.
+        /*
+         * The drop itself happened on the next kill after
+         * currentDryStreak.
+         *
+         * Example:
+         * 19 dry kills followed by a unique means the unique
+         * took 20 kills.
          */
-        lastCompletedDryStreak = currentDryStreak;
+        int completedDropStreak = currentDryStreak + 1;
 
-        /**
-         * A tracked drop ended the current dry streak.
-         * The next dry streak may establish a new record.
+        /*
+         * Check whether the kill that produced this drop also
+         * established a new dry streak record.
+         *
+         * Do this BEFORE resetting the streak.
+         */
+        newDryRecordThisKill = totalTrackedDrops > 1 && !dryRecordNotificationSent && completedDropStreak > longestDryStreak;
+
+        if (completedDropStreak > longestDryStreak) {
+            longestDryStreak = completedDropStreak;
+        }
+
+        /*
+         * Save how many kills it took to receive this drop,
+         * including the kill that actually produced the unique.
+         */
+        lastCompletedDryStreak = completedDropStreak;
+
+        /*
+         * The drop ends the current streak.
          */
         dryRecordNotificationSent = false;
-        newDryRecordThisKill = false;
 
         currentDryStreak = 0;
 

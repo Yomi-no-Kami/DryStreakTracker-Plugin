@@ -1,5 +1,6 @@
 package com.harrystyles.drystreaktracker.ui;
 
+import com.harrystyles.drystreaktracker.discord.DiscordWebhookService;
 import com.harrystyles.drystreaktracker.encounter.EncounterDefinition;
 import com.harrystyles.drystreaktracker.encounter.EncounterRegistry;
 import com.harrystyles.drystreaktracker.encounter.EncounterStats;
@@ -17,6 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.*;
 
+import com.harrystyles.drystreaktracker.encounter.tracking.RecentDrop;
 import lombok.extern.slf4j.Slf4j;
 
 import net.runelite.api.ItemComposition;
@@ -38,12 +40,19 @@ public class DryStreakSidebarPanel extends PluginPanel {
     private final EncounterRegistry encounterRegistry;
     private final EncounterTrackerManager trackerManager;
     private final ItemManager itemManager;
+    private final DiscordWebhookService discordWebhookService;
 
     private final JPanel encounterContainer;
+
+    private final JPanel tabContentPanel;
+
+    private final JPanel recentDropsContainer;
 
     private final Map<String, Boolean> expandedStates = new HashMap<>();
 
     private final Map<Integer, ItemDisplayData> resolvedItemDisplayData = new HashMap<>();
+
+    private boolean recentDropsTabActive;
 
     /**
      * Whether a RuneScape account is currently logged in.
@@ -51,12 +60,13 @@ public class DryStreakSidebarPanel extends PluginPanel {
     private boolean loggedIn;
 
     @Inject
-    public DryStreakSidebarPanel(EncounterRegistry encounterRegistry, EncounterTrackerManager trackerManager, ItemManager itemManager) {
+    public DryStreakSidebarPanel(EncounterRegistry encounterRegistry, EncounterTrackerManager trackerManager, ItemManager itemManager, DiscordWebhookService discordWebhookService) {
         super();
 
         this.encounterRegistry = encounterRegistry;
         this.trackerManager = trackerManager;
         this.itemManager = itemManager;
+        this.discordWebhookService = discordWebhookService;
 
         setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
         setBackground(ColorScheme.DARK_GRAY_COLOR);
@@ -73,7 +83,7 @@ public class DryStreakSidebarPanel extends PluginPanel {
 
         title.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JButton clearAllButton = new JButton("Clear All Data");
+        JButton clearAllButton = new JButton("Clear All Tracker Data");
 
         /**
          * Discord Button
@@ -150,35 +160,47 @@ public class DryStreakSidebarPanel extends PluginPanel {
             }
         });
 
-        clearAllButton.addActionListener(
-                event ->
-                {
-                    if (!trackerManager.isActive()) {
-                        return;
-                    }
+        clearAllButton.addActionListener(event ->
+        {
+            if (!trackerManager.isActive()) {
+                return;
+            }
 
-                    int result = JOptionPane.showConfirmDialog(
-                            this,
-                            "Clear ALL Dry Streak Tracker data for this account?\n\n"
-                                    + "This cannot be undone.",
-                            "Clear All Tracker Data",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            String message;
+            String dialogTitle;
 
-                    if (result != JOptionPane.YES_OPTION) {
-                        return;
-                    }
+            if (recentDropsTabActive) {
+                message =
+                        "Clear ALL recent drop history for this account?\n\n" + "This cannot be undone.";
 
-                    trackerManager.clearAllData();
+                dialogTitle = "Clear All Recent Drops Data";
+            } else {
+                message = "Clear ALL tracker data for this account?\n\n" + "This cannot be undone.";
 
-                    expandedStates.clear();
+                dialogTitle = "Clear All Tracker Data";
+            }
 
-                    synchronized (resolvedItemDisplayData) {
-                        resolvedItemDisplayData.clear();
-                    }
+            int result = JOptionPane.showConfirmDialog(
+                    this, message, dialogTitle, JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
-                    refresh();
+            if (result != JOptionPane.YES_OPTION) {
+                return;
+            }
+
+            if (recentDropsTabActive) {
+                trackerManager.clearRecentDrops();
+            } else {
+                trackerManager.clearTrackerData();
+
+                expandedStates.clear();
+
+                synchronized (resolvedItemDisplayData) {
+                    resolvedItemDisplayData.clear();
                 }
-        );
+            }
+
+            refresh();
+        });
 
         JPanel headerPanel = new JPanel();
 
@@ -190,7 +212,6 @@ public class DryStreakSidebarPanel extends PluginPanel {
                 BorderFactory.createEmptyBorder(8, 10, 10, 10)));
 
         headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        headerPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, headerPanel.getPreferredSize().height));
 
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -219,23 +240,165 @@ public class DryStreakSidebarPanel extends PluginPanel {
         encounterContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
         encounterContainer.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 
-        JPanel layoutPanel = new JPanel();
+        JPanel trackerTab = new JPanel();
 
-        layoutPanel.setLayout(new BoxLayout(layoutPanel, BoxLayout.Y_AXIS));
+        trackerTab.setLayout(new BoxLayout(trackerTab, BoxLayout.Y_AXIS));
 
-        layoutPanel.setBackground(ColorScheme.DARK_GRAY_COLOR);
+        trackerTab.setBackground(ColorScheme.DARK_GRAY_COLOR);
 
-        layoutPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        trackerTab.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        layoutPanel.add(headerPanel);
+        trackerTab.add(encounterContainer);
 
-        layoutPanel.add(Box.createVerticalStrut(5));
 
-        layoutPanel.add(encounterContainer);
+        /**
+        * Recent Drops tab
+        */
+        recentDropsContainer = new JPanel();
 
-        add(layoutPanel, BorderLayout.NORTH);
+        recentDropsContainer.setLayout(new BoxLayout(recentDropsContainer, BoxLayout.Y_AXIS));
 
-        /*
+        recentDropsContainer.setBackground(ColorScheme.DARK_GRAY_COLOR);
+
+        recentDropsContainer.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+
+        /**
+         * Tab buttons.
+         */
+        JPanel tabButtonPanel = new JPanel(new GridLayout(1, 2, 0, 0));
+
+        tabButtonPanel.setBackground(ColorScheme.DARK_GRAY_COLOR);
+
+        JPanel trackerTabHeader = new JPanel(new BorderLayout());
+
+        JPanel recentDropsTabHeader = new JPanel(new BorderLayout());
+
+        trackerTabHeader.setBackground(ColorScheme.DARK_GRAY_COLOR);
+
+        recentDropsTabHeader.setBackground(ColorScheme.DARK_GRAY_COLOR);
+
+        JButton trackerTabButton = new JButton("Tracker");
+
+        JButton recentDropsTabButton = new JButton("Recent Drops");
+
+        trackerTabButton.setFocusPainted(false);
+        trackerTabButton.setBorderPainted(false);
+        trackerTabButton.setOpaque(true);
+
+        recentDropsTabButton.setFocusPainted(false);
+        recentDropsTabButton.setBorderPainted(false);
+        recentDropsTabButton.setOpaque(true);
+
+        trackerTabButton.setForeground(Color.WHITE);
+        trackerTabButton.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+
+        recentDropsTabButton.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+        recentDropsTabButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
+
+        JPanel trackerUnderline = new JPanel();
+
+        trackerUnderline.setPreferredSize(new Dimension(1, 2));
+
+        trackerUnderline.setBackground(ColorScheme.BRAND_ORANGE);
+
+
+        JPanel recentDropsUnderline = new JPanel();
+
+        recentDropsUnderline.setPreferredSize(new Dimension(1, 2));
+
+        recentDropsUnderline.setBackground(ColorScheme.DARK_GRAY_COLOR);
+
+
+        trackerTabHeader.add(trackerTabButton, BorderLayout.CENTER);
+
+        trackerTabHeader.add(trackerUnderline, BorderLayout.SOUTH);
+
+        recentDropsTabHeader.add(recentDropsTabButton, BorderLayout.CENTER);
+
+        recentDropsTabHeader.add(recentDropsUnderline, BorderLayout.SOUTH);
+
+        tabButtonPanel.add(trackerTabHeader);
+
+        tabButtonPanel.add(recentDropsTabHeader);
+
+        /**
+        * Tab content.
+        */
+        CardLayout tabLayout = new CardLayout();
+
+        tabContentPanel = new JPanel(tabLayout);
+
+        tabContentPanel.setBackground(ColorScheme.DARK_GRAY_COLOR);
+
+        tabContentPanel.add(trackerTab, "tracker");
+
+        tabContentPanel.add(recentDropsContainer, "recentDrops");
+
+
+        trackerTabButton.addActionListener(event ->
+        {
+            recentDropsTabActive = false;
+
+            tabLayout.show(tabContentPanel, "tracker");
+
+            trackerTabButton.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+            trackerTabButton.setForeground(Color.WHITE);
+
+            recentDropsTabButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
+            recentDropsTabButton.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+
+            trackerUnderline.setBackground(ColorScheme.BRAND_ORANGE);
+
+            recentDropsUnderline.setBackground(ColorScheme.DARK_GRAY_COLOR);
+
+            clearAllButton.setText("Clear All Tracker Data");
+
+            clearAllButton.setToolTipText(
+                    "Clear all Dry Streak Tracker encounter data for this account"
+            );
+        });
+
+        recentDropsTabButton.addActionListener(event ->
+        {
+            recentDropsTabActive = true;
+
+            tabLayout.show(tabContentPanel, "recentDrops");
+
+            recentDropsTabButton.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+            recentDropsTabButton.setForeground(Color.WHITE);
+
+            trackerTabButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
+            trackerTabButton.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+
+            recentDropsUnderline.setBackground(ColorScheme.BRAND_ORANGE);
+
+            trackerUnderline.setBackground(ColorScheme.DARK_GRAY_COLOR);
+
+            clearAllButton.setText("Clear All Recent Drops Data");
+
+            clearAllButton.setToolTipText(
+                    "Clear all recent drop history for this account"
+            );
+        });
+
+
+        /**
+        * Main sidebar layout
+        */
+        JPanel mainContentPanel = new JPanel(new BorderLayout());
+
+        mainContentPanel.setBackground(ColorScheme.DARK_GRAY_COLOR);
+
+        mainContentPanel.add(tabButtonPanel, BorderLayout.NORTH);
+
+        mainContentPanel.add(tabContentPanel, BorderLayout.CENTER);
+
+        add(headerPanel, BorderLayout.NORTH);
+
+        add(mainContentPanel, BorderLayout.CENTER);
+
+        /**
          * Plugin starts logged out.
          */
         loggedIn = false;
@@ -385,24 +548,45 @@ public class DryStreakSidebarPanel extends PluginPanel {
 
         encounterContainer.removeAll();
 
+        recentDropsContainer.removeAll();
+
         /**
          * LOGGED OUT
          */
         if (!loggedIn || !trackerManager.isActive()) {
-            JLabel loginLabel = new JLabel("<html><center>" + "Log in to view tracker!" + "</center></html>");
+            JLabel loginLabel = new JLabel(
+                    "Log in to view tracker!"
+            );
 
             loginLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-            loginLabel.setVerticalAlignment(SwingConstants.CENTER);
-
             loginLabel.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
 
-            loginLabel.setBorder(BorderFactory.createEmptyBorder(25, 10, 25, 10));
+            loginLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            loginLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
             encounterContainer.add(loginLabel);
 
+            JLabel recentDropsLoginLabel = new JLabel(
+                    "Log in to view recent drops!"
+            );
+
+            recentDropsLoginLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+            recentDropsLoginLabel.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+
+            recentDropsLoginLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            recentDropsLoginLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+            recentDropsContainer.add(recentDropsLoginLabel);
+
             encounterContainer.revalidate();
             encounterContainer.repaint();
+
+            recentDropsContainer.revalidate();
+            recentDropsContainer.repaint();
 
             revalidate();
             repaint();
@@ -481,13 +665,69 @@ public class DryStreakSidebarPanel extends PluginPanel {
             encounterContainer.add(emptyLabel);
         }
 
+        List<RecentDrop> recentDrops = trackerManager.getRecentDrops();
+
+        if (recentDrops.isEmpty()) {
+            JLabel noRecentDropsLabel = new JLabel(
+                    "No recent drops yet."
+            );
+
+            noRecentDropsLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+            noRecentDropsLabel.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+
+            noRecentDropsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            noRecentDropsLabel.setBorder(
+                    BorderFactory.createEmptyBorder(10, 10, 10, 10)
+            );
+
+            recentDropsContainer.add(noRecentDropsLabel);
+        } else {
+            for (RecentDrop recentDrop : recentDrops) {
+                ItemDisplayData itemData =
+                        displayData.get(recentDrop.getItemId());
+
+                RecentDropPanel recentDropPanel =
+                        new RecentDropPanel(
+                                recentDrop,
+                                itemManager,
+                                itemData,
+                                discordWebhookService::hasValidWebhook,
+                                () -> {
+                                    String itemName =
+                                            itemData != null
+                                                    ? itemData.getName()
+                                                    : "Item " + recentDrop.getItemId();
+
+                                    discordWebhookService.uploadDrop(
+                                            recentDrop,
+                                            itemName
+                                    );
+                                },
+                                () -> {
+                                    trackerManager.removeRecentDrop(recentDrop);
+                                    refresh();
+                                }
+                        );
+
+                recentDropsContainer.add(recentDropPanel);
+
+                recentDropsContainer.add(
+                        Box.createVerticalStrut(5)
+                );
+            }
+        }
+
         encounterContainer.revalidate();
         encounterContainer.repaint();
+
+        recentDropsContainer.revalidate();
+        recentDropsContainer.repaint();
 
         revalidate();
         repaint();
     }
-
     /**
      * Resolves an item's display name and sprite.
      * <p>
