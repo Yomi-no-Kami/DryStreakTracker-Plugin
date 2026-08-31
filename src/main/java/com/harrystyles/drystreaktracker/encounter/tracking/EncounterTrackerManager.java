@@ -236,6 +236,52 @@ public class EncounterTrackerManager {
     }
 
     /**
+     * Records a pet against the most recently completed kill
+     * for an encounter.
+     *
+     * The encounter kill has already been processed through
+     * NpcLootReceived or LootReceived, so this method does not
+     * create another kill.
+     */
+    public boolean recordPetForLastKill(String encounterId, int petItemId) {
+        if (!isActive()) {
+            return false;
+        }
+
+        if (encounterId == null || encounterId.trim().isEmpty()) {
+            return false;
+        }
+
+        EncounterDefinition definition = encounterRegistry.getById(encounterId);
+
+        if (definition == null) {
+            return false;
+        }
+
+        if (!definition.isPetDrop(petItemId)) {
+            log.warn("Item {} is not configured as a pet for {}", petItemId, encounterId);
+
+            return false;
+        }
+
+        EncounterStats stats = trackingData.getEncounter(encounterId);
+
+        if (stats == null || stats.getTotalKillsTracked() <= 0) {
+            return false;
+        }
+
+        int totalKillcount = getRuneLiteKillcount(definition);
+
+        stats.recordPetOnLastKill(totalKillcount, petItemId, 1);
+
+        save();
+
+        log.info("{} pet {} recorded on existing kill #{}", definition.getDisplayName(), petItemId, stats.getLastKnownKillcount());
+
+        return true;
+    }
+
+    /**
      * Registers a kill event so the same event cannot
      * immediately be processed twice.
      * <p>

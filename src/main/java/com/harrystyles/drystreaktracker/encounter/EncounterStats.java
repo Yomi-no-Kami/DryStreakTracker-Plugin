@@ -303,4 +303,73 @@ public class EncounterStats {
 
         receivedDrops.merge(itemId, quantity, Integer::sum);
     }
+
+    /**
+     * Records a pet against the encounter kill which was
+     * already processed through the normal loot event.
+     *
+     * Pets are detected separately from loot through the
+     * RuneScape pet acquisition game message, so this method
+     * must not increment totalKillsTracked.
+     *
+     * If the kill was originally recorded as dry, that dry
+     * kill is converted into a qualifying drop.
+     *
+     * If another tracked drop was already received on the
+     * same kill, the pet is added as an additional drop.
+     */
+    public void recordPetOnLastKill(int totalKillcount, int itemId, int quantity) {
+        if (totalKillsTracked <= 0) {
+            return;
+        }
+
+        lastActivityTime = System.currentTimeMillis();
+
+        int petQuantity = Math.max(1, quantity);
+
+        /*
+         * The encounter kill itself has already been counted.
+         *
+         * Only increase the number of tracked drops.
+         */
+        totalTrackedDrops++;
+
+        lastDropKillcount = lastKnownKillcount;
+
+        lastDropTotalKillcount = totalKillcount;
+
+        /*
+         * A positive currentDryStreak means the loot event was
+         * originally processed as a dry kill.
+         *
+         * That streak already includes the kill which produced
+         * the pet.
+         */
+        if (currentDryStreak > 0) {
+            int completedDropStreak = currentDryStreak;
+
+            newDryRecordThisKill = totalTrackedDrops > 1
+                    && !dryRecordNotificationSent
+                    && completedDropStreak > longestDryStreak;
+
+            if (completedDropStreak > longestDryStreak) {
+                longestDryStreak = completedDropStreak;
+            }
+
+            lastCompletedDryStreak = completedDropStreak;
+
+            currentDryStreak = 0;
+
+            dryRecordNotificationSent = false;
+        } else {
+            /*
+             * A normal tracked drop was already recorded on this
+             * kill, so its dry streak has already been reset.
+             */
+            newDryRecordThisKill = false;
+        }
+
+        receivedDrops.merge(itemId, petQuantity, Integer::sum);
+    }
+
 }

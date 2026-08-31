@@ -18,8 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameStateChanged;
 
+import net.runelite.api.events.GameTick;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -143,6 +145,8 @@ public class DryStreakTrackerPlugin extends Plugin {
         }
 
         if (gameState == GameState.LOGIN_SCREEN) {
+            lootDetectionService.clearProcessedLootEvents();
+
             trackerManager.stopForPlayer();
 
             SwingUtilities.invokeLater(() -> sidebarPanel.setLoggedIn(false));
@@ -200,5 +204,23 @@ public class DryStreakTrackerPlugin extends Plugin {
     @Subscribe
     public void onLootReceived(LootReceived event) {
         lootDetectionService.handleLootReceived(event);
+    }
+
+    /**
+     * RuneScape game messages used for pet acquisition detection.
+     */
+    @Subscribe
+    public void onChatMessage(ChatMessage event) {
+        lootDetectionService.handlePetAcquisitionMessage(event);
+    }
+
+    /**
+     * Processes dry results waiting for the pet acquisition
+     * matching window to expire.
+     */
+
+    @Subscribe
+    public void onGameTick(GameTick event) {
+        lootDetectionService.processPendingPetDryResult();
     }
 }

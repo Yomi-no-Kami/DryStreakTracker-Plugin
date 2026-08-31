@@ -29,10 +29,12 @@ import net.runelite.api.GameState;
 import net.runelite.api.ItemComposition;
 import net.runelite.api.NPC;
 
+import net.runelite.api.events.ChatMessage;
 import net.runelite.client.events.NpcLootReceived;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.ItemStack;
 import net.runelite.client.plugins.loottracker.LootReceived;
+import net.runelite.client.util.Text;
 
 
 @Slf4j
@@ -55,6 +57,15 @@ public class LootDetectionService {
     private final DiscordWebhookService discordWebhookService;
 
     private final DropScreenshotService dropScreenshotService;
+
+    /**
+     * Pet tracking
+     */
+    private final PetAcquisitionTracker petAcquisitionTracker = new PetAcquisitionTracker();
+    private EncounterDefinition pendingPetDryEncounter;
+    private int pendingPetDryTick = -1;
+    private int pendingPetDryStreak;
+    private boolean pendingPetDryRecord;
 
 
     @Inject
@@ -128,7 +139,7 @@ public class LootDetectionService {
         /**
          * Extra safety check.
          *
-         * Anything found by NPC ID should have been loaded
+         * Anything found by NPC id should have been loaded
          * from encounters.json.
          */
         if (encounter.getLootType() != EncounterLootType.GROUND_LOOT) {
@@ -137,18 +148,23 @@ public class LootDetectionService {
             return;
         }
 
+        boolean petMessageMatchedBeforeLoot = false;
+
+        if (isPetTrackingEnabledForEncounter(encounter)) {
+            petMessageMatchedBeforeLoot = petAcquisitionTracker.matchEncounterLootToPendingPetMessage(encounter, client.getTickCount());
+        }
+
         String eventKey = createNpcKillEventKey(npc, items);
 
-        processEncounterLoot(encounter, items, eventKey);
+        processEncounterLoot(encounter, items, eventKey, petMessageMatchedBeforeLoot);
     }
 
 
     /**
      * Handles RuneLite's generic LootReceived event.
      * Definition source:
-     * <p>
      * loot-received-encounters.json
-     * <p>
+     *
      * This may include:
      * pickpocketing
      * object/chest rewards
@@ -201,10 +217,15 @@ public class LootDetectionService {
             return;
         }
 
+        boolean petMessageMatchedBeforeLoot = false;
+
+        if (isPetTrackingEnabledForEncounter(encounter)) {
+            petMessageMatchedBeforeLoot = petAcquisitionTracker.matchEncounterLootToPendingPetMessage(encounter, client.getTickCount());
+        }
+
         String eventKey = createGenericLootEventKey(event);
 
-        processEncounterLoot(encounter, event.getItems(), eventKey
-        );
+        processEncounterLoot(encounter, event.getItems(), eventKey, petMessageMatchedBeforeLoot);
     }
 
 
@@ -216,50 +237,58 @@ public class LootDetectionService {
     /**
      * Converts one RuneLite loot event into one encounter
      * completion.
-     * <p>
+     *
      * Both NpcLootReceived and LootReceived eventually come
      * through this method.
      */
-    private void processEncounterLoot(EncounterDefinition encounter, Collection<ItemStack> items, String eventKey) {
+    private void processEncounterLoot(EncounterDefinition encounter, Collection<ItemStack> items, String eventKey, boolean petMessageMatchedBeforeLoot) {
         if (encounter == null) {
             return;
         }
 
+        /*
+         * Only normal tracked items are searched here.
+         *
+         * Pets are detected separately through the RuneScape
+         * pet acquisition game message.
+         */
         ItemStack qualifyingDrop = findQualifyingDrop(encounter, items);
 
         Integer dropItemId = qualifyingDrop == null ? null : qualifyingDrop.getId();
 
         int dropQuantity = qualifyingDrop == null ? 0 : qualifyingDrop.getQuantity();
 
+        /*
+         * The encounter itself is recorded exactly once through
+         * its normal loot event.
+         */
         boolean recorded = trackerManager.recordKill(encounter.getEncounterId(), eventKey, dropItemId, dropQuantity);
 
         if (!recorded) {
             return;
         }
 
+        /*
+         * Normal tracked drop contained in the loot event.
+         */
         if (qualifyingDrop != null) {
-            int gePrice = itemManager.getItemPrice(qualifyingDrop.getId());
-            int totalGeValue = gePrice * qualifyingDrop.getQuantity();
+            processRecordedDrop(encounter, qualifyingDrop.getId(), qualifyingDrop.getQuantity(), false);
+        }
 
-            trackerManager.recordRecentDrop(encounter.getEncounterId(), qualifyingDrop.getId(), qualifyingDrop.getQuantity(), totalGeValue);
+        /*
+         * The pet message arrived before the loot event.
+         *
+         * The kill has already been recorded above, so attach
+         * the pet to that existing kill instead of creating a
+         * second encounter completion.
+         */
+        if (petMessageMatchedBeforeLoot) {
+            Integer petItemId = getPetItemId(encounter);
 
-            if (config.discordAutomaticUploads()) {
-                RecentDrop recentDrop = trackerManager.getRecentDrops().isEmpty() ? null : trackerManager.getRecentDrops().get(0);
+            if (petItemId != null && trackerManager.recordPetForLastKill(encounter.getEncounterId(), petItemId)) {
+                clearPendingPetDryResult();
 
-                if (recentDrop != null) {
-                    boolean pet = encounter.isPetDrop(qualifyingDrop.getId());
-
-                    if (discordWebhookService.canAutomaticallyUpload(recentDrop, pet)) {
-                        String itemName = getItemName(qualifyingDrop.getId());
-
-                        if (config.discordIncludeScreenshot()) {
-                            dropScreenshotService.captureScreenshot(screenshot ->
-                                    discordWebhookService.uploadDrop(recentDrop, itemName, screenshot));
-                        } else {
-                            discordWebhookService.uploadDrop(recentDrop, itemName);
-                        }
-                    }
-                }
+                processRecordedDrop(encounter, petItemId, 1, true);
             }
         }
 
@@ -271,18 +300,25 @@ public class LootDetectionService {
             sidebarPanel.updateItemDisplayData(displayData);
         }
 
-        if (qualifyingDrop == null) {
-            /**
-             * If this kill surpassed the player's previous
-             * longest dry streak, show the record notification.
+        /*
+         * It was genuinely a dry kill only when neither a
+         * normal tracked drop nor a pet was received.
+         */
+        if (qualifyingDrop == null && !petMessageMatchedBeforeLoot) {
+            /*
+             * Pet-eligible encounters wait briefly before announcing
+             * a dry kill because the pet acquisition message may
+             * arrive shortly after the loot event.
              */
+            if (isPetTrackingEnabledForEncounter(encounter)) {
+                queuePendingPetDryResult(encounter, stats);
+
+                return;
+            }
+
             if (stats != null && stats.isNewDryRecordThisKill()) {
                 sendDryRecordNotification(encounter, stats);
 
-                /**
-                 * Chatbox messages still respect the plugin
-                 * configuration setting.
-                 */
                 if (config.showChatboxMessages()) {
                     sendDryRecordChatboxMessage(encounter, stats);
                 }
@@ -297,8 +333,6 @@ public class LootDetectionService {
             return;
         }
 
-        handleQualifyingDrop(encounter, qualifyingDrop);
-
         if (stats != null && stats.isNewDryRecordThisKill()) {
             sendDryRecordNotification(encounter, stats);
 
@@ -307,10 +341,138 @@ public class LootDetectionService {
             }
         }
     }
+    /**
+     * Releases a delayed dry result once the pet acquisition
+     * matching window has expired.
+     */
+    public void processPendingPetDryResult() {
+        if (!canProcess()) {
+            return;
+        }
+
+        if (pendingPetDryEncounter == null || pendingPetDryTick < 0) {
+            return;
+        }
+
+        int ticksElapsed = client.getTickCount() - pendingPetDryTick;
+
+        if (ticksElapsed <= PetAcquisitionTracker.MATCH_WINDOW_TICKS) {
+            return;
+        }
+
+        EncounterDefinition encounter = pendingPetDryEncounter;
+
+        int dryStreak = pendingPetDryStreak;
+
+        boolean newDryRecord = pendingPetDryRecord;
+
+        /*
+         * Clear first so the result cannot accidentally be sent
+         * twice.
+         */
+        clearPendingPetDryResult();
+
+        if (newDryRecord) {
+            sendDryRecordNotification(encounter, dryStreak);
+
+            if (config.showChatboxMessages()) {
+                sendDryRecordChatboxMessage(encounter, dryStreak);
+            }
+
+            return;
+        }
+
+        if (config.showChatboxMessages()) {
+            sendDryKillChatboxMessage(encounter, dryStreak);
+        }
+    }
 
 
     /**
-     * Finds the first tracked drop contained in the loot.
+     * Holds a dry result temporarily while waiting to see
+     * whether a pet aquisition message belongs to the kill
+     */
+    private void queuePendingPetDryResult(EncounterDefinition encounter, EncounterStats stats) {
+        if (encounter == null || stats == null) {
+            return;
+        }
+
+        pendingPetDryEncounter = encounter;
+
+        pendingPetDryTick = client.getTickCount();
+
+        pendingPetDryStreak = stats.getCurrentDryStreak();
+
+        pendingPetDryRecord = stats.isNewDryRecordThisKill();
+    }
+
+    /**
+     * Clears a dry result that was waiting for the pet
+     * acquisition matching window
+     */
+    private void clearPendingPetDryResult() {
+        pendingPetDryEncounter = null;
+
+        pendingPetDryTick = -1;
+
+        pendingPetDryStreak = 0;
+
+        pendingPetDryRecord = false;
+    }
+
+    /**
+     * Returns the configured pet item id for an encounter
+     */
+    private Integer getPetItemId(EncounterDefinition encounter) {
+        if (encounter == null || encounter.getPetDropIds() == null || encounter.getPetDropIds().isEmpty()) {
+            return null;
+        }
+
+        return encounter.getPetDropIds().iterator().next();
+    }
+
+    /**
+     * Returns whether pet detection should be active for this
+     * encounter
+     */
+    private boolean isPetTrackingEnabledForEncounter(EncounterDefinition encounter) {
+        return config.trackPets() && getPetItemId(encounter) != null;
+    }
+
+    /**
+     * Handles recent-drop history, Discord uploads and
+     * notifications after a tracked item has been recorded.
+     *
+     * This method does not modify encounter kill totals.
+     */
+    private void processRecordedDrop(EncounterDefinition encounter, int itemId, int quantity, boolean pet) {
+        int gePrice = itemManager.getItemPrice(itemId);
+
+        int totalGeValue = gePrice * quantity;
+
+        trackerManager.recordRecentDrop(encounter.getEncounterId(), itemId, quantity, totalGeValue);
+
+        if (config.discordAutomaticUploads()) {
+            RecentDrop recentDrop = trackerManager.getRecentDrops().isEmpty()
+                    ? null
+                    : trackerManager.getRecentDrops().get(0);
+
+            if (recentDrop != null && discordWebhookService.canAutomaticallyUpload(recentDrop, pet)) {
+                String itemName = getItemName(itemId);
+
+                if (config.discordIncludeScreenshot()) {
+                    dropScreenshotService.captureScreenshot(screenshot -> discordWebhookService.uploadDrop(recentDrop, itemName, screenshot));
+                } else {
+                    discordWebhookService.uploadDrop(recentDrop, itemName);
+                }
+            }
+        }
+
+        handleRecordedDrop(encounter, itemId, quantity, pet);
+    }
+
+    /**
+     * Finds the first tracked drop contained in the loot
      */
     private ItemStack findQualifyingDrop(EncounterDefinition encounter, Collection<ItemStack> items) {
         if (items == null || items.isEmpty()) {
@@ -322,7 +484,7 @@ public class LootDetectionService {
                 continue;
             }
 
-            if (encounter.isQualifyingDrop(item.getId(), config.trackPets())) {
+            if (encounter.isTrackedDrop(item.getId())) {
                 return item;
             }
         }
@@ -331,10 +493,12 @@ public class LootDetectionService {
     }
 
 
-    private void handleQualifyingDrop(EncounterDefinition encounter, ItemStack qualifyingDrop) {
-        String itemName = getItemName(qualifyingDrop.getId());
-
-        boolean pet = encounter.isPetDrop(qualifyingDrop.getId());
+    /**
+     * Displays notification and chat information for a
+     * successfully recorded tracked drop.
+     */
+    private void handleRecordedDrop(EncounterDefinition encounter, int itemId, int quantity, boolean pet) {
+        String itemName = getItemName(itemId);
 
         EncounterStats stats = trackerManager.getStats(encounter.getEncounterId());
 
@@ -346,7 +510,7 @@ public class LootDetectionService {
                         + "<col=FFFFFF>"
                         + itemName
                         + " x"
-                        + qualifyingDrop.getQuantity()
+                        + quantity
                         + "</col>";
 
         if (stats != null && stats.getLastCompletedDryStreak() > 0) {
@@ -362,7 +526,74 @@ public class LootDetectionService {
         notificationManager.notify(pet ? "PET RECEIVED" : "DROP RECEIVED", notificationText, 0x00FF00);
 
         if (config.showChatboxMessages()) {
-            sendDropChatboxMessage(encounter, itemName, qualifyingDrop.getQuantity(), pet, stats);
+            sendDropChatboxMessage(encounter, itemName, quantity, pet, stats);
+        }
+    }
+
+    /**
+     * Handles RuneScape game messages used to detect pet
+     * acquisitions.
+     */
+    public void handlePetAcquisitionMessage(ChatMessage event) {
+        if (!canProcess()) {
+            return;
+        }
+
+        if (!config.trackPets()) {
+            return;
+        }
+
+        if (event == null || event.getType() != ChatMessageType.GAMEMESSAGE) {
+            return;
+        }
+
+        String message = Text.removeTags(event.getMessage());
+
+        if (!petAcquisitionTracker.isPetAcquisitionMessage(message)) {
+            return;
+        }
+
+        EncounterDefinition encounter = petAcquisitionTracker.matchPetMessageToRecentEncounter(client.getTickCount());
+
+        /*
+         * Null means the pet message arrived before the loot
+         * event. The message is being held temporarily and will
+         * be processed when the encounter loot arrives.
+         */
+        if (encounter == null) {
+            return;
+        }
+
+        Integer petItemId = getPetItemId(encounter);
+
+        if (petItemId == null) {
+            return;
+        }
+
+        /*
+         * Loot arrived first, so the encounter kill has already
+         * been recorded.
+         */
+        boolean recorded = trackerManager.recordPetForLastKill(encounter.getEncounterId(), petItemId);
+
+        if (!recorded) {
+            return;
+        }
+
+        /*
+         * This kill was waiting to be announced as dry, but the
+         * pet message confirms that it was actually a pet kill.
+         */
+        clearPendingPetDryResult();
+
+        processRecordedDrop(encounter, petItemId, 1, true);
+
+        EncounterStats stats = trackerManager.getStats(encounter.getEncounterId());
+
+        if (stats != null) {
+            Map<Integer, ItemDisplayData> displayData = resolveEncounterItemDisplayData(stats);
+
+            sidebarPanel.updateItemDisplayData(displayData);
         }
     }
 
@@ -491,6 +722,24 @@ public class LootDetectionService {
         return "Item " + itemId;
     }
 
+    private void sendDryRecordNotification(EncounterDefinition encounter, int recordStreak) {
+        if (encounter == null) {
+            return;
+        }
+
+        String text =
+                "<col=FFFF00>"
+                        + encounter.getDisplayName()
+                        + "</col>"
+                        + "<br>"
+                        + "<col=FFFFFF>"
+                        + recordStreak
+                        + " KC Dry"
+                        + "</col>";
+
+        notificationManager.notify("DRY STREAK RECORD", text, 0xFF0000);
+    }
+
     /**
      * Displays an in-game notification when the player
      * surpasses their previous longest dry streak.
@@ -504,18 +753,24 @@ public class LootDetectionService {
                 ? stats.getCurrentDryStreak()
                 : stats.getLastCompletedDryStreak();
 
-        String text =
-                "<col=FFFF00>"
-                        + encounter.getDisplayName()
-                        + "</col>"
-                        + "<br>"
-                        + "<col=FFFFFF>"
-                        + recordStreak
-                        + " KC Dry"
-                        + "</col>";
+        sendDryRecordNotification(encounter, recordStreak);
+    }
 
-        notificationManager.notify("DRY STREAK RECORD", text, 0xFF0000
-        );
+    private void sendDryRecordChatboxMessage(EncounterDefinition encounter, int recordStreak) {
+        if (encounter == null) {
+            return;
+        }
+
+        String message = "[<col=FF0000>Dry Streak</col>] "
+                + "[<col=FFFF00>"
+                + encounter.getDisplayName()
+                + "</col>]: "
+                + "<col=800080>New dry streak record! "
+                + recordStreak
+                + " KC dry"
+                + "</col>";
+
+        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", message, null);
     }
 
     /**
@@ -531,16 +786,7 @@ public class LootDetectionService {
                 ? stats.getCurrentDryStreak()
                 : stats.getLastCompletedDryStreak();
 
-        String message = "[<col=FF0000>Dry Streak</col>] "
-                + "[<col=FFFF00>"
-                + encounter.getDisplayName()
-                + "</col>]: "
-                + "<col=800080>New dry streak record! "
-                + recordStreak
-                + " KC dry"
-                + "</col>";
-
-        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", message, null);
+        sendDryRecordChatboxMessage(encounter, recordStreak);
     }
 
     private void sendDropChatboxMessage(EncounterDefinition encounter, String itemName, int quantity, boolean pet, EncounterStats stats) {
@@ -566,11 +812,8 @@ public class LootDetectionService {
         client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", message, null);
     }
 
-
-    private void sendDryKillChatboxMessage(EncounterDefinition encounter) {
-        EncounterStats stats = trackerManager.getStats(encounter.getEncounterId());
-
-        if (stats == null) {
+    private void sendDryKillChatboxMessage(EncounterDefinition encounter, int dryStreak) {
+        if (encounter == null) {
             return;
         }
 
@@ -579,14 +822,28 @@ public class LootDetectionService {
                         + "[<col=FFFF00>"
                         + encounter.getDisplayName()
                         + "</col>]: <col=800080>"
-                        + stats.getCurrentDryStreak()
+                        + dryStreak
                         + "</col> KC since last unique";
 
         client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", message, null);
     }
 
+    private void sendDryKillChatboxMessage(EncounterDefinition encounter) {
+        EncounterStats stats = trackerManager.getStats(encounter.getEncounterId());
+
+        if (stats == null) {
+            return;
+        }
+
+        sendDryKillChatboxMessage(encounter, stats.getCurrentDryStreak());
+    }
+
 
     public void clearProcessedLootEvents() {
+        petAcquisitionTracker.clearPetAcquisitionState();
+
+        clearPendingPetDryResult();
+
         trackerManager.clearProcessedKillEvents();
     }
 

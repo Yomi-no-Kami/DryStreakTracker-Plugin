@@ -96,6 +96,8 @@ public class EncounterPanel extends JPanel {
 
         add(detailsPanel, BorderLayout.CENTER);
 
+        updatePanelHeight();
+
     }
 
     private JPanel createSummaryPanel() {
@@ -445,9 +447,9 @@ public class EncounterPanel extends JPanel {
     private void toggleExpanded() {
         expanded = !expanded;
 
-        detailsPanel.setVisible(
-                expanded
-        );
+        detailsPanel.setVisible(expanded);
+
+        updatePanelHeight();
 
         if (expandIndicator != null) {
             expandIndicator.setText(expanded ? "▲" : "▼");
@@ -461,6 +463,10 @@ public class EncounterPanel extends JPanel {
 
         revalidate();
         repaint();
+    }
+
+    private void updatePanelHeight() {
+        setMaximumSize(new Dimension(Integer.MAX_VALUE, getPreferredSize().height));
     }
 
     /**
