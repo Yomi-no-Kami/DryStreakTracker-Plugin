@@ -6,6 +6,7 @@ public class DiscordEmbed {
     private final int color;
     private final DiscordField[] fields;
     private DiscordThumbnail thumbnail;
+    private DiscordImage image;
 
     public DiscordEmbed(String title, String description, int color, DiscordField[] fields) {
         this.title = title;
@@ -16,6 +17,10 @@ public class DiscordEmbed {
 
     public void setThumbnail(DiscordThumbnail thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public void setImage(DiscordImage image) {
+        this.image = image;
     }
 
 }

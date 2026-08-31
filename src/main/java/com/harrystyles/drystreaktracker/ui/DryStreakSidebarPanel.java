@@ -503,6 +503,30 @@ public class DryStreakSidebarPanel extends PluginPanel {
             }
         }
 
+        for (RecentDrop recentDrop : trackerManager.getRecentDrops()) {
+            if (recentDrop == null) {
+                continue;
+            }
+
+            int itemId = recentDrop.getItemId();
+
+            synchronized (resolvedItemDisplayData) {
+                if (resolvedItemDisplayData.containsKey(itemId)) {
+                    continue;
+                }
+            }
+
+            if (newlyResolved.containsKey(itemId)) {
+                continue;
+            }
+
+            ItemDisplayData data = resolveItemDisplayData(itemId);
+
+            if (data != null) {
+                newlyResolved.put(itemId, data);
+            }
+        }
+
         if (!newlyResolved.isEmpty()) {
             synchronized (resolvedItemDisplayData) {
                 resolvedItemDisplayData.putAll(newlyResolved);

@@ -14,6 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
@@ -23,6 +24,8 @@ import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.ColorScheme;
 
 public class EncounterPanel extends JPanel {
+
+    private static final Map<String, ImageIcon> ENCOUNTER_IMAGE_CACHE = new ConcurrentHashMap<>();
 
     private final EncounterDefinition encounter;
     private final EncounterStats stats;
@@ -232,6 +235,14 @@ public class EncounterPanel extends JPanel {
             return imageLabel;
         }
 
+        ImageIcon cachedIcon = ENCOUNTER_IMAGE_CACHE.get(imageUrl);
+
+        if (cachedIcon != null) {
+            imageLabel.setIcon(cachedIcon);
+
+            return imageLabel;
+        }
+
         Thread imageThread = new Thread(() ->
         {
             try {
@@ -248,9 +259,13 @@ public class EncounterPanel extends JPanel {
 
                 Image scaled = image.getScaledInstance(64, 64, Image.SCALE_SMOOTH);
 
+                ImageIcon icon = new ImageIcon(scaled);
+
+                ENCOUNTER_IMAGE_CACHE.put(imageUrl, icon);
+
                 SwingUtilities.invokeLater(() ->
                         {
-                            imageLabel.setIcon(new ImageIcon(scaled));
+                            imageLabel.setIcon(icon);
 
                             imageLabel.setText("");
 

@@ -95,7 +95,7 @@ public class DiscordWebhookService {
 
         byte[] itemSprite = createItemSpritePng(drop.getItemId());
 
-        DiscordWebhookPayload payload = createPayload(drop, itemName, itemSprite != null);
+        DiscordWebhookPayload payload = createPayload(drop, itemName, itemSprite != null, false);
 
         String json = gson.toJson(payload);
 
@@ -125,7 +125,7 @@ public class DiscordWebhookService {
 
         byte[] itemSprite = createItemSpritePng(drop.getItemId());
 
-        DiscordWebhookPayload payload = createPayload(drop, itemName, itemSprite != null);
+        DiscordWebhookPayload payload = createPayload(drop, itemName, itemSprite != null, true);
 
         String json = gson.toJson(payload);
 
@@ -148,7 +148,7 @@ public class DiscordWebhookService {
         sendWebhookRequest(webhookUrl, body);
     }
 
-    private DiscordWebhookPayload createPayload(RecentDrop drop, String itemName, boolean includeItemThumbnail) {
+    private DiscordWebhookPayload createPayload(RecentDrop drop, String itemName, boolean includeItemThumbnail, boolean includeScreenshot) {
 
         NumberFormat numberFormat = NumberFormat.getIntegerInstance(Locale.US);
 
@@ -166,6 +166,12 @@ public class DiscordWebhookService {
             playerName = "Unknown";
         }
 
+        String encounterName = drop.getEncounterName();
+
+        if (encounterName == null || encounterName.trim().isEmpty()) {
+            encounterName = "Unknown Encounter";
+        }
+
         DiscordWebhookPayload payload = new DiscordWebhookPayload();
 
         payload.setUsername("Dry Streak Tracker");
@@ -176,7 +182,7 @@ public class DiscordWebhookService {
 
         DiscordEmbed embed =
                 new DiscordEmbed(
-                        itemName,
+                        itemName + " from " + encounterName,
                         description,
                         0xFF981F,
                         new DiscordField[]{
@@ -189,6 +195,16 @@ public class DiscordWebhookService {
 
         if (includeItemThumbnail) {
             embed.setThumbnail(new DiscordThumbnail("attachment://item.png"));
+        }
+
+        if (includeScreenshot) {
+            embed.setImage(new DiscordImage("attachment://drop.png"));
+        } else {
+            String encounterImageUrl = drop.getEncounterImageUrl();
+
+            if (encounterImageUrl != null && !encounterImageUrl.trim().isEmpty()) {
+                embed.setImage(new DiscordImage(encounterImageUrl));
+            }
         }
 
         payload.setEmbeds(new DiscordEmbed[]{

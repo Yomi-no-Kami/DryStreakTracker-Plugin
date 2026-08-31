@@ -454,6 +454,7 @@ public class EncounterTrackerManager {
                 currentPlayerName,
                 encounterId,
                 definition.getDisplayName(),
+                definition.getImageUrl(),
                 itemId,
                 quantity,
                 stats.getLastCompletedDryStreak(),
