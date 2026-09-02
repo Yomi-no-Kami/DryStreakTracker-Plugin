@@ -2,7 +2,7 @@
   {
     "encounterId": "cerberus",
     "displayName": "Cerberus",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Cerberus.png",
+    "imageUrl": "Cerberus.png",
     "npcIds": [
       5862
     ],
@@ -19,7 +19,7 @@
   {
     "encounterId": "scurrius",
     "displayName": "Scurrius",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Scurrius.png",
+    "imageUrl": "Scurrius.png",
     "npcIds": [
       7221, 7222
     ],
@@ -32,7 +32,7 @@
   {
     "encounterId": "giant_mole",
     "displayName": "Giant Mole",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Giant_Mole.png",
+    "imageUrl": "Giant_Mole.png",
     "npcIds": [
       5779
     ],
@@ -45,7 +45,7 @@
   {
     "encounterId": "deranged_archaeologist",
     "displayName": "Deranged Archaeologist",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Deranged_archaeologist.png",
+    "imageUrl": "Deranged_archaeologist.png",
     "npcIds": [
       7806
     ],
@@ -58,7 +58,7 @@
   {
     "encounterId": "dagannoth_supreme",
     "displayName": "Dagannoth Supreme",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Dagannoth_Supreme.png",
+    "imageUrl": "Dagannoth_Supreme.png",
     "npcIds": [
       2265
     ],
@@ -71,7 +71,7 @@
   {
     "encounterId": "dagannoth_rex",
     "displayName": "Dagannoth Rex",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Dagannoth_Rex.png",
+    "imageUrl": "Dagannoth_Rex.png",
     "npcIds": [
       2267
     ],
@@ -84,7 +84,7 @@
   {
     "encounterId": "dagannoth_prime",
     "displayName": "Dagannoth Prime",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Dagannoth_Prime.png",
+    "imageUrl": "Dagannoth_Prime.png",
     "npcIds": [
       2266
     ],
@@ -97,7 +97,7 @@
   {
     "encounterId": "sarachnis",
     "displayName": "Sarachnis",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Sarachnis.png",
+    "imageUrl": "Sarachnis.png",
     "npcIds": [
       8713
     ],
@@ -110,7 +110,7 @@
   {
     "encounterId": "kalphite_queen",
     "displayName": "Kalphite Queen",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Kalphite_Queen.png",
+    "imageUrl": "Kalphite_Queen.png",
     "npcIds": [
       965
     ],
@@ -123,7 +123,7 @@
   {
     "encounterId": "kreearra",
     "displayName": "Kree'aara",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Kree%27arra.png",
+    "imageUrl": "Kree%27arra.png",
     "npcIds": [
       3162
     ],
@@ -136,7 +136,7 @@
   {
     "encounterId": "commander_zilyana",
     "displayName": "Commander Zilyana",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Commander_Zilyana.png",
+    "imageUrl": "Commander_Zilyana.png",
     "npcIds": [
       2205
     ],
@@ -149,7 +149,7 @@
   {
     "encounterId": "general_graardor",
     "displayName": "General Graardor",
-    "imageUrl": "https://oldschool.runescape.wiki/images/General_Graardor.png",
+    "imageUrl": "General_Graardor.png",
     "npcIds": [
       2215
     ],
@@ -162,7 +162,7 @@
   {
     "encounterId": "kril_tsutsaroth",
     "displayName": "K'ril Tsutsaroth",
-    "imageUrl": "https://oldschool.runescape.wiki/images/K%27ril_Tsutsaroth.png",
+    "imageUrl": "K%27ril_Tsutsaroth.png",
     "npcIds": [
       3129
     ],
@@ -175,7 +175,7 @@
   {
     "encounterId": "the_hueycoatl",
     "displayName": "The Hueycoatl",
-    "imageUrl": "https://oldschool.runescape.wiki/images/The_Hueycoatl.png",
+    "imageUrl": "The_Hueycoatl.png",
     "killcountNames": [
       "Hueycoatl"
     ],
@@ -191,7 +191,7 @@
   {
     "encounterId": "corporeal_beast",
     "displayName": "Corporeal Beast",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Corporeal_Beast.png",
+    "imageUrl": "Corporeal_Beast.png",
     "npcIds": [
       319
     ],
@@ -204,7 +204,7 @@
   {
     "encounterId": "nex",
     "displayName": "Nex",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Nex.png",
+    "imageUrl": "Nex.png",
     "npcIds": [
       11278, 11282
     ],
@@ -217,7 +217,7 @@
   {
     "encounterId": "chaos_fanatic",
     "displayName": "Chaos Fanatic",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Chaos_Fanatic.png",
+    "imageUrl": "Chaos_Fanatic.png",
     "npcIds": [
       6619
     ],
@@ -230,7 +230,7 @@
   {
     "encounterId": "crazy_archaeologist",
     "displayName": "Crazy Archaeologist",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Crazy_archaeologist.png",
+    "imageUrl": "Crazy_archaeologist.png",
     "npcIds": [
       6618
     ],
@@ -243,7 +243,7 @@
   {
     "encounterId": "scorpia",
     "displayName": "Scorpia",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Scorpia.png",
+    "imageUrl": "Scorpia.png",
     "npcIds": [
       6615
     ],
@@ -256,7 +256,7 @@
   {
     "encounterId": "king_black_dragon",
     "displayName": "King Black Dragon",
-    "imageUrl": "https://oldschool.runescape.wiki/images/King_Black_Dragon.png",
+    "imageUrl": "King_Black_Dragon.png",
     "npcIds": [
       239
     ],
@@ -269,7 +269,7 @@
   {
     "encounterId": "chaos_elemental",
     "displayName": "Chaos Elemental",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Chaos_Elemental.png",
+    "imageUrl": "Chaos_Elemental.png",
     "npcIds": [
       2054
     ],
@@ -282,7 +282,7 @@
   {
     "encounterId": "revenant_maledictus",
     "displayName": "Revenant Maledictus",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Revenant_maledictus.png",
+    "imageUrl": "Revenant_maledictus.png",
     "npcIds": [
       11246
     ],
@@ -295,7 +295,7 @@
   {
     "encounterId": "calvarion",
     "displayName": "Calvar'ion",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Calvar%27ion.png",
+    "imageUrl": "Calvar%27ion.png",
     "npcIds": [
       11994
     ],
@@ -308,7 +308,7 @@
   {
     "encounterId": "vetion",
     "displayName": "Vet'ion",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Vet%27ion_%28enraged%29.png",
+    "imageUrl": "Vet%27ion_%28enraged%29.png",
     "npcIds": [
       6612
     ],
@@ -321,7 +321,7 @@
   {
     "encounterId": "spindel",
     "displayName": "Spindel",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Spindel.png",
+    "imageUrl": "Spindel.png",
     "npcIds": [
       11998
     ],
@@ -334,7 +334,7 @@
   {
     "encounterId": "venenatis",
     "displayName": "Venenatis",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Venenatis.png",
+    "imageUrl": "Venenatis.png",
     "npcIds": [
       6610
     ],
@@ -347,7 +347,7 @@
   {
     "encounterId": "artio",
     "displayName": "Artio",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Artio.png",
+    "imageUrl": "Artio.png",
     "npcIds": [
       11992
     ],
@@ -360,7 +360,7 @@
   {
     "encounterId": "callisto",
     "displayName": "Callisto",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Callisto.png",
+    "imageUrl": "Callisto.png",
     "npcIds": [
       6609
     ],
@@ -373,7 +373,7 @@
   {
     "encounterId": "brutus",
     "displayName": "Brutus",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Brutus.png",
+    "imageUrl": "Brutus.png",
     "npcIds": [
       15626
     ],
@@ -386,7 +386,7 @@
   {
     "encounterId": "amoxliatl",
     "displayName": "Amoxliatl",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Amoxliatl.png",
+    "imageUrl": "Amoxliatl.png",
     "npcIds": [
       13685
     ],
@@ -399,7 +399,7 @@
   {
     "encounterId": "mad_angel",
     "displayName": "Mad Angel",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Mad_Angel_%28dormant%29.png",
+    "imageUrl": "Mad_Angel_%28dormant%29.png",
     "npcIds": [
       16305
     ],
@@ -412,7 +412,7 @@
   {
     "encounterId": "zulrah",
     "displayName": "Zulrah",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Zulrah_%28serpentine%29.png",
+    "imageUrl": "Zulrah_%28serpentine%29.png",
     "npcIds": [
       2042, 2043, 2044
     ],
@@ -425,7 +425,7 @@
   {
     "encounterId": "vorkath",
     "displayName": "Vorkath",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Vorkath.png",
+    "imageUrl": "Vorkath.png",
     "npcIds": [
       8061
     ],
@@ -438,7 +438,7 @@
   {
     "encounterId": "phantom_muspah",
     "displayName": "Phantom Muspah",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Phantom_Muspah_%28ranged%29.png",
+    "imageUrl": "Phantom_Muspah_%28ranged%29.png",
     "npcIds": [
       12077, 12078, 12080
     ],
@@ -451,7 +451,7 @@
   {
     "encounterId": "the_nightmare",
     "displayName": "The Nightmare",
-    "imageUrl": "https://oldschool.runescape.wiki/images/The_Nightmare.png",
+    "imageUrl": "The_Nightmare.png",
     "killcountNames": [
       "Nightmare"
     ],
@@ -467,7 +467,7 @@
   {
     "encounterId": "phosanis_nightmare",
     "displayName": "Phosani's Nightmare",
-    "imageUrl": "https://oldschool.runescape.wiki/images/The_Nightmare.png",
+    "imageUrl": "The_Nightmare.png",
     "npcIds": [
       9424, 377
     ],
@@ -480,7 +480,7 @@
   {
     "encounterId": "yama",
     "displayName": "Yama",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Yama.png",
+    "imageUrl": "Yama.png",
     "npcIds": [
       14176
     ],
@@ -493,7 +493,7 @@
   {
     "encounterId": "duke_sucellus",
     "displayName": "Duke Sucellus",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Duke_Sucellus.png",
+    "imageUrl": "Duke_Sucellus.png",
     "npcIds": [
       12191, 12192
     ],
@@ -506,7 +506,7 @@
   {
     "encounterId": "the_leviathan",
     "displayName": "The Leviathan",
-    "imageUrl": "https://oldschool.runescape.wiki/images/The_Leviathan.png",
+    "imageUrl": "The_Leviathan.png",
     "killcountNames": [
       "Leviathan"
     ],
@@ -522,7 +522,7 @@
   {
     "encounterId": "the_whisperer",
     "displayName": "The Whisperer",
-    "imageUrl": "https://oldschool.runescape.wiki/images/The_Whisperer.png",
+    "imageUrl": "The_Whisperer.png",
     "killcountNames": [
       "Whisperer"
     ],
@@ -538,7 +538,7 @@
   {
     "encounterId": "vardorvis",
     "displayName": "Vardorvis",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Vardorvis.png",
+    "imageUrl": "Vardorvis.png",
     "npcIds": [
       12223
     ],
@@ -551,7 +551,7 @@
   {
   "encounterId": "skotizo",
   "displayName": "Skotizo",
-  "imageUrl": "https://oldschool.runescape.wiki/images/Skotizo.png",
+  "imageUrl": "Skotizo.png",
   "npcIds": [
     7286
   ],
@@ -564,7 +564,7 @@
   {
     "encounterId": "shellbane_gryphon",
     "displayName": "Shellbane Gryphon",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Shellbane_gryphon.png",
+    "imageUrl": "Shellbane_gryphon.png",
     "npcIds": [
       14860
     ],
@@ -577,7 +577,7 @@
   {
     "encounterId": "grotesque_guardians",
     "displayName": "Grotesque Guardians",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Dusk.png",
+    "imageUrl": "Dusk.png",
     "npcIds": [
       7889
     ],
@@ -590,7 +590,7 @@
   {
     "encounterId": "abyssal_sire",
     "displayName": "Abyssal Sire",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Abyssal_Sire_%28phase_1%29.png",
+    "imageUrl": "Abyssal_Sire_%28phase_1%29.png",
     "npcIds": [
       5908
     ],
@@ -603,7 +603,7 @@
   {
     "encounterId": "kraken",
     "displayName": "Kraken",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Kraken.png",
+    "imageUrl": "Kraken.png",
     "npcIds": [
       0
     ],
@@ -616,7 +616,7 @@
   {
     "encounterId": "thermonuclear_smoke_devil",
     "displayName": "Thermonuclear Smoke Devil",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Thermonuclear_smoke_devil.png",
+    "imageUrl": "Thermonuclear_smoke_devil.png",
     "npcIds": [
       499
     ],
@@ -642,7 +642,7 @@
   {
     "encounterId": "zalcano",
     "displayName": "Zalcano",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Zalcano.png",
+    "imageUrl": "Zalcano.png",
     "npcIds": [
       9049, 9050
     ],
@@ -655,7 +655,7 @@
   {
     "encounterId": "tekton",
     "displayName": "Tekton",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Tekton.png",
+    "imageUrl": "Tekton.png",
     "npcIds": [
       7540, 7541, 7542, 7545, 7543, 7544
     ],
@@ -668,7 +668,7 @@
   {
     "encounterId": "jad",
     "displayName": "TzTok-Jad",
-    "imageUrl": "https://oldschool.runescape.wiki/images/TzTok-Jad.png",
+    "imageUrl": "TzTok-Jad.png",
     "npcIds": [
       3127
     ],
@@ -680,7 +680,7 @@
   {
     "encounterId": "zuk",
     "displayName": "TzKal-Zuk",
-    "imageUrl": "https://oldschool.runescape.wiki/images/TzKal-Zuk.png",
+    "imageUrl": "TzKal-Zuk.png",
     "npcIds": [
       7706
     ],
@@ -692,7 +692,7 @@
   {
     "encounterId": "demonic_brutus",
     "displayName": "Demonic Brutus",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Demonic_Brutus.png",
+    "imageUrl": "Demonic_Brutus.png",
     "npcIds": [
       15628
     ],

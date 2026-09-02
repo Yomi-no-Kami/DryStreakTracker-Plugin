@@ -22,7 +22,9 @@ public class EncounterDefinition {
 
     private String displayName;
 
-    private String imageUrl;
+    private static final String WIKI_IMAGE_BASE_URL = "https://oldschool.runescape.wiki/images/";
+
+    private String imageFileName;
 
     /**
      * Assigned internally by EncounterDefinitionLoader.
@@ -94,13 +96,32 @@ public class EncounterDefinition {
     }
 
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImageFileName() {
+        return imageFileName;
     }
 
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImageFileName(String imageFileName) {
+        this.imageFileName = imageFileName;
+    }
+
+
+    public String getImageUrl() {
+        if (imageFileName == null || imageFileName.trim().isEmpty()) {
+            return null;
+        }
+
+        String fileName = imageFileName.trim();
+
+        /*
+         * Encounter JSON is only allowed to provide a Wiki
+         * image filename, not an arbitrary URL or path.
+         */
+        if (fileName.contains("/") || fileName.contains("\\") || fileName.contains(":")) {
+            return null;
+        }
+
+        return WIKI_IMAGE_BASE_URL + fileName;
     }
 
 

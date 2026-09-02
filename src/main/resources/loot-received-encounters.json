@@ -2,7 +2,7 @@
   {
     "encounterId": "branda_royal_titans",
     "displayName": "Branda the Fire Queen",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Branda_the_Fire_Queen.png",
+    "imageUrl": "Branda_the_Fire_Queen.png",
     "lootSourceNames": [
       "Branda the Fire Queen"
     ],
@@ -19,7 +19,7 @@
   {
     "encounterId": "eldric_royal_titans",
     "displayName": "Eldric the Ice King",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Eldric_the_Ice_King.png",
+    "imageUrl": "Eldric_the_Ice_King.png",
     "lootSourceNames": [
       "Eldric the Ice King"
     ],
@@ -36,7 +36,7 @@
   {
     "encounterId": "maggot_king",
     "displayName": "Maggot King",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Maggot_King.png",
+    "imageUrl": "Maggot_King.png",
     "lootSourceNames": [
       "Maggot King"
     ],
@@ -50,7 +50,7 @@
   {
     "encounterId": "araxxor",
     "displayName": "Araxxor",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Araxxor.png",
+    "imageUrl": "Araxxor.png",
     "lootSourceNames": [
       "Araxxor"
     ],
@@ -64,7 +64,7 @@
   {
     "encounterId": "hespori",
     "displayName": "Hespori",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Hespori.png",
+    "imageUrl": "Hespori.png",
     "lootSourceNames": [
       "Hespori"
     ],
@@ -78,7 +78,7 @@
   {
     "encounterId": "barrows",
     "displayName": "Barrows",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Dharok_the_Wretched.png",
+    "imageUrl": "Dharok_the_Wretched.png",
     "lootSourceNames": [
       "Barrows"
     ],
@@ -96,7 +96,7 @@
   {
     "encounterId": "moons_of_peril",
     "displayName": "Moons of Peril",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Blood_Moon.png",
+    "imageUrl": "Blood_Moon.png",
     "lootSourceNames": [
       "Lunar Chest"
     ],
@@ -114,7 +114,7 @@
   {
     "encounterId": "bryophyta",
     "displayName": "Bryophyta",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Bryophyta.png",
+    "imageUrl": "Bryophyta.png",
     "lootSourceNames": [
       "Bryophyta (Chest)"
     ],
@@ -127,7 +127,7 @@
   {
     "encounterId": "obor",
     "displayName": "Obor",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Obor.png",
+    "imageUrl": "Obor.png",
     "lootSourceNames": [
       "Obor (Chest)"
     ],
@@ -140,7 +140,7 @@
   {
     "encounterId": "corrupted_gauntlet",
     "displayName": "Corrupted Gauntlet",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Corrupted_Hunllef.png",
+    "imageUrl": "Corrupted_Hunllef.png",
     "lootSourceNames": [
       "Corrupted Hunllef"
     ],
@@ -154,7 +154,7 @@
   {
     "encounterId": "gauntlet",
     "displayName": "Gauntlet",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Crystalline_Hunllef.png",
+    "imageUrl": "Crystalline_Hunllef.png",
     "lootSourceNames": [
       "Crystalline Hunllef"
     ],
@@ -168,7 +168,7 @@
   {
     "encounterId": "doom_of_mokhaiotl",
     "displayName": "Doom of Mokhaiotl",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Doom_of_Mokhaiotl.png",
+    "imageUrl": "Doom_of_Mokhaiotl.png",
     "lootSourceNames": [
       "Doom of Mokhaiotl"
     ],
@@ -182,7 +182,7 @@
   {
     "encounterId": "fortis_colosseum",
     "displayName": "Fortis Colosseum",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Sol_Heredit_%28sitting%29.png",
+    "imageUrl": "Sol_Heredit_%28sitting%29.png",
     "lootSourceNames": [
       "Fortis Colosseum"
     ],
@@ -199,7 +199,7 @@
   {
   "encounterId": "guardians_of_the_rift",
   "displayName": "Guardians of the Rift",
-  "imageUrl": "https://oldschool.runescape.wiki/images/Rewards_Guardian.png",
+  "imageUrl": "Rewards_Guardian.png",
   "lootSourceNames": [
     "Guardians of the Rift"
   ],
@@ -213,7 +213,7 @@
   {
     "encounterId": "tempoross",
     "displayName": "Tempoross",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Tempoross.png",
+    "imageUrl": "Tempoross.png",
     "lootSourceNames": [
       "Reward pool (Tempoross)"
     ],
@@ -227,7 +227,7 @@
   {
     "encounterId": "wintertodt",
     "displayName": "Wintertodt",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Pyromancer.png",
+    "imageUrl": "Pyromancer.png",
     "lootSourceNames": [
       "Reward cart (Wintertodt)"
     ],
@@ -241,7 +241,7 @@
   {
     "encounterId": "tombs_of_amascut",
     "displayName": "Tombs of Amascut",
-    "imageUrl": "https://oldschool.runescape.wiki/images/Tumeken%27s_Warden_%28level-544%29.png",
+    "imageUrl": "Tumeken%27s_Warden_%28level-544%29.png",
     "lootSourceNames": [
       "Tombs of Amascut"
     ],

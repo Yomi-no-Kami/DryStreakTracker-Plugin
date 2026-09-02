@@ -76,59 +76,27 @@ public class DryStreakSidebarPanel extends PluginPanel {
 
         title.setForeground(Color.WHITE);
 
-        title.setFont(title.getFont().deriveFont(Font.BOLD, 16f));
-
+        title.setFont(title.getFont().deriveFont(Font.BOLD, 13f));
 
         title.setHorizontalAlignment(SwingConstants.CENTER);
-
-        title.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JButton clearAllButton = new JButton("Clear All Tracker Data");
 
         /**
          * Discord Button
          */
-        BufferedImage discordImage = ImageUtil.loadImageResource(
-                getClass(),
-                "/discord-icon.png"
-        );
+        BufferedImage discordImage = ImageUtil.loadImageResource(getClass(), "/discord-icon.png");
 
-        Image discordScaledImage = discordImage.getScaledInstance(
-                14,
-                14,
-                Image.SCALE_SMOOTH
-        );
+        Image discordScaledImage = discordImage.getScaledInstance(14, 14, Image.SCALE_SMOOTH);
 
-        JButton discordButton = new JButton(
-                "Our Discord",
-                new ImageIcon(discordScaledImage)
-        );
+        JButton discordButton = new JButton(new ImageIcon(discordScaledImage));
 
         discordButton.setFocusPainted(false);
         discordButton.setBorderPainted(false);
-        discordButton.setOpaque(true);
-
-        discordButton.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
-        discordButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
-
+        discordButton.setContentAreaFilled(false);
         discordButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-        discordButton.setBorder(BorderFactory.createEmptyBorder(4, 10, 4, 10));
-
-        discordButton.setIconTextGap(6);
-
-        discordButton.addChangeListener(event ->
-        {
-            ButtonModel model = discordButton.getModel();
-
-            if (model.isPressed()) {
-                discordButton.setBackground(ColorScheme.DARKER_GRAY_COLOR);
-            } else if (model.isRollover()) {
-                discordButton.setBackground(ColorScheme.DARK_GRAY_HOVER_COLOR);
-            } else {
-                discordButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
-            }
-        });
+        discordButton.setToolTipText("Our Discord");
+        discordButton.setPreferredSize(new Dimension(22, 22));
 
         discordButton.addActionListener(event ->
                 LinkBrowser.browse("https://discord.gg/xyWgaHDmnh")
@@ -143,7 +111,7 @@ public class DryStreakSidebarPanel extends PluginPanel {
 
         clearAllButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        clearAllButton.setBorder(BorderFactory.createEmptyBorder(6, 14, 6, 14));
+        clearAllButton.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
 
         clearAllButton.setToolTipText("Clear all Dry Streak Tracker data for this account");
 
@@ -202,32 +170,42 @@ public class DryStreakSidebarPanel extends PluginPanel {
             refresh();
         });
 
-        JPanel headerPanel = new JPanel();
+        JPanel titlePanel = new JPanel(null) {
+            @Override
+            public void doLayout() {
+                int width = getWidth();
+                int height = getHeight();
 
-        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
+                title.setBounds(0, 0, width, height);
+                discordButton.setBounds(2, 0, 22, height);
+            }
+        };
+
+        titlePanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+
+        titlePanel.setPreferredSize(new Dimension(0, 24));
+
+        titlePanel.add(title);
+        titlePanel.add(discordButton);
+
+        JPanel clearButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 5));
+
+        clearButtonPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+
+        clearButtonPanel.setBorder(BorderFactory.createMatteBorder(
+                1, 0, 0, 0, ColorScheme.MEDIUM_GRAY_COLOR));
+
+        clearButtonPanel.add(clearAllButton);
+
+        JPanel headerPanel = new JPanel(new BorderLayout());
 
         headerPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
 
-        headerPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, ColorScheme.MEDIUM_GRAY_COLOR),
-                BorderFactory.createEmptyBorder(8, 10, 10, 10)));
+        headerPanel.setBorder(BorderFactory.createMatteBorder(
+                0, 0, 1, 0, ColorScheme.MEDIUM_GRAY_COLOR));
 
-        headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        discordButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        clearAllButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        headerPanel.add(title);
-
-        headerPanel.add(Box.createVerticalStrut(6));
-
-        headerPanel.add(discordButton);
-
-        headerPanel.add(Box.createVerticalStrut(4));
-
-        headerPanel.add(clearAllButton);
+        headerPanel.add(titlePanel, BorderLayout.NORTH);
+        headerPanel.add(clearButtonPanel, BorderLayout.CENTER);
 
         encounterContainer = new JPanel();
 

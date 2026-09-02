@@ -148,6 +148,17 @@ public class EncounterDefinitionLoader {
             throw new IllegalStateException("Encounter " + definition.getEncounterId() + " has no displayName");
         }
 
+        String imageFileName = definition.getImageFileName();
+
+        if (imageFileName != null && !imageFileName.trim().isEmpty()) {
+            String fileName = imageFileName.trim();
+
+            if (fileName.contains("/") || fileName.contains("\\") || fileName.contains(":")) {
+                throw new IllegalStateException(
+                        "[DRY STREAK TRACKER]: Encounter " + definition.getEncounterId() + " has an invalid imageFileName: " + fileName);
+            }
+        }
+
         if (definition.getLootType() == null) {
             throw new IllegalStateException("Encounter " + definition.getEncounterId() + " has no internally assigned loot type");
         }
