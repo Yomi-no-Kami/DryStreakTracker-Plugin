@@ -392,6 +392,11 @@ public class DryStreakSidebarPanel extends PluginPanel {
             return;
         }
 
+        if (loggedIn && trackerManager.isActive()) {
+            refreshItemDisplayData();
+            return;
+        }
+
         refresh();
     }
 

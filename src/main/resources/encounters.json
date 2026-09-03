@@ -2,7 +2,7 @@
   {
     "encounterId": "cerberus",
     "displayName": "Cerberus",
-    "imageUrl": "Cerberus.png",
+    "imageFileName": "Cerberus.png",
     "npcIds": [
       5862
     ],
@@ -19,7 +19,7 @@
   {
     "encounterId": "scurrius",
     "displayName": "Scurrius",
-    "imageUrl": "Scurrius.png",
+    "imageFileName": "Scurrius.png",
     "npcIds": [
       7221, 7222
     ],
@@ -32,7 +32,7 @@
   {
     "encounterId": "giant_mole",
     "displayName": "Giant Mole",
-    "imageUrl": "Giant_Mole.png",
+    "imageFileName": "Giant_Mole.png",
     "npcIds": [
       5779
     ],
@@ -45,7 +45,7 @@
   {
     "encounterId": "deranged_archaeologist",
     "displayName": "Deranged Archaeologist",
-    "imageUrl": "Deranged_archaeologist.png",
+    "imageFileName": "Deranged_archaeologist.png",
     "npcIds": [
       7806
     ],
@@ -58,7 +58,7 @@
   {
     "encounterId": "dagannoth_supreme",
     "displayName": "Dagannoth Supreme",
-    "imageUrl": "Dagannoth_Supreme.png",
+    "imageFileName": "Dagannoth_Supreme.png",
     "npcIds": [
       2265
     ],
@@ -71,7 +71,7 @@
   {
     "encounterId": "dagannoth_rex",
     "displayName": "Dagannoth Rex",
-    "imageUrl": "Dagannoth_Rex.png",
+    "imageFileName": "Dagannoth_Rex.png",
     "npcIds": [
       2267
     ],
@@ -84,7 +84,7 @@
   {
     "encounterId": "dagannoth_prime",
     "displayName": "Dagannoth Prime",
-    "imageUrl": "Dagannoth_Prime.png",
+    "imageFileName": "Dagannoth_Prime.png",
     "npcIds": [
       2266
     ],
@@ -97,7 +97,7 @@
   {
     "encounterId": "sarachnis",
     "displayName": "Sarachnis",
-    "imageUrl": "Sarachnis.png",
+    "imageFileName": "Sarachnis.png",
     "npcIds": [
       8713
     ],
@@ -110,7 +110,7 @@
   {
     "encounterId": "kalphite_queen",
     "displayName": "Kalphite Queen",
-    "imageUrl": "Kalphite_Queen.png",
+    "imageFileName": "Kalphite_Queen.png",
     "npcIds": [
       965
     ],
@@ -123,7 +123,7 @@
   {
     "encounterId": "kreearra",
     "displayName": "Kree'aara",
-    "imageUrl": "Kree%27arra.png",
+    "imageFileName": "Kree%27arra.png",
     "npcIds": [
       3162
     ],
@@ -136,7 +136,7 @@
   {
     "encounterId": "commander_zilyana",
     "displayName": "Commander Zilyana",
-    "imageUrl": "Commander_Zilyana.png",
+    "imageFileName": "Commander_Zilyana.png",
     "npcIds": [
       2205
     ],
@@ -149,7 +149,7 @@
   {
     "encounterId": "general_graardor",
     "displayName": "General Graardor",
-    "imageUrl": "General_Graardor.png",
+    "imageFileName": "General_Graardor.png",
     "npcIds": [
       2215
     ],
@@ -162,7 +162,7 @@
   {
     "encounterId": "kril_tsutsaroth",
     "displayName": "K'ril Tsutsaroth",
-    "imageUrl": "K%27ril_Tsutsaroth.png",
+    "imageFileName": "K%27ril_Tsutsaroth.png",
     "npcIds": [
       3129
     ],
@@ -175,7 +175,7 @@
   {
     "encounterId": "the_hueycoatl",
     "displayName": "The Hueycoatl",
-    "imageUrl": "The_Hueycoatl.png",
+    "imageFileName": "The_Hueycoatl.png",
     "killcountNames": [
       "Hueycoatl"
     ],
@@ -191,7 +191,7 @@
   {
     "encounterId": "corporeal_beast",
     "displayName": "Corporeal Beast",
-    "imageUrl": "Corporeal_Beast.png",
+    "imageFileName": "Corporeal_Beast.png",
     "npcIds": [
       319
     ],
@@ -204,7 +204,7 @@
   {
     "encounterId": "nex",
     "displayName": "Nex",
-    "imageUrl": "Nex.png",
+    "imageFileName": "Nex.png",
     "npcIds": [
       11278, 11282
     ],
@@ -217,7 +217,7 @@
   {
     "encounterId": "chaos_fanatic",
     "displayName": "Chaos Fanatic",
-    "imageUrl": "Chaos_Fanatic.png",
+    "imageFileName": "Chaos_Fanatic.png",
     "npcIds": [
       6619
     ],
@@ -230,7 +230,7 @@
   {
     "encounterId": "crazy_archaeologist",
     "displayName": "Crazy Archaeologist",
-    "imageUrl": "Crazy_archaeologist.png",
+    "imageFileName": "Crazy_archaeologist.png",
     "npcIds": [
       6618
     ],
@@ -243,7 +243,7 @@
   {
     "encounterId": "scorpia",
     "displayName": "Scorpia",
-    "imageUrl": "Scorpia.png",
+    "imageFileName": "Scorpia.png",
     "npcIds": [
       6615
     ],
@@ -256,7 +256,7 @@
   {
     "encounterId": "king_black_dragon",
     "displayName": "King Black Dragon",
-    "imageUrl": "King_Black_Dragon.png",
+    "imageFileName": "King_Black_Dragon.png",
     "npcIds": [
       239
     ],
@@ -269,7 +269,7 @@
   {
     "encounterId": "chaos_elemental",
     "displayName": "Chaos Elemental",
-    "imageUrl": "Chaos_Elemental.png",
+    "imageFileName": "Chaos_Elemental.png",
     "npcIds": [
       2054
     ],
@@ -282,7 +282,7 @@
   {
     "encounterId": "revenant_maledictus",
     "displayName": "Revenant Maledictus",
-    "imageUrl": "Revenant_maledictus.png",
+    "imageFileName": "Revenant_maledictus.png",
     "npcIds": [
       11246
     ],
@@ -295,7 +295,7 @@
   {
     "encounterId": "calvarion",
     "displayName": "Calvar'ion",
-    "imageUrl": "Calvar%27ion.png",
+    "imageFileName": "Calvar%27ion.png",
     "npcIds": [
       11994
     ],
@@ -308,7 +308,7 @@
   {
     "encounterId": "vetion",
     "displayName": "Vet'ion",
-    "imageUrl": "Vet%27ion_%28enraged%29.png",
+    "imageFileName": "Vet%27ion_%28enraged%29.png",
     "npcIds": [
       6612
     ],
@@ -321,7 +321,7 @@
   {
     "encounterId": "spindel",
     "displayName": "Spindel",
-    "imageUrl": "Spindel.png",
+    "imageFileName": "Spindel.png",
     "npcIds": [
       11998
     ],
@@ -334,7 +334,7 @@
   {
     "encounterId": "venenatis",
     "displayName": "Venenatis",
-    "imageUrl": "Venenatis.png",
+    "imageFileName": "Venenatis.png",
     "npcIds": [
       6610
     ],
@@ -347,7 +347,7 @@
   {
     "encounterId": "artio",
     "displayName": "Artio",
-    "imageUrl": "Artio.png",
+    "imageFileName": "Artio.png",
     "npcIds": [
       11992
     ],
@@ -360,7 +360,7 @@
   {
     "encounterId": "callisto",
     "displayName": "Callisto",
-    "imageUrl": "Callisto.png",
+    "imageFileName": "Callisto.png",
     "npcIds": [
       6609
     ],
@@ -373,7 +373,7 @@
   {
     "encounterId": "brutus",
     "displayName": "Brutus",
-    "imageUrl": "Brutus.png",
+    "imageFileName": "Brutus.png",
     "npcIds": [
       15626
     ],
@@ -386,7 +386,7 @@
   {
     "encounterId": "amoxliatl",
     "displayName": "Amoxliatl",
-    "imageUrl": "Amoxliatl.png",
+    "imageFileName": "Amoxliatl.png",
     "npcIds": [
       13685
     ],
@@ -399,7 +399,7 @@
   {
     "encounterId": "mad_angel",
     "displayName": "Mad Angel",
-    "imageUrl": "Mad_Angel_%28dormant%29.png",
+    "imageFileName": "Mad_Angel_%28dormant%29.png",
     "npcIds": [
       16305
     ],
@@ -412,7 +412,7 @@
   {
     "encounterId": "zulrah",
     "displayName": "Zulrah",
-    "imageUrl": "Zulrah_%28serpentine%29.png",
+    "imageFileName": "Zulrah_%28serpentine%29.png",
     "npcIds": [
       2042, 2043, 2044
     ],
@@ -425,7 +425,7 @@
   {
     "encounterId": "vorkath",
     "displayName": "Vorkath",
-    "imageUrl": "Vorkath.png",
+    "imageFileName": "Vorkath.png",
     "npcIds": [
       8061
     ],
@@ -438,7 +438,7 @@
   {
     "encounterId": "phantom_muspah",
     "displayName": "Phantom Muspah",
-    "imageUrl": "Phantom_Muspah_%28ranged%29.png",
+    "imageFileName": "Phantom_Muspah_%28ranged%29.png",
     "npcIds": [
       12077, 12078, 12080
     ],
@@ -451,7 +451,7 @@
   {
     "encounterId": "the_nightmare",
     "displayName": "The Nightmare",
-    "imageUrl": "The_Nightmare.png",
+    "imageFileName": "The_Nightmare.png",
     "killcountNames": [
       "Nightmare"
     ],
@@ -467,7 +467,7 @@
   {
     "encounterId": "phosanis_nightmare",
     "displayName": "Phosani's Nightmare",
-    "imageUrl": "The_Nightmare.png",
+    "imageFileName": "The_Nightmare.png",
     "npcIds": [
       9424, 377
     ],
@@ -480,7 +480,7 @@
   {
     "encounterId": "yama",
     "displayName": "Yama",
-    "imageUrl": "Yama.png",
+    "imageFileName": "Yama.png",
     "npcIds": [
       14176
     ],
@@ -493,7 +493,7 @@
   {
     "encounterId": "duke_sucellus",
     "displayName": "Duke Sucellus",
-    "imageUrl": "Duke_Sucellus.png",
+    "imageFileName": "Duke_Sucellus.png",
     "npcIds": [
       12191, 12192
     ],
@@ -506,7 +506,7 @@
   {
     "encounterId": "the_leviathan",
     "displayName": "The Leviathan",
-    "imageUrl": "The_Leviathan.png",
+    "imageFileName": "The_Leviathan.png",
     "killcountNames": [
       "Leviathan"
     ],
@@ -522,7 +522,7 @@
   {
     "encounterId": "the_whisperer",
     "displayName": "The Whisperer",
-    "imageUrl": "The_Whisperer.png",
+    "imageFileName": "The_Whisperer.png",
     "killcountNames": [
       "Whisperer"
     ],
@@ -538,7 +538,7 @@
   {
     "encounterId": "vardorvis",
     "displayName": "Vardorvis",
-    "imageUrl": "Vardorvis.png",
+    "imageFileName": "Vardorvis.png",
     "npcIds": [
       12223
     ],
@@ -551,7 +551,7 @@
   {
   "encounterId": "skotizo",
   "displayName": "Skotizo",
-  "imageUrl": "Skotizo.png",
+  "imageFileName": "Skotizo.png",
   "npcIds": [
     7286
   ],
@@ -564,7 +564,7 @@
   {
     "encounterId": "shellbane_gryphon",
     "displayName": "Shellbane Gryphon",
-    "imageUrl": "Shellbane_gryphon.png",
+    "imageFileName": "Shellbane_gryphon.png",
     "npcIds": [
       14860
     ],
@@ -577,7 +577,7 @@
   {
     "encounterId": "grotesque_guardians",
     "displayName": "Grotesque Guardians",
-    "imageUrl": "Dusk.png",
+    "imageFileName": "Dusk.png",
     "npcIds": [
       7889
     ],
@@ -590,7 +590,7 @@
   {
     "encounterId": "abyssal_sire",
     "displayName": "Abyssal Sire",
-    "imageUrl": "Abyssal_Sire_%28phase_1%29.png",
+    "imageFileName": "Abyssal_Sire_%28phase_1%29.png",
     "npcIds": [
       5908
     ],
@@ -603,7 +603,7 @@
   {
     "encounterId": "kraken",
     "displayName": "Kraken",
-    "imageUrl": "Kraken.png",
+    "imageFileName": "Kraken.png",
     "npcIds": [
       0
     ],
@@ -616,7 +616,7 @@
   {
     "encounterId": "thermonuclear_smoke_devil",
     "displayName": "Thermonuclear Smoke Devil",
-    "imageUrl": "Thermonuclear_smoke_devil.png",
+    "imageFileName": "Thermonuclear_smoke_devil.png",
     "npcIds": [
       499
     ],
@@ -629,7 +629,7 @@
   {
     "encounterId": "alchemical_hydra",
     "displayName": "Alchemical Hydra",
-    "imageUrl": "",
+    "imageFileName": "Alchemical_Hydra_%28serpentine%29.png",
     "npcIds": [
       8621, 8622
     ],
@@ -642,7 +642,7 @@
   {
     "encounterId": "zalcano",
     "displayName": "Zalcano",
-    "imageUrl": "Zalcano.png",
+    "imageFileName": "Zalcano.png",
     "npcIds": [
       9049, 9050
     ],
@@ -655,7 +655,7 @@
   {
     "encounterId": "tekton",
     "displayName": "Tekton",
-    "imageUrl": "Tekton.png",
+    "imageFileName": "Tekton.png",
     "npcIds": [
       7540, 7541, 7542, 7545, 7543, 7544
     ],
@@ -668,7 +668,7 @@
   {
     "encounterId": "jad",
     "displayName": "TzTok-Jad",
-    "imageUrl": "TzTok-Jad.png",
+    "imageFileName": "TzTok-Jad.png",
     "npcIds": [
       3127
     ],
@@ -680,7 +680,7 @@
   {
     "encounterId": "zuk",
     "displayName": "TzKal-Zuk",
-    "imageUrl": "TzKal-Zuk.png",
+    "imageFileName": "TzKal-Zuk.png",
     "npcIds": [
       7706
     ],
@@ -692,7 +692,7 @@
   {
     "encounterId": "demonic_brutus",
     "displayName": "Demonic Brutus",
-    "imageUrl": "Demonic_Brutus.png",
+    "imageFileName": "Demonic_Brutus.png",
     "npcIds": [
       15628
     ],
@@ -700,5 +700,89 @@
     "petDropIds": [
       33124
     ]
+  },
+  {
+    "encounterId": "sulphur_nagua",
+    "displayName": "Sulphur Nagua",
+    "imageFileName": "Sulphur_Nagua.png",
+    "npcIds": [
+      13033
+    ],
+    "trackedDropIds": [
+      29084
+    ],
+    "petDropIds": []
+  },
+  {
+    "encounterId": "frost_nagua",
+    "displayName": "Frost Nagua",
+    "imageFileName": "Frost_Nagua.png",
+    "npcIds": [
+      13788
+    ],
+    "trackedDropIds": [
+      29889, 29892
+    ],
+    "petDropIds": []
+  },
+  {
+    "encounterId": "earthen_nagua",
+    "displayName": "Earthen Nagua",
+    "imageFileName": "Earthen_Nagua.png",
+    "npcIds": [
+      14420
+    ],
+    "trackedDropIds": [
+      30957
+    ],
+    "petDropIds": []
+  },
+  {
+    "encounterId": "warped_creatures",
+    "displayName": "Warped Creatures",
+    "imageFileName": "Warped_Terrorbird_%28lv_96%29.png",
+    "npcIds": [
+      12490, 12491, 12492, 12943, 12494, 12495, 12496, 12497, 12498
+    ],
+    "trackedDropIds": [
+      28583
+    ],
+    "petDropIds": []
+  },
+  {
+    "encounterId": "armoured_zombie",
+    "displayName": "Armoured Zombie",
+    "imageFileName": "Armoured_zombie_%28melee%2C_5%29.png",
+    "npcIds": [
+      14113, 14114, 14115, 14116, 14117, 14118, 14119, 14120, 14121, 14122
+    ],
+    "trackedDropIds": [
+      28813, 30324, 6807
+    ],
+    "petDropIds": []
+  },
+  {
+    "encounterId": "cyclops_wg",
+    "displayName": "Cyclops",
+    "imageFileName": "Cyclops_%28level_56%2C_3%29.png",
+    "npcIds": [
+      2137, 2138, 2139, 2140, 2141, 2142, 2463, 2464, 2465, 2466, 2467, 2468
+    ],
+    "trackedDropIds": [
+      8844, 8845, 8846, 8847, 8848, 8849, 8850, 12954
+    ],
+    "petDropIds": []
+  },
+  {
+    "encounterId": "cave_horror",
+    "displayName": "Cave Horror",
+    "imageFileName": "Cave_horror_%281%29.png",
+    "npcIds": [
+      1047, 1048, 1049, 1050, 1051
+    ],
+    "trackedDropIds": [
+      8901
+    ],
+    "petDropIds": []
   }
 ]

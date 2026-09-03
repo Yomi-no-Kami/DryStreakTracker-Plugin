@@ -2,7 +2,7 @@
   {
     "encounterId": "branda_royal_titans",
     "displayName": "Branda the Fire Queen",
-    "imageUrl": "Branda_the_Fire_Queen.png",
+    "imageFileName": "Branda_the_Fire_Queen.png",
     "lootSourceNames": [
       "Branda the Fire Queen"
     ],
@@ -19,7 +19,7 @@
   {
     "encounterId": "eldric_royal_titans",
     "displayName": "Eldric the Ice King",
-    "imageUrl": "Eldric_the_Ice_King.png",
+    "imageFileName": "Eldric_the_Ice_King.png",
     "lootSourceNames": [
       "Eldric the Ice King"
     ],
@@ -36,7 +36,7 @@
   {
     "encounterId": "maggot_king",
     "displayName": "Maggot King",
-    "imageUrl": "Maggot_King.png",
+    "imageFileName": "Maggot_King.png",
     "lootSourceNames": [
       "Maggot King"
     ],
@@ -50,7 +50,7 @@
   {
     "encounterId": "araxxor",
     "displayName": "Araxxor",
-    "imageUrl": "Araxxor.png",
+    "imageFileName": "Araxxor.png",
     "lootSourceNames": [
       "Araxxor"
     ],
@@ -64,7 +64,7 @@
   {
     "encounterId": "hespori",
     "displayName": "Hespori",
-    "imageUrl": "Hespori.png",
+    "imageFileName": "Hespori.png",
     "lootSourceNames": [
       "Hespori"
     ],
@@ -78,7 +78,7 @@
   {
     "encounterId": "barrows",
     "displayName": "Barrows",
-    "imageUrl": "Dharok_the_Wretched.png",
+    "imageFileName": "Dharok_the_Wretched.png",
     "lootSourceNames": [
       "Barrows"
     ],
@@ -96,7 +96,7 @@
   {
     "encounterId": "moons_of_peril",
     "displayName": "Moons of Peril",
-    "imageUrl": "Blood_Moon.png",
+    "imageFileName": "Blood_Moon.png",
     "lootSourceNames": [
       "Lunar Chest"
     ],
@@ -114,7 +114,7 @@
   {
     "encounterId": "bryophyta",
     "displayName": "Bryophyta",
-    "imageUrl": "Bryophyta.png",
+    "imageFileName": "Bryophyta.png",
     "lootSourceNames": [
       "Bryophyta (Chest)"
     ],
@@ -127,7 +127,7 @@
   {
     "encounterId": "obor",
     "displayName": "Obor",
-    "imageUrl": "Obor.png",
+    "imageFileName": "Obor.png",
     "lootSourceNames": [
       "Obor (Chest)"
     ],
@@ -140,7 +140,7 @@
   {
     "encounterId": "corrupted_gauntlet",
     "displayName": "Corrupted Gauntlet",
-    "imageUrl": "Corrupted_Hunllef.png",
+    "imageFileName": "Corrupted_Hunllef.png",
     "lootSourceNames": [
       "Corrupted Hunllef"
     ],
@@ -154,7 +154,7 @@
   {
     "encounterId": "gauntlet",
     "displayName": "Gauntlet",
-    "imageUrl": "Crystalline_Hunllef.png",
+    "imageFileName": "Crystalline_Hunllef.png",
     "lootSourceNames": [
       "Crystalline Hunllef"
     ],
@@ -168,7 +168,7 @@
   {
     "encounterId": "doom_of_mokhaiotl",
     "displayName": "Doom of Mokhaiotl",
-    "imageUrl": "Doom_of_Mokhaiotl.png",
+    "imageFileName": "Doom_of_Mokhaiotl.png",
     "lootSourceNames": [
       "Doom of Mokhaiotl"
     ],
@@ -182,7 +182,7 @@
   {
     "encounterId": "fortis_colosseum",
     "displayName": "Fortis Colosseum",
-    "imageUrl": "Sol_Heredit_%28sitting%29.png",
+    "imageFileName": "Sol_Heredit_%28sitting%29.png",
     "lootSourceNames": [
       "Fortis Colosseum"
     ],
@@ -199,7 +199,7 @@
   {
   "encounterId": "guardians_of_the_rift",
   "displayName": "Guardians of the Rift",
-  "imageUrl": "Rewards_Guardian.png",
+  "imageFileName": "Rewards_Guardian.png",
   "lootSourceNames": [
     "Guardians of the Rift"
   ],
@@ -213,7 +213,7 @@
   {
     "encounterId": "tempoross",
     "displayName": "Tempoross",
-    "imageUrl": "Tempoross.png",
+    "imageFileName": "Tempoross.png",
     "lootSourceNames": [
       "Reward pool (Tempoross)"
     ],
@@ -227,7 +227,7 @@
   {
     "encounterId": "wintertodt",
     "displayName": "Wintertodt",
-    "imageUrl": "Pyromancer.png",
+    "imageFileName": "Pyromancer.png",
     "lootSourceNames": [
       "Reward cart (Wintertodt)"
     ],
@@ -241,7 +241,7 @@
   {
     "encounterId": "tombs_of_amascut",
     "displayName": "Tombs of Amascut",
-    "imageUrl": "Tumeken%27s_Warden_%28level-544%29.png",
+    "imageFileName": "Tumeken%27s_Warden_%28level-544%29.png",
     "lootSourceNames": [
       "Tombs of Amascut"
     ],

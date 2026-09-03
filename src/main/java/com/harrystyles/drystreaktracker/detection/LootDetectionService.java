@@ -452,13 +452,22 @@ public class LootDetectionService {
 
         trackerManager.recordRecentDrop(encounter.getEncounterId(), itemId, quantity, totalGeValue);
 
+        Map<Integer, ItemDisplayData> displayData = new HashMap<>();
+
+        String itemName = getItemName(itemId);
+
+        Image itemImage = itemManager.getImage(itemId);
+
+        displayData.put(itemId, new ItemDisplayData(itemName, itemImage));
+
+        sidebarPanel.updateItemDisplayData(displayData);
+
         if (config.discordAutomaticUploads()) {
             RecentDrop recentDrop = trackerManager.getRecentDrops().isEmpty()
                     ? null
                     : trackerManager.getRecentDrops().get(0);
 
             if (recentDrop != null && discordWebhookService.canAutomaticallyUpload(recentDrop, pet)) {
-                String itemName = getItemName(itemId);
 
                 if (config.discordIncludeScreenshot()) {
                     dropScreenshotService.captureScreenshot(screenshot -> discordWebhookService.uploadDrop(recentDrop, itemName, screenshot));

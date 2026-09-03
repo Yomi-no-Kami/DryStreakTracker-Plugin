@@ -127,7 +127,7 @@ public interface DryStreakTrackerConfig extends Config {
     )
 
     default boolean discordIncludeScreenshot() {
-        return true;
+        return false;
     }
 
     @ConfigItem(
