@@ -213,7 +213,7 @@ public class DryStreakSidebarPanel extends PluginPanel {
 
         encounterContainer.setBackground(ColorScheme.DARK_GRAY_COLOR);
 
-        encounterContainer.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        encounterContainer.setBorder(BorderFactory.createEmptyBorder(5, 2, 5, 2));
 
         encounterContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
         encounterContainer.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
@@ -634,7 +634,12 @@ public class DryStreakSidebarPanel extends PluginPanel {
             boolean expanded = expandedStates.getOrDefault(encounter.getEncounterId(), false);
 
             EncounterPanel encounterPanel =
-                    new EncounterPanel(encounter, stats, displayData, itemManager, expanded, isExpanded -> expandedStates.put(encounter.getEncounterId(), isExpanded), () ->
+                    new EncounterPanel(encounter, stats, displayData, itemManager, expanded, isExpanded -> expandedStates.put(encounter.getEncounterId(), isExpanded), (totalKillcount, dryKillcount, longestDryKillcount) ->
+                    {
+                        if (trackerManager.setEncounterKillcounts(encounter.getEncounterId(), totalKillcount, dryKillcount, longestDryKillcount)) {
+                            refresh();
+                        }
+                    }, () ->
                     {
                         trackerManager.clearEncounterData(encounter.getEncounterId());
 

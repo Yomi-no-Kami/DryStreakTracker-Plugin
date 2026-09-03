@@ -14,9 +14,7 @@ import com.harrystyles.drystreaktracker.ui.ItemDisplayData;
 import com.harrystyles.drystreaktracker.ui.notification.DryStreakNotificationManager;
 
 import java.awt.Image;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -35,6 +33,7 @@ import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.ItemStack;
 import net.runelite.client.plugins.loottracker.LootReceived;
 import net.runelite.client.util.Text;
+import net.runelite.http.api.loottracker.LootRecordType;
 
 
 @Slf4j
@@ -66,6 +65,16 @@ public class LootDetectionService {
     private int pendingPetDryTick = -1;
     private int pendingPetDryStreak;
     private boolean pendingPetDryRecord;
+
+    /**
+     * NpcLootReceived events already processed during the current game tick.
+     *
+     * RuneLite normally follows NpcLootReceived with a LootReceived event for
+     * the same NPC loot. These fingerprints allow LootReceived to act as a
+     * fallback without counting normal NPC kills twice.
+     */
+    private final Map<String, Integer> processedNpcLootThisTick = new HashMap<>();
+    private int processedNpcLootTick = -1;
 
 
     @Inject
@@ -156,6 +165,8 @@ public class LootDetectionService {
 
         String eventKey = createNpcKillEventKey(npc, items);
 
+        rememberNpcLootEvent(encounter, items);
+
         processEncounterLoot(encounter, items, eventKey, petMessageMatchedBeforeLoot);
     }
 
@@ -195,37 +206,75 @@ public class LootDetectionService {
 
         log.debug("LootReceived: source={} type={} amount={} items={}", sourceName, event.getType(), event.getAmount(), event.getItems().size());
 
+        /*
+         * Normal loot-received encounters keep using the existing
+         * source-name based path.
+         */
         EncounterDefinition encounter = encounterRegistry.getByLootSourceName(sourceName);
+
+        if (encounter != null && encounter.getLootType() == EncounterLootType.LOOT_RECEIVED) {
+            boolean petMessageMatchedBeforeLoot = false;
+
+            if (isPetTrackingEnabledForEncounter(encounter)) {
+                petMessageMatchedBeforeLoot = petAcquisitionTracker.matchEncounterLootToPendingPetMessage(encounter, client.getTickCount());
+            }
+
+            String eventKey = createGenericLootEventKey(event);
+
+            processEncounterLoot(encounter, event.getItems(), eventKey, petMessageMatchedBeforeLoot);
+
+            return;
+        }
+
+        /*
+         * RuneLite normally detects NPC encounters through
+         * NpcLootReceived. However, some ground-item quantity changes
+         * can reach LootReceived without producing NpcLootReceived.
+         *
+         * Use the generic NPC loot event as a fallback in that case.
+         */
+        if (event.getType() == LootRecordType.NPC) {
+            EncounterDefinition groundLootEncounter = encounterRegistry.getGroundLootBySourceName(sourceName);
+
+            if (groundLootEncounter != null) {
+                /*
+                 * A matching NpcLootReceived already processed this
+                 * exact loot during this tick, so this is RuneLite's
+                 * normal duplicate LootReceived event.
+                 */
+                if (consumeNpcLootEvent(groundLootEncounter, event.getItems())) {
+                    log.debug("Ignoring paired LootReceived for {} because NpcLootReceived already processed it", groundLootEncounter.getEncounterId());
+
+                    return;
+                }
+
+                /*
+                 * No matching NpcLootReceived was seen.
+                 *
+                 * This is the fallback case we observed when RuneLite
+                 * detected an existing ground stack increasing.
+                 */
+                log.debug("Processing NPC LootReceived fallback for {}", groundLootEncounter.getEncounterId());
+
+                boolean petMessageMatchedBeforeLoot = false;
+
+                if (isPetTrackingEnabledForEncounter(groundLootEncounter)) {
+                    petMessageMatchedBeforeLoot = petAcquisitionTracker.matchEncounterLootToPendingPetMessage(groundLootEncounter, client.getTickCount());
+                }
+
+                String eventKey = createNpcLootFallbackEventKey(groundLootEncounter, event);
+
+                processEncounterLoot(groundLootEncounter, event.getItems(), eventKey, petMessageMatchedBeforeLoot);
+
+                return;
+            }
+        }
 
         if (config.showLootSourceDebug() && encounter == null) {
             sendLootSourceDebugMessage(sourceName);
         }
 
-        if (encounter == null) {
-            log.debug("No encounter registered for LootReceived source '{}'", sourceName);
-
-            return;
-        }
-
-        /**
-         * Only encounters loaded from
-         * loot-received-encounters.json are allowed here.
-         */
-        if (encounter.getLootType() != EncounterLootType.LOOT_RECEIVED) {
-            log.debug("Ignoring LootReceived for {} because lootType={}", encounter.getEncounterId(), encounter.getLootType());
-
-            return;
-        }
-
-        boolean petMessageMatchedBeforeLoot = false;
-
-        if (isPetTrackingEnabledForEncounter(encounter)) {
-            petMessageMatchedBeforeLoot = petAcquisitionTracker.matchEncounterLootToPendingPetMessage(encounter, client.getTickCount());
-        }
-
-        String eventKey = createGenericLootEventKey(event);
-
-        processEncounterLoot(encounter, event.getItems(), eventKey, petMessageMatchedBeforeLoot);
+        log.debug("No encounter registered for LootReceived source '{}'", sourceName);
     }
 
 
@@ -252,27 +301,51 @@ public class LootDetectionService {
          * Pets are detected separately through the RuneScape
          * pet acquisition game message.
          */
-        ItemStack qualifyingDrop = findQualifyingDrop(encounter, items);
+        Map<Integer, Integer> qualifyingDrops = findQualifyingDrops(encounter, items);
 
-        Integer dropItemId = qualifyingDrop == null ? null : qualifyingDrop.getId();
+        Integer firstDropItemId = null;
+        int firstDropQuantity = 0;
 
-        int dropQuantity = qualifyingDrop == null ? 0 : qualifyingDrop.getQuantity();
+        if (!qualifyingDrops.isEmpty()) {
+            Map.Entry<Integer, Integer> firstDrop = qualifyingDrops.entrySet().iterator().next();
+
+            firstDropItemId = firstDrop.getKey();
+            firstDropQuantity = firstDrop.getValue();
+        }
 
         /*
-         * The encounter itself is recorded exactly once through
-         * its normal loot event.
+         * The encounter itself is recorded exactly once.
+         *
+         * The first tracked item, if present, is responsible for ending
+         * the dry streak. Any additional tracked items are attached to
+         * this same kill below.
          */
-        boolean recorded = trackerManager.recordKill(encounter.getEncounterId(), eventKey, dropItemId, dropQuantity);
+        boolean recorded = trackerManager.recordKill(encounter.getEncounterId(), eventKey, firstDropItemId, firstDropQuantity);
 
         if (!recorded) {
             return;
         }
 
         /*
-         * Normal tracked drop contained in the loot event.
+         * Process every tracked item received from this encounter.
          */
-        if (qualifyingDrop != null) {
-            processRecordedDrop(encounter, qualifyingDrop.getId(), qualifyingDrop.getQuantity(), false);
+        boolean firstDrop = true;
+
+        for (Map.Entry<Integer, Integer> entry : qualifyingDrops.entrySet()) {
+            int itemId = entry.getKey();
+            int quantity = entry.getValue();
+
+            if (firstDrop) {
+                firstDrop = false;
+
+                processRecordedDrop(encounter, itemId, quantity, false);
+
+                continue;
+            }
+
+            if (trackerManager.recordAdditionalDropForLastKill(encounter.getEncounterId(), itemId, quantity)) {
+                processRecordedDrop(encounter, itemId, quantity, false);
+            }
         }
 
         /*
@@ -304,7 +377,7 @@ public class LootDetectionService {
          * It was genuinely a dry kill only when neither a
          * normal tracked drop nor a pet was received.
          */
-        if (qualifyingDrop == null && !petMessageMatchedBeforeLoot) {
+        if (qualifyingDrops.isEmpty() && !petMessageMatchedBeforeLoot) {
             /*
              * Pet-eligible encounters wait briefly before announcing
              * a dry kill because the pet acquisition message may
@@ -481,24 +554,27 @@ public class LootDetectionService {
     }
 
     /**
-     * Finds the first tracked drop contained in the loot
+     * Finds all tracked drops contained in one loot event.
+     * <p>
+     * Multiple tracked uniques may legitimately be received from
+     * the same encounter completion.
      */
-    private ItemStack findQualifyingDrop(EncounterDefinition encounter, Collection<ItemStack> items) {
-        if (items == null || items.isEmpty()) {
-            return null;
+    private Map<Integer, Integer> findQualifyingDrops(EncounterDefinition encounter, Collection<ItemStack> items) {
+        Map<Integer, Integer> qualifyingDrops = new LinkedHashMap<>();
+
+        if (encounter == null || items == null || items.isEmpty()) {
+            return qualifyingDrops;
         }
 
         for (ItemStack item : items) {
-            if (item == null) {
+            if (item == null || !encounter.isTrackedDrop(item.getId())) {
                 continue;
             }
 
-            if (encounter.isTrackedDrop(item.getId())) {
-                return item;
-            }
+            qualifyingDrops.merge(item.getId(), item.getQuantity(), Integer::sum);
         }
 
-        return null;
+        return qualifyingDrops;
     }
 
 
@@ -604,6 +680,89 @@ public class LootDetectionService {
 
             sidebarPanel.updateItemDisplayData(displayData);
         }
+    }
+
+    private void rememberNpcLootEvent(EncounterDefinition encounter, Collection<ItemStack> items) {
+        int currentTick = client.getTickCount();
+
+        if (processedNpcLootTick != currentTick) {
+            processedNpcLootThisTick.clear();
+            processedNpcLootTick = currentTick;
+        }
+
+        String matchKey = createNpcLootMatchKey(encounter, items);
+
+        processedNpcLootThisTick.merge(matchKey, 1, Integer::sum);
+    }
+
+
+    private boolean consumeNpcLootEvent(EncounterDefinition encounter, Collection<ItemStack> items) {
+        int currentTick = client.getTickCount();
+
+        if (processedNpcLootTick != currentTick) {
+            processedNpcLootThisTick.clear();
+            processedNpcLootTick = currentTick;
+
+            return false;
+        }
+
+        String matchKey = createNpcLootMatchKey(encounter, items);
+
+        Integer amount = processedNpcLootThisTick.get(matchKey);
+
+        if (amount == null || amount <= 0) {
+            return false;
+        }
+
+        if (amount == 1) {
+            processedNpcLootThisTick.remove(matchKey);
+        } else {
+            processedNpcLootThisTick.put(matchKey, amount - 1);
+        }
+
+        return true;
+    }
+
+
+    private String createNpcLootMatchKey(EncounterDefinition encounter, Collection<ItemStack> items) {
+        StringBuilder key = new StringBuilder();
+
+        key.append(encounter.getEncounterId());
+
+        Map<Integer, Integer> quantities = new TreeMap<>();
+
+        if (items != null) {
+            for (ItemStack item : items) {
+                if (item == null) {
+                    continue;
+                }
+
+                quantities.merge(item.getId(), item.getQuantity(), Integer::sum);
+            }
+        }
+
+        for (Map.Entry<Integer, Integer> entry : quantities.entrySet()) {
+            key.append('|');
+            key.append(entry.getKey());
+            key.append('x');
+            key.append(entry.getValue());
+        }
+
+        return key.toString();
+    }
+
+
+    private String createNpcLootFallbackEventKey(EncounterDefinition encounter, LootReceived event) {
+        StringBuilder key = new StringBuilder();
+
+        key.append("npc-fallback|");
+        key.append(client.getTickCount());
+        key.append('|');
+        key.append(encounter.getEncounterId());
+
+        appendItemsToKey(key, event.getItems());
+
+        return key.toString();
     }
 
 
@@ -852,6 +1011,9 @@ public class LootDetectionService {
         petAcquisitionTracker.clearPetAcquisitionState();
 
         clearPendingPetDryResult();
+
+        processedNpcLootThisTick.clear();
+        processedNpcLootTick = -1;
 
         trackerManager.clearProcessedKillEvents();
     }

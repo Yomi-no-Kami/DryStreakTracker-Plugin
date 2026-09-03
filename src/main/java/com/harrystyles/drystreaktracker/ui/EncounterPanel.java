@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
@@ -24,6 +25,11 @@ import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.ColorScheme;
 
 public class EncounterPanel extends JPanel {
+
+    @FunctionalInterface
+    public interface KillcountUpdateListener {
+        void accept(int totalKillcount, int dryKillcount, int longestDryKillcount);
+    }
 
     private static final Map<String, ImageIcon> ENCOUNTER_IMAGE_CACHE = new ConcurrentHashMap<>();
 
@@ -35,6 +41,7 @@ public class EncounterPanel extends JPanel {
     private final JPanel detailsPanel;
 
     private final Consumer<Boolean> expandedStateListener;
+    private final KillcountUpdateListener setKillcountListener;
     private final Runnable clearEncounterListener;
 
     private JLabel expandIndicator;
@@ -47,6 +54,7 @@ public class EncounterPanel extends JPanel {
             ItemManager itemManager,
             boolean expanded,
             Consumer<Boolean> expandedStateListener,
+            KillcountUpdateListener setKillcountListener,
             Runnable clearEncounterListener) {
         this.encounter = encounter;
         this.stats = stats;
@@ -54,6 +62,7 @@ public class EncounterPanel extends JPanel {
         this.itemManager = itemManager;
         this.expanded = expanded;
         this.expandedStateListener = expandedStateListener;
+        this.setKillcountListener = setKillcountListener;
         this.clearEncounterListener = clearEncounterListener;
 
         setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -65,7 +74,7 @@ public class EncounterPanel extends JPanel {
         setBackground(ColorScheme.DARKER_GRAY_COLOR);
 
         setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(ColorScheme.MEDIUM_GRAY_COLOR),
-                BorderFactory.createEmptyBorder(8, 8, 8, 8)));
+                BorderFactory.createEmptyBorder(8, 4, 8, 4)));
 
         JPanel summary = createSummaryPanel();
 
@@ -104,7 +113,7 @@ public class EncounterPanel extends JPanel {
     }
 
     private JPanel createSummaryPanel() {
-        JPanel panel = new JPanel(new BorderLayout(10, 0));
+        JPanel panel = new JPanel(new BorderLayout(4, 0));
 
         panel.setOpaque(false);
 
@@ -130,40 +139,50 @@ public class EncounterPanel extends JPanel {
 
         informationPanel.add(nameLabel);
 
-        JPanel statsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-
+        JPanel statsPanel = new JPanel();
+        statsPanel.setLayout(new BoxLayout(statsPanel, BoxLayout.X_AXIS));
         statsPanel.setOpaque(false);
 
         makeSummaryComponentClickable(statsPanel);
 
-        JLabel kcLabel = new JLabel(
-                "<html><font color='#c8c8c8'>KC: </font>"
-                        + "<font color='#ffffff'>"
-                        + stats.getTotalKillsTracked()
-                        + "</font></html>"
-        );
+        JPanel kcPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        kcPanel.setOpaque(false);
 
-        makeSummaryComponentClickable(kcLabel);
+        JLabel kcTitleLabel = new JLabel("KC: ");
+        kcTitleLabel.setForeground(new java.awt.Color(200, 200, 200));
+
+        JLabel kcValueLabel = new JLabel(String.valueOf(stats.getTotalKillsTracked()));
+        kcValueLabel.setForeground(java.awt.Color.WHITE);
+
+        makeSummaryComponentClickable(kcPanel);
+        makeSummaryComponentClickable(kcTitleLabel);
+        makeSummaryComponentClickable(kcValueLabel);
+
+        kcPanel.add(kcTitleLabel);
+        kcPanel.add(kcValueLabel);
 
         boolean isCurrentRecord = stats.getCurrentDryStreak() > 0 &&
                 stats.getCurrentDryStreak() == stats.getLongestDryStreak();
 
-        String currentDryColor = isCurrentRecord ? "#ffff00" : "#ffffff";
+        JPanel dryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        dryPanel.setOpaque(false);
 
-        JLabel dryLabel = new JLabel(
-                "<html><font color='#c8c8c8'>Dry: </font>"
-                        + "<font color='" + currentDryColor + "'>"
-                        + stats.getCurrentDryStreak()
-                        + "</font></html>"
-        );
+        JLabel dryTitleLabel = new JLabel("Dry: ");
+        dryTitleLabel.setForeground(new java.awt.Color(200, 200, 200));
 
-        makeSummaryComponentClickable(dryLabel);
+        JLabel dryValueLabel = new JLabel(String.valueOf(stats.getCurrentDryStreak()));
+        dryValueLabel.setForeground(isCurrentRecord ? java.awt.Color.YELLOW : java.awt.Color.WHITE);
 
-        statsPanel.add(kcLabel);
+        makeSummaryComponentClickable(dryPanel);
+        makeSummaryComponentClickable(dryTitleLabel);
+        makeSummaryComponentClickable(dryValueLabel);
 
-        statsPanel.add(new JLabel("    "));
+        dryPanel.add(dryTitleLabel);
+        dryPanel.add(dryValueLabel);
 
-        statsPanel.add(dryLabel);
+        statsPanel.add(kcPanel);
+        statsPanel.add(Box.createHorizontalStrut(4));
+        statsPanel.add(dryPanel);
 
         informationPanel.add(statsPanel);
 
@@ -221,11 +240,11 @@ public class EncounterPanel extends JPanel {
 
         imageLabel.setVerticalAlignment(SwingConstants.CENTER);
 
-        imageLabel.setPreferredSize(new Dimension(64, 64));
+        imageLabel.setPreferredSize(new Dimension(48, 64));
 
-        imageLabel.setMinimumSize(new Dimension(64, 64));
+        imageLabel.setMinimumSize(new Dimension(48, 64));
 
-        imageLabel.setMaximumSize(new Dimension(64, 64));
+        imageLabel.setMaximumSize(new Dimension(48, 64));
 
         String imageUrl = encounter.getImageUrl();
 
@@ -257,7 +276,17 @@ public class EncounterPanel extends JPanel {
                     return;
                 }
 
-                Image scaled = image.getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+                int originalWidth = image.getWidth(null);
+                int originalHeight = image.getHeight(null);
+
+                double widthScale = 48.0 / originalWidth;
+                double heightScale = 64.0 / originalHeight;
+                double scale = Math.min(widthScale, heightScale);
+
+                int scaledWidth = Math.max(1, (int) Math.round(originalWidth * scale));
+                int scaledHeight = Math.max(1, (int) Math.round(originalHeight * scale));
+
+                Image scaled = image.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
 
                 ImageIcon icon = new ImageIcon(scaled);
 
@@ -432,6 +461,14 @@ public class EncounterPanel extends JPanel {
 
         JPopupMenu popupMenu = new JPopupMenu();
 
+        JMenuItem setKillcountItem = new JMenuItem("Set KC / Dry Streak...");
+
+        setKillcountItem.addActionListener(actionEvent -> showSetKillcountDialog());
+
+        popupMenu.add(setKillcountItem);
+
+        popupMenu.addSeparator();
+
         JMenuItem clearItem = new JMenuItem("Clear encounter data");
 
         clearItem.addActionListener(actionEvent ->
@@ -457,6 +494,88 @@ public class EncounterPanel extends JPanel {
         popupMenu.add(clearItem);
 
         popupMenu.show(event.getComponent(), event.getX(), event.getY());
+    }
+
+    private void showSetKillcountDialog() {
+        JTextField totalKillcountField = new JTextField(String.valueOf(stats.getTotalKillsTracked()), 8);
+        JTextField dryKillcountField = new JTextField(String.valueOf(stats.getCurrentDryStreak()), 8);
+        JTextField longestDryKillcountField = new JTextField(String.valueOf(stats.getLongestDryStreak()), 8);
+
+        JPanel inputPanel = new JPanel(new GridLayout(0, 2, 8, 8));
+
+        inputPanel.add(new JLabel("Total KC:"));
+        inputPanel.add(totalKillcountField);
+
+        inputPanel.add(new JLabel("Dry KC:"));
+        inputPanel.add(dryKillcountField);
+
+        inputPanel.add(new JLabel("Longest Dry KC:"));
+        inputPanel.add(longestDryKillcountField);
+
+        int result = JOptionPane.showConfirmDialog(
+                this,
+                inputPanel,
+                "Set KC / Dry Streak - " + encounter.getDisplayName(),
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
+
+        if (result != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        int totalKillcount;
+        int dryKillcount;
+        int longestDryKillcount;
+
+        try {
+            totalKillcount = Integer.parseInt(totalKillcountField.getText().trim());
+            dryKillcount = Integer.parseInt(dryKillcountField.getText().trim());
+            longestDryKillcount = Integer.parseInt(longestDryKillcountField.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "All KC values must be whole numbers.",
+                    "Invalid KC",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        if (totalKillcount < 0 || dryKillcount < 0 || longestDryKillcount < 0) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "KC values cannot be negative.",
+                    "Invalid KC",
+                    JOptionPane.ERROR_MESSAGE);
+
+            return;
+        }
+
+        if (dryKillcount > totalKillcount) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Dry KC cannot be greater than Total KC.",
+                    "Invalid KC",
+                    JOptionPane.ERROR_MESSAGE);
+
+            return;
+        }
+
+        if (longestDryKillcount < dryKillcount) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Longest Dry KC cannot be less than the current Dry KC.",
+                    "Invalid KC",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        if (setKillcountListener != null) {
+            setKillcountListener.accept(totalKillcount, dryKillcount,longestDryKillcount);
+        }
     }
 
     private void toggleExpanded() {

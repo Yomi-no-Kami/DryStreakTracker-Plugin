@@ -236,6 +236,42 @@ public class EncounterTrackerManager {
     }
 
     /**
+     * Records another tracked drop from an encounter kill which
+     * has already been recorded.
+     */
+    public boolean recordAdditionalDropForLastKill(String encounterId, int itemId, int quantity) {
+        if (!isActive()) {
+            return false;
+        }
+
+        if (encounterId == null || encounterId.trim().isEmpty()) {
+            return false;
+        }
+
+        EncounterDefinition definition = encounterRegistry.getById(encounterId);
+
+        if (definition == null || !definition.isTrackedDrop(itemId)) {
+            return false;
+        }
+
+        EncounterStats stats = trackingData.getEncounter(encounterId);
+
+        if (stats == null || stats.getTotalKillsTracked() <= 0) {
+            return false;
+        }
+
+        int totalKillcount = getRuneLiteKillcount(definition);
+
+        stats.recordAdditionalDropOnLastKill(totalKillcount, itemId, quantity);
+
+        save();
+
+        log.info("{} additional tracked drop {} recorded on existing kill #{}", definition.getDisplayName(), itemId, stats.getLastKnownKillcount());
+
+        return true;
+    }
+
+    /**
      * Records a pet against the most recently completed kill
      * for an encounter.
      *
@@ -398,6 +434,48 @@ public class EncounterTrackerManager {
         save();
 
         log.info("Cleared all tracking data for account {}", playerName);
+    }
+
+    /**
+     * Manually synchronizes an encounter with the player's
+     * existing total KC and current dry streak.
+     */
+    public boolean setEncounterKillcounts(String encounterId, int totalKillcount, int dryKillcount, int longestDryKillcount) {
+        if (!isActive()) {
+            return false;
+        }
+
+        if (encounterId == null || encounterId.trim().isEmpty()) {
+            return false;
+        }
+
+        if (totalKillcount < 0 || dryKillcount < 0 || longestDryKillcount < 0) {
+            return false;
+        }
+
+        if (dryKillcount > totalKillcount || longestDryKillcount < dryKillcount) {
+            return false;
+        }
+
+        EncounterDefinition definition = encounterRegistry.getById(encounterId);
+
+        if (definition == null) {
+            return false;
+        }
+
+        EncounterStats stats = trackingData.getOrCreateEncounter(definition);
+
+        if (stats == null) {
+            return false;
+        }
+
+        stats.setTrackingBaseline(totalKillcount, dryKillcount, longestDryKillcount);
+
+        save();
+
+        log.info("Manually synchronized {} to total KC {}, dry KC {}, and longest dry KC {}", encounterId, totalKillcount, dryKillcount, longestDryKillcount);
+
+        return true;
     }
 
     /**

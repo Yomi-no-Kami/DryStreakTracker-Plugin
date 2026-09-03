@@ -219,6 +219,41 @@ public class EncounterStats {
         this.receivedDrops = receivedDrops == null ? new HashMap<>() : new HashMap<>(receivedDrops);
     }
 
+    /**
+     * Manually synchronizes the encounter counters with the player's
+     * existing progress.
+     * <p>
+     * This is a data correction only. It must not trigger dry streak
+     * records, notifications, drops, or any other encounter events.
+     */
+    public void setTrackingBaseline(int totalKillcount, int dryKillcount, int longestDryKillcount) {
+        if (totalKillcount < 0 || dryKillcount < 0 || longestDryKillcount < 0) {
+            return;
+        }
+
+        if (dryKillcount > totalKillcount || longestDryKillcount < dryKillcount) {
+            return;
+        }
+
+        totalKillsTracked = totalKillcount;
+        lastKnownKillcount = totalKillcount;
+        currentDryStreak = dryKillcount;
+        longestDryStreak = longestDryKillcount;
+
+        /*
+         * Manual synchronization must never represent a new record kill.
+         */
+        newDryRecordThisKill = false;
+
+        /*
+         * Treat the manually entered streak as an existing baseline.
+         * Do not fire a record notification because of this edit.
+         */
+        dryRecordNotificationSent = false;
+
+        lastActivityTime = System.currentTimeMillis();
+    }
+
     public void recordDryKill(int currentKillcount) {
 
         /**
@@ -300,6 +335,29 @@ public class EncounterStats {
         dryRecordNotificationSent = false;
 
         currentDryStreak = 0;
+
+        receivedDrops.merge(itemId, quantity, Integer::sum);
+    }
+
+    /**
+     * Records an additional tracked drop from the same encounter
+     * completion.
+     * <p>
+     * The encounter kill and dry streak have already been processed
+     * by recordDrop(), so this must not increment the kill count or
+     * reset the dry streak again.
+     */
+    public void recordAdditionalDropOnLastKill(int totalKillcount, int itemId, int quantity) {
+        if (totalKillsTracked <= 0) {
+            return;
+        }
+
+        lastActivityTime = System.currentTimeMillis();
+
+        totalTrackedDrops++;
+
+        lastDropKillcount = lastKnownKillcount;
+        lastDropTotalKillcount = totalKillcount;
 
         receivedDrops.merge(itemId, quantity, Integer::sum);
     }

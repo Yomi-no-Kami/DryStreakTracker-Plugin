@@ -131,6 +131,30 @@ public class EncounterRegistry {
         return encountersByLootSourceName.get(normalizeLootSourceName(sourceName));
     }
 
+    public EncounterDefinition getGroundLootBySourceName(String sourceName) {
+        if (sourceName == null || sourceName.trim().isEmpty()) {
+            return null;
+        }
+
+        String normalizedName = normalizeLootSourceName(sourceName);
+
+        for (EncounterDefinition encounter : encountersById.values()) {
+            if (encounter == null || encounter.getLootType() != EncounterLootType.GROUND_LOOT) {
+                continue;
+            }
+
+            if (encounter.getDisplayName() != null && normalizeLootSourceName(encounter.getDisplayName()).equals(normalizedName)) {
+                return encounter;
+            }
+
+            if (encounter.matchesLootSource(sourceName)) {
+                return encounter;
+            }
+        }
+
+        return null;
+    }
+
 
     public boolean containsNpcId(int npcId) {
         return encountersByNpcId.containsKey(npcId);
