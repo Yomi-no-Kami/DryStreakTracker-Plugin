@@ -902,7 +902,7 @@ public class LootDetectionService {
                         + "<br>"
                         + "<col=FFFFFF>"
                         + recordStreak
-                        + " KC Dry"
+                        + " kc Dry"
                         + "</col>";
 
         notificationManager.notify("DRY STREAK RECORD", text, 0xFF0000);
@@ -935,7 +935,7 @@ public class LootDetectionService {
                 + "</col>]: "
                 + "<col=800080>New dry streak record! "
                 + recordStreak
-                + " KC dry"
+                + " kc dry"
                 + "</col>";
 
         client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", message, null);
@@ -991,7 +991,7 @@ public class LootDetectionService {
                         + encounter.getDisplayName()
                         + "</col>]: <col=800080>"
                         + dryStreak
-                        + "</col> KC since last unique";
+                        + "</col> kc since last unique";
 
         client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", message, null);
     }

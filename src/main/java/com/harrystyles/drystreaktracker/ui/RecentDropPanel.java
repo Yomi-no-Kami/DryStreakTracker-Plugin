@@ -16,7 +16,7 @@ import net.runelite.client.ui.ColorScheme;
 
 public class RecentDropPanel extends JPanel {
 
-    private static final int PANEL_HEIGHT = 128;
+    private static final int PANEL_HEIGHT = 140;
 
     public RecentDropPanel(RecentDrop drop, ItemManager itemManager, ItemDisplayData itemDisplayData, BooleanSupplier discordAvailableSupplier, Runnable uploadDiscordListener, Runnable clearRecentDropListener) {
 

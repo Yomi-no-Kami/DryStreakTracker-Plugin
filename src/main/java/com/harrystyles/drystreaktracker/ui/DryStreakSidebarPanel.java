@@ -101,6 +101,26 @@ public class DryStreakSidebarPanel extends PluginPanel {
         discordButton.addActionListener(event ->
                 LinkBrowser.browse("https://discord.gg/xyWgaHDmnh")
         );
+        /**
+         * Help Button
+         */
+        BufferedImage helpImage = ImageUtil.loadImageResource(getClass(), "/help-icon.png");
+
+        Image helpScaledImage = helpImage.getScaledInstance(14, 14, Image.SCALE_SMOOTH);
+
+        JButton helpButton = new JButton(new ImageIcon(helpScaledImage));
+
+        helpButton.setFocusPainted(false);
+        helpButton.setBorderPainted(false);
+        helpButton.setContentAreaFilled(false);
+        helpButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        helpButton.setToolTipText("Guide for new users");
+        helpButton.setPreferredSize(new Dimension(22, 22));
+
+        helpButton.addActionListener(event ->
+                LinkBrowser.browse("https://github.com/Yomi-no-Kami/DryStreakTracker-Plugin#dry-streak-tracker")
+        );
+
 
         clearAllButton.setFocusPainted(false);
         clearAllButton.setBorderPainted(false);
@@ -178,6 +198,7 @@ public class DryStreakSidebarPanel extends PluginPanel {
 
                 title.setBounds(0, 0, width, height);
                 discordButton.setBounds(2, 0, 22, height);
+                helpButton.setBounds(24, 0, 22, height);
             }
         };
 
@@ -187,6 +208,7 @@ public class DryStreakSidebarPanel extends PluginPanel {
 
         titlePanel.add(title);
         titlePanel.add(discordButton);
+        titlePanel.add(helpButton);
 
         JPanel clearButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 5));
 
