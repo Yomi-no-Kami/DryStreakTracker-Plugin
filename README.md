@@ -56,6 +56,27 @@ The **Recent Drops** tab keeps a history of your recently tracked uniques and sh
 
 Recent Drops can be cleared separately without resetting your encounter statistics.
 
+## Configuring Tracked Drops
+
+You can choose which supported unique drops count toward your dry streak for each encounter.
+
+Right-click an encounter and select **Configure Tracked Drops...** to view all configurable drops for that encounter.
+
+![](screenshots-readme/readme7.png) ![](screenshots-readme/readme8.png)
+
+Use the checkboxes to choose which drops you want to track:
+
+- **Checked drops** count as uniques and will end your current dry streak when received.
+- **Unchecked drops** are ignored and will not reset your dry streak.
+
+This is useful for encounters where you may only care about certain uniques, or where some less significant drops are available to track but are disabled by default.
+
+Your choices are saved separately for each encounter and will be remembered between sessions.
+
+Select **Reset to Defaults** at any time to restore the plugin's default tracked drops for that encounter.
+
+Changing your tracked drop settings only affects future drops. It does not remove or change drops you have already received or your existing tracking history.
+
 ## Notifications & Discord
 
 Dry Streak Tracker can notify you when you:
