@@ -154,11 +154,7 @@ public class DiscordWebhookService {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy h:mm a");
 
-        String kcValue = numberFormat.format(drop.getDropKillcount()) + " KC";
-
-        if (drop.getTotalKillcount() > 0) {
-            kcValue += " (" + numberFormat.format(drop.getTotalKillcount()) + " Total KC)";
-        }
+        String kcValue = numberFormat.format(drop.getDropKillcount()) + " kc";
 
         String playerName = drop.getPlayerName();
 
