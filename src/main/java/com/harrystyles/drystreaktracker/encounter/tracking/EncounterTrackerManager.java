@@ -524,10 +524,6 @@ public class EncounterTrackerManager {
 
         int totalKillcount = stats.getLastDropTotalKillcount();
 
-        if (totalKillcount <= 0) {
-            totalKillcount = stats.getLastDropKillcount();
-        }
-
         RecentDrop recentDrop = new RecentDrop(
                 currentPlayerName,
                 encounterId,
