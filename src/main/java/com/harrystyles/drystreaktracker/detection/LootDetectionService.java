@@ -567,7 +567,7 @@ public class LootDetectionService {
         }
 
         for (ItemStack item : items) {
-            if (item == null || !encounter.isTrackedDrop(item.getId())) {
+            if (item == null || !trackerManager.isDropEnabled(encounter.getEncounterId(), item.getId())) {
                 continue;
             }
 

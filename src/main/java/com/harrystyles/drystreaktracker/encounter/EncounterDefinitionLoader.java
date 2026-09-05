@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -163,8 +165,24 @@ public class EncounterDefinitionLoader {
             throw new IllegalStateException("Encounter " + definition.getEncounterId() + " has no internally assigned loot type");
         }
 
-        if (definition.getTrackedDropIds() == null) {
-            throw new IllegalStateException("Encounter " + definition.getEncounterId() + " has null trackedDropIds");
+        if (definition.getTrackedDrops() == null) {
+            throw new IllegalStateException("Encounter " + definition.getEncounterId() + " has null trackedDrops");
+        }
+
+        Set<Integer> configuredDropIds = new HashSet<>();
+
+        for (EncounterDropDefinition drop : definition.getTrackedDrops()) {
+            if (drop == null) {
+                throw new IllegalStateException("Encounter " + definition.getEncounterId() + " contains a null tracked drop");
+            }
+
+            if (drop.getItemId() <= 0) {
+                throw new IllegalStateException("Encounter " + definition.getEncounterId() + " contains invalid tracked drop item ID " + drop.getItemId());
+            }
+
+            if (!configuredDropIds.add(drop.getItemId())) {
+                throw new IllegalStateException("Encounter " + definition.getEncounterId() + " contains duplicate tracked drop item ID " + drop.getItemId());
+            }
         }
 
         if (definition.getPetDropIds() == null) {

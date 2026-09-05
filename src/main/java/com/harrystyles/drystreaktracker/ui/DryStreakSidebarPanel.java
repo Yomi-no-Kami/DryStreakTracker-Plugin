@@ -2,6 +2,7 @@ package com.harrystyles.drystreaktracker.ui;
 
 import com.harrystyles.drystreaktracker.discord.DiscordWebhookService;
 import com.harrystyles.drystreaktracker.encounter.EncounterDefinition;
+import com.harrystyles.drystreaktracker.encounter.EncounterDropDefinition;
 import com.harrystyles.drystreaktracker.encounter.EncounterRegistry;
 import com.harrystyles.drystreaktracker.encounter.EncounterStats;
 import com.harrystyles.drystreaktracker.encounter.tracking.EncounterTrackerManager;
@@ -22,6 +23,7 @@ import com.harrystyles.drystreaktracker.encounter.tracking.RecentDrop;
 import lombok.extern.slf4j.Slf4j;
 
 import net.runelite.api.ItemComposition;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.PluginPanel;
@@ -42,6 +44,8 @@ public class DryStreakSidebarPanel extends PluginPanel {
     private final ItemManager itemManager;
     private final DiscordWebhookService discordWebhookService;
 
+    private final ClientThread clientThread;
+
     private final JPanel encounterContainer;
 
     private final JPanel tabContentPanel;
@@ -60,13 +64,14 @@ public class DryStreakSidebarPanel extends PluginPanel {
     private boolean loggedIn;
 
     @Inject
-    public DryStreakSidebarPanel(EncounterRegistry encounterRegistry, EncounterTrackerManager trackerManager, ItemManager itemManager, DiscordWebhookService discordWebhookService) {
+    public DryStreakSidebarPanel(EncounterRegistry encounterRegistry, EncounterTrackerManager trackerManager, ItemManager itemManager, DiscordWebhookService discordWebhookService, ClientThread clientThread) {
         super();
 
         this.encounterRegistry = encounterRegistry;
         this.trackerManager = trackerManager;
         this.itemManager = itemManager;
         this.discordWebhookService = discordWebhookService;
+        this.clientThread = clientThread;
 
         setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
         setBackground(ColorScheme.DARK_GRAY_COLOR);
@@ -661,6 +666,42 @@ public class DryStreakSidebarPanel extends PluginPanel {
                         if (trackerManager.setEncounterKillcounts(encounter.getEncounterId(), totalKillcount, dryKillcount, longestDryKillcount)) {
                             refresh();
                         }
+                    }, () ->
+                    {
+                        Map<Integer, String> itemNames = new HashMap<>();
+
+                        clientThread.invokeLater(() -> {
+                            for (EncounterDropDefinition drop : encounter.getTrackedDrops()) {
+                                if (drop == null) {
+                                    continue;
+                                }
+
+                                ItemComposition itemComposition = itemManager.getItemComposition(drop.getItemId());
+
+                                if (itemComposition != null) {
+                                    itemNames.put(drop.getItemId(), itemComposition.getName());
+                                }
+                            }
+
+                            SwingUtilities.invokeLater(() -> {
+                                TrackedDropsDialog dialog = new TrackedDropsDialog(
+                                        this,
+                                        encounter,
+                                        itemManager,
+                                        itemNames::get,
+                                        itemId -> trackerManager.isDropEnabled(encounter.getEncounterId(), itemId),
+                                        (itemId, enabled) -> trackerManager.setDropEnabled(encounter.getEncounterId(), itemId, enabled, false),
+                                        trackerManager::save,
+                                        () -> {
+                                            if (trackerManager.resetDropPreferences(encounter.getEncounterId())) {
+                                                refresh();
+                                            }
+                                        }
+                                );
+
+                                dialog.show();
+                            });
+                        });
                     }, () ->
                     {
                         trackerManager.clearEncounterData(encounter.getEncounterId());

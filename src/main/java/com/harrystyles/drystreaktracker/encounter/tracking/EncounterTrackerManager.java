@@ -1,6 +1,7 @@
 package com.harrystyles.drystreaktracker.encounter.tracking;
 
 import com.harrystyles.drystreaktracker.encounter.EncounterDefinition;
+import com.harrystyles.drystreaktracker.encounter.EncounterDropDefinition;
 import com.harrystyles.drystreaktracker.encounter.EncounterRegistry;
 import com.harrystyles.drystreaktracker.encounter.EncounterStats;
 import com.harrystyles.drystreaktracker.storage.DryStreakStorage;
@@ -250,7 +251,7 @@ public class EncounterTrackerManager {
 
         EncounterDefinition definition = encounterRegistry.getById(encounterId);
 
-        if (definition == null || !definition.isTrackedDrop(itemId)) {
+        if (definition == null || !isDropEnabled(encounterId, itemId)) {
             return false;
         }
 
@@ -590,6 +591,125 @@ public class EncounterTrackerManager {
         save();
 
         log.info("Cleared tracker data for account {}", currentPlayerName);
+    }
+
+    /**
+     * Returns whether a configurable drop is currently enabled
+     * for the active player.
+     */
+    public boolean isDropEnabled(String encounterId, int itemId) {
+        if (!isActive()) {
+            return false;
+        }
+
+        if (encounterId == null || encounterId.trim().isEmpty()) {
+            return false;
+        }
+
+        EncounterDefinition definition = encounterRegistry.getById(encounterId);
+
+        if (definition == null) {
+            return false;
+        }
+
+        EncounterDropDefinition drop = definition.getTrackedDrop(itemId);
+
+        if (drop == null) {
+            return false;
+        }
+
+        EncounterDropPreferences preferences = trackingData.getDropPreferences(encounterId);
+
+        if (preferences.getEnabled().contains(itemId)) {
+            return true;
+        }
+
+        if (preferences.getDisabled().contains(itemId)) {
+            return false;
+        }
+
+        return drop.isEnabledByDefault();
+    }
+
+
+    /**
+     * Changes whether one configurable drop is enabled for the
+     * active player.
+     *
+     * If the selected state matches the encounter's default,
+     * any stored override is removed.
+     */
+    public boolean setDropEnabled(String encounterId, int itemId, boolean enabled, boolean saveImmediately) {
+        if (!isActive()) {
+            return false;
+        }
+
+        if (encounterId == null || encounterId.trim().isEmpty()) {
+            return false;
+        }
+
+        EncounterDefinition definition = encounterRegistry.getById(encounterId);
+
+        if (definition == null) {
+            return false;
+        }
+
+        EncounterDropDefinition drop = definition.getTrackedDrop(itemId);
+
+        if (drop == null) {
+            return false;
+        }
+
+        EncounterDropPreferences preferences = trackingData.getOrCreateDropPreferences(encounterId);
+
+        preferences.getEnabled().remove(itemId);
+        preferences.getDisabled().remove(itemId);
+
+        if (enabled != drop.isEnabledByDefault()) {
+            if (enabled) {
+                preferences.getEnabled().add(itemId);
+            } else {
+                preferences.getDisabled().add(itemId);
+            }
+        }
+
+        if (preferences.getEnabled().isEmpty() && preferences.getDisabled().isEmpty()) {
+            trackingData.clearDropPreferences(encounterId);
+        }
+
+        if (saveImmediately) {
+            save();
+        }
+
+        return true;
+    }
+
+    public boolean setDropEnabled(String encounterId, int itemId, boolean enabled) {
+        return setDropEnabled(encounterId, itemId, enabled, true);
+    }
+
+    /**
+     * Resets all configurable drops for one encounter back to
+     * the defaults supplied by the encounter definition.
+     */
+    public boolean resetDropPreferences(String encounterId) {
+        if (!isActive()) {
+            return false;
+        }
+
+        if (encounterId == null || encounterId.trim().isEmpty()) {
+            return false;
+        }
+
+        if (encounterRegistry.getById(encounterId) == null) {
+            return false;
+        }
+
+        trackingData.clearDropPreferences(encounterId);
+
+        save();
+
+        return true;
     }
 
     private int getRuneLiteKillcount(EncounterDefinition definition) {

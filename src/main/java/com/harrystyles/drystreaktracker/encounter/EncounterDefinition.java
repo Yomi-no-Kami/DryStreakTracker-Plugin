@@ -1,6 +1,8 @@
 package com.harrystyles.drystreaktracker.encounter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -60,9 +62,12 @@ public class EncounterDefinition {
     private Set<String> killcountNames = new HashSet<>();
 
     /**
-     * Item IDs which reset the dry streak.
+     * Drops which may be tracked for this encounter.
+     *
+     * Each drop defines whether it is enabled by default.
+     * Players may override these defaults per account.
      */
-    private Set<Integer> trackedDropIds = new HashSet<>();
+    private List<EncounterDropDefinition> trackedDrops = new ArrayList<>();
 
     /**
      * Pet item IDs.
@@ -175,17 +180,28 @@ public class EncounterDefinition {
     }
 
 
-    public Set<Integer> getTrackedDropIds() {
-        if (trackedDropIds == null) {
-            trackedDropIds = new HashSet<>();
+    public List<EncounterDropDefinition> getTrackedDrops() {
+        if (trackedDrops == null) {
+            trackedDrops = new ArrayList<>();
         }
 
-        return trackedDropIds;
+        return trackedDrops;
     }
 
 
-    public void setTrackedDropIds(Set<Integer> trackedDropIds) {
-        this.trackedDropIds = trackedDropIds == null ? new HashSet<>() : new HashSet<>(trackedDropIds);
+    public void setTrackedDrops(List<EncounterDropDefinition> trackedDrops) {
+        this.trackedDrops = trackedDrops == null ? new ArrayList<>() : new ArrayList<>(trackedDrops);
+    }
+
+
+    public EncounterDropDefinition getTrackedDrop(int itemId) {
+        for (EncounterDropDefinition drop : getTrackedDrops()) {
+            if (drop != null && drop.getItemId() == itemId) {
+                return drop;
+            }
+        }
+
+        return null;
     }
 
 
@@ -227,7 +243,7 @@ public class EncounterDefinition {
 
 
     public boolean isTrackedDrop(int itemId) {
-        return getTrackedDropIds().contains(itemId);
+        return getTrackedDrop(itemId) != null;
     }
 
 
@@ -254,7 +270,7 @@ public class EncounterDefinition {
                 ", npcIds=" + npcIds +
                 ", lootSourceNames=" + lootSourceNames +
                 ", killcountNames=" + killcountNames +
-                ", trackedDropIds=" + trackedDropIds +
+                ", trackedDrops=" + trackedDrops +
                 ", petDropIds=" + petDropIds +
                 '}';
     }

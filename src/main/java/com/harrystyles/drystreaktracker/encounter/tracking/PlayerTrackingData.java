@@ -24,6 +24,14 @@ public class PlayerTrackingData {
 
     private List<RecentDrop> recentDrops = new ArrayList<>();
 
+    /**
+     * Player-specific tracked drop overrides by encounter ID.
+     *
+     * Drops not explicitly enabled or disabled here follow
+     * the defaults from the encounter definition.
+     */
+    private Map<String, EncounterDropPreferences> dropPreferences = new HashMap<>();
+
     public PlayerTrackingData() {
     }
 
@@ -55,6 +63,47 @@ public class PlayerTrackingData {
         this.recentDrops = recentDrops == null ? new ArrayList<>() : new ArrayList<>(recentDrops);
     }
 
+    public Map<String, EncounterDropPreferences> getDropPreferences() {
+        if (dropPreferences == null) {
+            dropPreferences = new HashMap<>();
+        }
+
+        return dropPreferences;
+    }
+
+    public EncounterDropPreferences getDropPreferences(String encounterId) {
+        if (encounterId == null) {
+            return new EncounterDropPreferences();
+        }
+
+        EncounterDropPreferences preferences = getDropPreferences().get(encounterId);
+
+        return preferences != null ? preferences : new EncounterDropPreferences();
+    }
+
+    public EncounterDropPreferences getOrCreateDropPreferences(String encounterId) {
+        if (encounterId == null) {
+            return null;
+        }
+
+        EncounterDropPreferences preferences = getDropPreferences().get(encounterId);
+
+        if (preferences == null) {
+            preferences = new EncounterDropPreferences();
+
+            getDropPreferences().put(encounterId, preferences);
+        }
+
+        return preferences;
+    }
+
+    public void clearDropPreferences(String encounterId) {
+        if (encounterId == null) {
+            return;
+        }
+
+        getDropPreferences().remove(encounterId);
+    }
 
     public EncounterStats getEncounter(String encounterId) {
         if (encounterId == null) {

@@ -9,8 +9,15 @@
     "killcountNames": [
       "Royal Titans"
     ],
-    "trackedDropIds": [
-      30631, 30627
+    "trackedDrops": [
+      {
+        "itemId": 30631,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 30627,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": [
       30622
@@ -26,8 +33,15 @@
     "killcountNames": [
       "Royal Titans"
     ],
-    "trackedDropIds": [
-      30628, 30626
+    "trackedDrops": [
+      {
+        "itemId": 30628,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 30626,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": [
       30622
@@ -40,8 +54,15 @@
     "lootSourceNames": [
       "Maggot King"
     ],
-    "trackedDropIds": [
-      33634, 33631
+    "trackedDrops": [
+      {
+        "itemId": 33634,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 33631,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": [
       33642
@@ -54,8 +75,31 @@
     "lootSourceNames": [
       "Araxxor"
     ],
-    "trackedDropIds": [
-      29799,29790, 29792, 29794, 29786, 29788
+    "trackedDrops": [
+      {
+        "itemId": 29799,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 29790,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 29792,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 29794,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 29786,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 29788,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": [
       29836
@@ -68,8 +112,11 @@
     "lootSourceNames": [
       "Hespori"
     ],
-    "trackedDropIds": [
-      22994
+    "trackedDrops": [
+      {
+        "itemId": 22994,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": [
       20661
@@ -82,13 +129,103 @@
     "lootSourceNames": [
       "Barrows"
     ],
-    "trackedDropIds": [
-      4755, 4757, 4759, 4753,
-      4724, 4726, 4728, 4730,
-      4745, 4747, 4749, 4751,
-      4716, 4718, 4720, 4722,
-      4708, 4710, 4712, 4714,
-      4732, 4734, 4736, 4738
+    "trackedDrops": [
+      {
+        "itemId": 4755,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4757,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4759,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4753,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4724,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4726,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4728,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4730,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4745,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4747,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4749,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4751,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4716,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4718,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4720,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4722,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4708,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4710,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4712,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4714,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4732,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4734,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4736,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4738,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": [
     ]
@@ -103,10 +240,55 @@
     "killcountNames": [
       "Lunar Chest"
     ],
-    "trackedDropIds": [
-      29000, 29004, 29007, 29010,
-      29022, 29025, 29028, 28997,
-      28988, 29013, 29016, 29019
+    "trackedDrops": [
+      {
+        "itemId": 29000,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 29004,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 29007,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 29010,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 29022,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 29025,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 29028,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28997,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28988,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 29013,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 29016,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 29019,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": [
     ]
@@ -118,8 +300,11 @@
     "lootSourceNames": [
       "Bryophyta (Chest)"
     ],
-    "trackedDropIds": [
-      22372
+    "trackedDrops": [
+      {
+        "itemId": 22372,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": [
     ]
@@ -131,8 +316,11 @@
     "lootSourceNames": [
       "Obor (Chest)"
     ],
-    "trackedDropIds": [
-      20756
+    "trackedDrops": [
+      {
+        "itemId": 20756,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": [
     ]
@@ -144,8 +332,19 @@
     "lootSourceNames": [
       "Corrupted Hunllef"
     ],
-    "trackedDropIds": [
-      23956, 4207, 25859
+    "trackedDrops": [
+      {
+        "itemId": 23956,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4207,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 25859,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": [
       23759, 23757
@@ -158,8 +357,19 @@
     "lootSourceNames": [
       "Crystalline Hunllef"
     ],
-    "trackedDropIds": [
-      23956, 4207, 25859
+    "trackedDrops": [
+      {
+        "itemId": 23956,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4207,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 25859,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": [
       23757, 23759
@@ -172,8 +382,19 @@
     "lootSourceNames": [
       "Doom of Mokhaiotl"
     ],
-    "trackedDropIds": [
-      31088, 31115, 31109
+    "trackedDrops": [
+      {
+        "itemId": 31088,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 31115,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 31109,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": [
       31130
@@ -189,27 +410,65 @@
     "killcountNames": [
       "Sol Heredit"
     ],
-    "trackedDropIds": [
-      28933, 28936, 28939, 28919, 28942
+    "trackedDrops": [
+      {
+        "itemId": 28933,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28936,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28939,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28919,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28942,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": [
       28960
     ]
   },
   {
-  "encounterId": "guardians_of_the_rift",
-  "displayName": "Guardians of the Rift",
-  "imageFileName": "Rewards_Guardian.png",
-  "lootSourceNames": [
-    "Guardians of the Rift"
-  ],
-  "trackedDropIds": [
-    26807, 26809, 26811, 26813, 26822
-  ],
-  "petDropIds": [
-    26901
-  ]
-},
+    "encounterId": "guardians_of_the_rift",
+    "displayName": "Guardians of the Rift",
+    "imageFileName": "Rewards_Guardian.png",
+    "lootSourceNames": [
+      "Guardians of the Rift"
+    ],
+    "trackedDrops": [
+      {
+        "itemId": 26807,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26809,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26811,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26813,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26822,
+        "enabledByDefault": true
+      }
+    ],
+    "petDropIds": [
+      26901
+    ]
+  },
   {
     "encounterId": "tempoross",
     "displayName": "Tempoross",
@@ -217,8 +476,31 @@
     "lootSourceNames": [
       "Reward pool (Tempoross)"
     ],
-    "trackedDropIds": [
-      25582, 25584, 25580, 25559, 25576, 21028
+    "trackedDrops": [
+      {
+        "itemId": 25582,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 25584,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 25580,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 25559,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 25576,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 21028,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": [
       25602
@@ -231,8 +513,39 @@
     "lootSourceNames": [
       "Reward cart (Wintertodt)"
     ],
-    "trackedDropIds": [
-  20704, 20706, 20708, 20710, 20712, 6739, 20716, 20720
+    "trackedDrops": [
+      {
+        "itemId": 20704,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 20706,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 20708,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 20710,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 20712,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 6739,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 20716,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 20720,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": [
       20693
@@ -249,8 +562,35 @@
       "Tombs of Amascut",
       "Tombs of Amascut: Expert Mode"
     ],
-    "trackedDropIds": [
-      26219, 25975, 25985, 27226, 27229, 27232, 27277
+    "trackedDrops": [
+      {
+        "itemId": 26219,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 25975,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 25985,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27226,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27229,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27232,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27277,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": [
       27352

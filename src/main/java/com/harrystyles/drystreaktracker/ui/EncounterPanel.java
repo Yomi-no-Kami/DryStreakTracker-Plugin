@@ -42,6 +42,7 @@ public class EncounterPanel extends JPanel {
 
     private final Consumer<Boolean> expandedStateListener;
     private final KillcountUpdateListener setKillcountListener;
+    private final Runnable configureDropsListener;
     private final Runnable clearEncounterListener;
 
     private JLabel expandIndicator;
@@ -55,6 +56,7 @@ public class EncounterPanel extends JPanel {
             boolean expanded,
             Consumer<Boolean> expandedStateListener,
             KillcountUpdateListener setKillcountListener,
+            Runnable configureDropsListener,
             Runnable clearEncounterListener) {
         this.encounter = encounter;
         this.stats = stats;
@@ -63,6 +65,7 @@ public class EncounterPanel extends JPanel {
         this.expanded = expanded;
         this.expandedStateListener = expandedStateListener;
         this.setKillcountListener = setKillcountListener;
+        this.configureDropsListener = configureDropsListener;
         this.clearEncounterListener = clearEncounterListener;
 
         setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -466,6 +469,16 @@ public class EncounterPanel extends JPanel {
         setKillcountItem.addActionListener(actionEvent -> showSetKillcountDialog());
 
         popupMenu.add(setKillcountItem);
+
+        JMenuItem configureDropsItem = new JMenuItem("Configure Tracked Drops...");
+
+        configureDropsItem.addActionListener(actionEvent -> {
+            if (configureDropsListener != null) {
+                configureDropsListener.run();
+            }
+        });
+
+        popupMenu.add(configureDropsItem);
 
         popupMenu.addSeparator();
 

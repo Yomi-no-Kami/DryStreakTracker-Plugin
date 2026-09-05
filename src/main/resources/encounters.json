@@ -6,28 +6,45 @@
     "npcIds": [
       5862
     ],
-    "trackedDropIds": [
-      13227,
-      13229,
-      13231,
-      13233,
-      13245
+    "trackedDrops": [
+      {
+        "itemId": 13227,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 13229,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 13231,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 13233,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 13245,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "scurrius",
     "displayName": "Scurrius",
     "imageFileName": "Scurrius.png",
     "npcIds": [
-      7221, 7222
+      7221,
+      7222
     ],
-    "trackedDropIds": [
-      28798
+    "trackedDrops": [
+      {
+        "itemId": 28798,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "giant_mole",
@@ -36,11 +53,13 @@
     "npcIds": [
       5779
     ],
-    "trackedDropIds": [
-      33382
+    "trackedDrops": [
+      {
+        "itemId": 33382,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "deranged_archaeologist",
@@ -49,11 +68,13 @@
     "npcIds": [
       7806
     ],
-    "trackedDropIds": [
-      30895
+    "trackedDrops": [
+      {
+        "itemId": 30895,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "dagannoth_supreme",
@@ -62,11 +83,13 @@
     "npcIds": [
       2265
     ],
-    "trackedDropIds": [
-      6733
+    "trackedDrops": [
+      {
+        "itemId": 6733,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "dagannoth_rex",
@@ -75,11 +98,17 @@
     "npcIds": [
       2267
     ],
-    "trackedDropIds": [
-      6735, 6737
+    "trackedDrops": [
+      {
+        "itemId": 6735,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 6737,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "dagannoth_prime",
@@ -88,11 +117,13 @@
     "npcIds": [
       2266
     ],
-    "trackedDropIds": [
-      6731
+    "trackedDrops": [
+      {
+        "itemId": 6731,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "sarachnis",
@@ -101,11 +132,17 @@
     "npcIds": [
       8713
     ],
-    "trackedDropIds": [
-      23528, 23525
+    "trackedDrops": [
+      {
+        "itemId": 23528,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 23525,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "kalphite_queen",
@@ -114,11 +151,29 @@
     "npcIds": [
       965
     ],
-    "trackedDropIds": [
-      7981, 7158, 11920, 12885, 3140
+    "trackedDrops": [
+      {
+        "itemId": 7981,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 7158,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11920,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 12885,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 3140,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "kreearra",
@@ -127,11 +182,37 @@
     "npcIds": [
       3162
     ],
-    "trackedDropIds": [
-      11818, 11820, 11822, 11826, 11828, 11830, 11810
+    "trackedDrops": [
+      {
+        "itemId": 11818,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11820,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11822,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11826,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11828,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11830,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11810,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "commander_zilyana",
@@ -140,11 +221,37 @@
     "npcIds": [
       2205
     ],
-    "trackedDropIds": [
-      11818, 11820, 11822, 11814, 13256, 11828, 11785
+    "trackedDrops": [
+      {
+        "itemId": 11818,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11820,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11822,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11814,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 13256,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11828,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11785,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "general_graardor",
@@ -153,11 +260,37 @@
     "npcIds": [
       2215
     ],
-    "trackedDropIds": [
-      11818, 11820, 11822, 11812, 11832, 11834, 11836
+    "trackedDrops": [
+      {
+        "itemId": 11818,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11820,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11822,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11812,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11832,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11834,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11836,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "kril_tsutsaroth",
@@ -166,11 +299,37 @@
     "npcIds": [
       3129
     ],
-    "trackedDropIds": [
-      11818, 11820, 11822, 11816, 11787, 11824, 11791
+    "trackedDrops": [
+      {
+        "itemId": 11818,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11820,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11822,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11816,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11787,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11824,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11791,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "the_hueycoatl",
@@ -182,11 +341,21 @@
     "npcIds": [
       14009
     ],
-    "trackedDropIds": [
-      30085, 30070, 30066
+    "trackedDrops": [
+      {
+        "itemId": 30085,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 30070,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 30066,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "corporeal_beast",
@@ -195,24 +364,65 @@
     "npcIds": [
       319
     ],
-    "trackedDropIds": [
-      12819, 12823, 12827, 12833, 25521
+    "trackedDrops": [
+      {
+        "itemId": 12819,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 12823,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 12827,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 12833,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 25521,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "nex",
     "displayName": "Nex",
     "imageFileName": "Nex.png",
     "npcIds": [
-      11278, 11282
+      11278,
+      11282
     ],
-    "trackedDropIds": [
-      26235, 26370, 26372, 26376, 26378, 26380
+    "trackedDrops": [
+      {
+        "itemId": 26235,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26370,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26372,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26376,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26378,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26380,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "chaos_fanatic",
@@ -221,11 +431,17 @@
     "npcIds": [
       6619
     ],
-    "trackedDropIds": [
-      11928, 11931
+    "trackedDrops": [
+      {
+        "itemId": 11928,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11931,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "crazy_archaeologist",
@@ -234,11 +450,21 @@
     "npcIds": [
       6618
     ],
-    "trackedDropIds": [
-      11932, 11929, 11990
+    "trackedDrops": [
+      {
+        "itemId": 11932,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11929,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11990,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "scorpia",
@@ -247,11 +473,17 @@
     "npcIds": [
       6615
     ],
-    "trackedDropIds": [
-      11930, 11933
+    "trackedDrops": [
+      {
+        "itemId": 11930,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11933,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "king_black_dragon",
@@ -260,11 +492,21 @@
     "npcIds": [
       239
     ],
-    "trackedDropIds": [
-      11920, 7980, 11286
+    "trackedDrops": [
+      {
+        "itemId": 11920,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 7980,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11286,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "chaos_elemental",
@@ -273,11 +515,13 @@
     "npcIds": [
       2054
     ],
-    "trackedDropIds": [
-      11920
+    "trackedDrops": [
+      {
+        "itemId": 11920,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "revenant_maledictus",
@@ -286,11 +530,53 @@
     "npcIds": [
       11246
     ],
-    "trackedDropIds": [
-      22557, 22547, 22552, 22542, 21804, 21807, 21810,  21813, 22299, 22302, 22305
+    "trackedDrops": [
+      {
+        "itemId": 22557,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 22547,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 22552,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 22542,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 21804,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 21807,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 21810,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 21813,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 22299,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 22302,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 22305,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "calvarion",
@@ -299,11 +585,29 @@
     "npcIds": [
       11994
     ],
-    "trackedDropIds": [
-      7158, 11920, 27673, 12601, 27684
+    "trackedDrops": [
+      {
+        "itemId": 7158,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11920,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27673,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 12601,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27684,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "vetion",
@@ -312,11 +616,29 @@
     "npcIds": [
       6612
     ],
-    "trackedDropIds": [
-      7158, 11920, 27673, 12601, 27684
+    "trackedDrops": [
+      {
+        "itemId": 7158,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11920,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27673,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 12601,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27684,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "spindel",
@@ -325,11 +647,29 @@
     "npcIds": [
       11998
     ],
-    "trackedDropIds": [
-      7158, 11920, 27670, 12605, 27687
+    "trackedDrops": [
+      {
+        "itemId": 7158,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11920,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27670,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 12605,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27687,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "venenatis",
@@ -338,11 +678,29 @@
     "npcIds": [
       6610
     ],
-    "trackedDropIds": [
-      7158, 11920, 27670, 12605, 27687
+    "trackedDrops": [
+      {
+        "itemId": 7158,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11920,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27670,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 12605,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27687,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "artio",
@@ -351,11 +709,29 @@
     "npcIds": [
       11992
     ],
-    "trackedDropIds": [
-      7158, 11920, 27667, 12603, 27681
+    "trackedDrops": [
+      {
+        "itemId": 7158,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11920,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27667,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 12603,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27681,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "callisto",
@@ -364,11 +740,29 @@
     "npcIds": [
       6609
     ],
-    "trackedDropIds": [
-      7158, 11920, 27667, 12603, 27681
+    "trackedDrops": [
+      {
+        "itemId": 7158,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11920,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27667,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 12603,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27681,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "brutus",
@@ -377,11 +771,21 @@
     "npcIds": [
       15626
     ],
-    "trackedDropIds": [
-      33101, 33091, 33093
+    "trackedDrops": [
+      {
+        "itemId": 33101,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 33091,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 33093,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "amoxliatl",
@@ -390,11 +794,17 @@
     "npcIds": [
       13685
     ],
-    "trackedDropIds": [
-      29892, 29889
+    "trackedDrops": [
+      {
+        "itemId": 29892,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 29889,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "mad_angel",
@@ -403,24 +813,58 @@
     "npcIds": [
       16305
     ],
-    "trackedDropIds": [
-      34027, 34030
+    "trackedDrops": [
+      {
+        "itemId": 34027,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 34030,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "zulrah",
     "displayName": "Zulrah",
     "imageFileName": "Zulrah_%28serpentine%29.png",
     "npcIds": [
-      2042, 2043, 2044
+      2042,
+      2043,
+      2044
     ],
-    "trackedDropIds": [
-      12922, 13200, 13201, 12932, 12927, 6571, 12936
+    "trackedDrops": [
+      {
+        "itemId": 12922,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 13200,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 13201,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 12932,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 12927,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 6571,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 12936,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "vorkath",
@@ -429,24 +873,54 @@
     "npcIds": [
       8061
     ],
-    "trackedDropIds": [
-      21907, 22111, 11286, 22006, 22106
+    "trackedDrops": [
+      {
+        "itemId": 21907,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 22111,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11286,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 22006,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 22106,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "phantom_muspah",
     "displayName": "Phantom Muspah",
     "imageFileName": "Phantom_Muspah_%28ranged%29.png",
     "npcIds": [
-      12077, 12078, 12080
+      12077,
+      12078,
+      12080
     ],
-    "trackedDropIds": [
-      27627, 27614, 27622
+    "trackedDrops": [
+      {
+        "itemId": 27627,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27614,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 27622,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "the_nightmare",
@@ -456,26 +930,96 @@
       "Nightmare"
     ],
     "npcIds": [
-     9433, 378
+      9433,
+      378
     ],
-    "trackedDropIds": [
-      24422, 24419, 24420, 24421, 24517, 24511, 24514, 24495
+    "trackedDrops": [
+      {
+        "itemId": 24422,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 24419,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 24420,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 24421,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 24517,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 24511,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 24514,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 24495,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "phosanis_nightmare",
     "displayName": "Phosani's Nightmare",
     "imageFileName": "The_Nightmare.png",
     "npcIds": [
-      9424, 377
+      9424,
+      377
     ],
-    "trackedDropIds": [
-      24422, 24419, 24420, 24421, 24517, 24511, 24514, 24495, 25838, 25837
+    "trackedDrops": [
+      {
+        "itemId": 24422,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 24419,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 24420,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 24421,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 24517,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 24511,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 24514,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 24495,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 25838,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 25837,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "yama",
@@ -484,24 +1028,73 @@
     "npcIds": [
       14176
     ],
-    "trackedDropIds": [
-      30750, 30753, 30756, 30759
+    "trackedDrops": [
+      {
+        "itemId": 30750,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 30753,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 30756,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 30759,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "duke_sucellus",
     "displayName": "Duke Sucellus",
     "imageFileName": "Duke_Sucellus.png",
     "npcIds": [
-      12191, 12192
+      12191,
+      12192
     ],
-    "trackedDropIds": [
-      26241, 26243, 26245, 28276, 28281, 28321, 1635
+    "trackedDrops": [
+      {
+        "itemId": 26241,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26243,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26245,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28276,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28281,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28321,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 1635,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28334,
+        "enabledByDefault": false
+      },
+      {
+        "itemId": 28270,
+        "enabledByDefault": false
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "the_leviathan",
@@ -513,11 +1106,45 @@
     "npcIds": [
       12214
     ],
-    "trackedDropIds": [
-      26241, 26243, 26245, 28276, 28283, 28325, 1635
+    "trackedDrops": [
+      {
+        "itemId": 26241,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26243,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26245,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28276,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28283,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28325,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 1635,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28334,
+        "enabledByDefault": false
+      },
+      {
+        "itemId": 28274,
+        "enabledByDefault": false
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "the_whisperer",
@@ -529,11 +1156,45 @@
     "npcIds": [
       12204
     ],
-    "trackedDropIds": [
-      26241, 26243, 26245, 28276, 28279, 28323, 1635
+    "trackedDrops": [
+      {
+        "itemId": 26241,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26243,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26245,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28276,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28279,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28323,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 1635,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28334,
+        "enabledByDefault": false
+      },
+      {
+        "itemId": 28272,
+        "enabledByDefault": false
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "vardorvis",
@@ -542,24 +1203,68 @@
     "npcIds": [
       12223
     ],
-    "trackedDropIds": [
-      26241, 26243, 26245, 28276, 28285, 28319, 1635
+    "trackedDrops": [
+      {
+        "itemId": 26241,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26243,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 26245,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28276,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28285,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28319,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 1635,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 28334,
+        "enabledByDefault": false
+      },
+      {
+        "itemId": 28268,
+        "enabledByDefault": false
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
-  "encounterId": "skotizo",
-  "displayName": "Skotizo",
-  "imageFileName": "Skotizo.png",
-  "npcIds": [
-    7286
-  ],
-  "trackedDropIds": [
-    6571, 21275, 19701
-  ],
-    "petDropIds": [
-    ]
+    "encounterId": "skotizo",
+    "displayName": "Skotizo",
+    "imageFileName": "Skotizo.png",
+    "npcIds": [
+      7286
+    ],
+    "trackedDrops": [
+      {
+        "itemId": 6571,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 21275,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 19701,
+        "enabledByDefault": true
+      }
+    ],
+    "petDropIds": []
   },
   {
     "encounterId": "shellbane_gryphon",
@@ -568,11 +1273,17 @@
     "npcIds": [
       14860
     ],
-    "trackedDropIds": [
-      31245, 32921
+    "trackedDrops": [
+      {
+        "itemId": 31245,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 32921,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "grotesque_guardians",
@@ -581,11 +1292,33 @@
     "npcIds": [
       7889
     ],
-    "trackedDropIds": [
-      21730, 4153, 21736, 21739, 21742, 21745
+    "trackedDrops": [
+      {
+        "itemId": 21730,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 4153,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 21736,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 21739,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 21742,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 21745,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "abyssal_sire",
@@ -594,11 +1327,13 @@
     "npcIds": [
       5908
     ],
-    "trackedDropIds": [
-      13273
+    "trackedDrops": [
+      {
+        "itemId": 13273,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "kraken",
@@ -607,11 +1342,21 @@
     "npcIds": [
       0
     ],
-    "trackedDropIds": [
-      11905, 12004, 12007
+    "trackedDrops": [
+      {
+        "itemId": 11905,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 12004,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 12007,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "thermonuclear_smoke_devil",
@@ -620,50 +1365,121 @@
     "npcIds": [
       499
     ],
-    "trackedDropIds": [
-      12002, 11998, 3140, 25524
+    "trackedDrops": [
+      {
+        "itemId": 12002,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 11998,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 3140,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 25524,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "alchemical_hydra",
     "displayName": "Alchemical Hydra",
     "imageFileName": "Alchemical_Hydra_%28serpentine%29.png",
     "npcIds": [
-      8621, 8622
+      8621,
+      8622
     ],
-    "trackedDropIds": [
-      22966, 22969, 22971, 22973, 22983, 22988, 23077, 20849, 22804, 23064
+    "trackedDrops": [
+      {
+        "itemId": 22966,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 22969,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 22971,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 22973,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 22983,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 22988,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 23077,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 20849,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 22804,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 23064,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "zalcano",
     "displayName": "Zalcano",
     "imageFileName": "Zalcano.png",
     "npcIds": [
-      9049, 9050
+      9049,
+      9050
     ],
-    "trackedDropIds": [
-      23953, 23908, 6571
+    "trackedDrops": [
+      {
+        "itemId": 23953,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 23908,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 6571,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "tekton",
     "displayName": "Tekton",
     "imageFileName": "Tekton.png",
     "npcIds": [
-      7540, 7541, 7542, 7545, 7543, 7544
+      7540,
+      7541,
+      7542,
+      7545,
+      7543,
+      7544
     ],
-    "trackedDropIds": [
-      6573
+    "trackedDrops": [
+      {
+        "itemId": 6573,
+        "enabledByDefault": true
+      }
     ],
-    "petDropIds": [
-    ]
+    "petDropIds": []
   },
   {
     "encounterId": "jad",
@@ -672,7 +1488,7 @@
     "npcIds": [
       3127
     ],
-    "trackedDropIds": [],
+    "trackedDrops": [],
     "petDropIds": [
       13225
     ]
@@ -684,7 +1500,7 @@
     "npcIds": [
       7706
     ],
-    "trackedDropIds": [],
+    "trackedDrops": [],
     "petDropIds": [
       22319
     ]
@@ -696,7 +1512,7 @@
     "npcIds": [
       15628
     ],
-    "trackedDropIds": [],
+    "trackedDrops": [],
     "petDropIds": [
       33124
     ]
@@ -708,8 +1524,11 @@
     "npcIds": [
       13033
     ],
-    "trackedDropIds": [
-      29084
+    "trackedDrops": [
+      {
+        "itemId": 29084,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": []
   },
@@ -720,8 +1539,15 @@
     "npcIds": [
       13788
     ],
-    "trackedDropIds": [
-      29889, 29892
+    "trackedDrops": [
+      {
+        "itemId": 29889,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 29892,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": []
   },
@@ -732,8 +1558,11 @@
     "npcIds": [
       14420
     ],
-    "trackedDropIds": [
-      30957
+    "trackedDrops": [
+      {
+        "itemId": 30957,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": []
   },
@@ -742,10 +1571,21 @@
     "displayName": "Warped Creatures",
     "imageFileName": "Warped_Terrorbird_%28lv_96%29.png",
     "npcIds": [
-      12490, 12491, 12492, 12943, 12494, 12495, 12496, 12497, 12498
+      12490,
+      12491,
+      12492,
+      12943,
+      12494,
+      12495,
+      12496,
+      12497,
+      12498
     ],
-    "trackedDropIds": [
-      28583
+    "trackedDrops": [
+      {
+        "itemId": 28583,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": []
   },
@@ -754,10 +1594,30 @@
     "displayName": "Armoured Zombie",
     "imageFileName": "Armoured_zombie_%28melee%2C_5%29.png",
     "npcIds": [
-      14113, 14114, 14115, 14116, 14117, 14118, 14119, 14120, 14121, 14122
+      14113,
+      14114,
+      14115,
+      14116,
+      14117,
+      14118,
+      14119,
+      14120,
+      14121,
+      14122
     ],
-    "trackedDropIds": [
-      28813, 30324, 6807
+    "trackedDrops": [
+      {
+        "itemId": 28813,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 30324,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 6807,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": []
   },
@@ -766,10 +1626,52 @@
     "displayName": "Cyclops",
     "imageFileName": "Cyclops_%28level_56%2C_3%29.png",
     "npcIds": [
-      2137, 2138, 2139, 2140, 2141, 2142, 2463, 2464, 2465, 2466, 2467, 2468
+      2137,
+      2138,
+      2139,
+      2140,
+      2141,
+      2142,
+      2463,
+      2464,
+      2465,
+      2466,
+      2467,
+      2468
     ],
-    "trackedDropIds": [
-      8844, 8845, 8846, 8847, 8848, 8849, 8850, 12954
+    "trackedDrops": [
+      {
+        "itemId": 8844,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 8845,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 8846,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 8847,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 8848,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 8849,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 8850,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 12954,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": []
   },
@@ -778,10 +1680,17 @@
     "displayName": "Cave Horror",
     "imageFileName": "Cave_horror_%281%29.png",
     "npcIds": [
-      1047, 1048, 1049, 1050, 1051
+      1047,
+      1048,
+      1049,
+      1050,
+      1051
     ],
-    "trackedDropIds": [
-      8901
+    "trackedDrops": [
+      {
+        "itemId": 8901,
+        "enabledByDefault": true
+      }
     ],
     "petDropIds": []
   },
@@ -790,12 +1699,100 @@
     "displayName": "Superior Creatures",
     "imageFileName": "Nechryarch.png",
     "npcIds": [
-      7388, 7389, 14031, 7390, 7391, 7392, 7393, 7394, 7395, 7396, 7397, 7398, 14859, 7399, 7400, 15501, 10397, 12464, 12465,
-      7401, 7402, 7403, 9258, 10399, 15504, 7404, 7405, 15770, 7407, 7408, 14520, 15502, 15503, 7411, 10400, 10401, 7410, 7409,
-      13680, 7406, 10402
+      7388,
+      7389,
+      14031,
+      7390,
+      7391,
+      7392,
+      7393,
+      7394,
+      7395,
+      7396,
+      7397,
+      7398,
+      14859,
+      7399,
+      7400,
+      15501,
+      10397,
+      12464,
+      12465,
+      7401,
+      7402,
+      7403,
+      9258,
+      10399,
+      15504,
+      7404,
+      7405,
+      15770,
+      7407,
+      7408,
+      14520,
+      15502,
+      15503,
+      7411,
+      10400,
+      10401,
+      7410,
+      7409,
+      13680,
+      7406,
+      10402
     ],
-    "trackedDropIds": [
-      20724, 21270, 20730, 20736
+    "trackedDrops": [
+      {
+        "itemId": 20724,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 21270,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 20730,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 20736,
+        "enabledByDefault": true
+      }
+    ],
+    "petDropIds": []
+  },
+  {
+    "encounterId": "goblin_test",
+    "displayName": "Goblin Test",
+    "imageFileName": "Goblin_%28level_2%29.png",
+    "npcIds": [
+      3028, 3029, 3030, 3031, 3032,
+      3033, 3034, 3035, 3036, 3037,
+      3038, 3039, 3040, 3041, 3042,
+      3043, 3044, 3045, 3046, 3047,
+      3048, 3051, 3052, 3053, 3054
+    ],
+    "trackedDrops": [
+      {
+        "itemId": 2347,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 288,
+        "enabledByDefault": true
+      },
+      {
+        "itemId":  995,
+        "enabledByDefault": false
+      },
+      {
+        "itemId":  1237,
+        "enabledByDefault": false
+      },
+      {
+        "itemId":  10999,
+        "enabledByDefault": false
+      }
     ],
     "petDropIds": []
   }
