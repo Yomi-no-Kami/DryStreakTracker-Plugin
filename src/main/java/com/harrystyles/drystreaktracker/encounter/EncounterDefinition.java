@@ -24,6 +24,8 @@ public class EncounterDefinition {
 
     private String displayName;
 
+    private Integer combatLevel;
+
     private static final String WIKI_IMAGE_BASE_URL = "https://oldschool.runescape.wiki/images/";
 
     private String imageFileName;
@@ -100,6 +102,13 @@ public class EncounterDefinition {
         this.displayName = displayName;
     }
 
+    public Integer getCombatLevel() {
+        return combatLevel;
+    }
+
+    public void setCombatLevel(Integer combatLevel) {
+        this.combatLevel = combatLevel;
+    }
 
     public String getImageFileName() {
         return imageFileName;

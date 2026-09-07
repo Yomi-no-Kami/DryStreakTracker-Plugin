@@ -43,6 +43,7 @@ public class EncounterPanel extends JPanel {
     private final Consumer<Boolean> expandedStateListener;
     private final KillcountUpdateListener setKillcountListener;
     private final Runnable configureDropsListener;
+    private final Runnable deleteCustomEncounterListener;
     private final Runnable clearEncounterListener;
 
     private JLabel expandIndicator;
@@ -57,6 +58,7 @@ public class EncounterPanel extends JPanel {
             Consumer<Boolean> expandedStateListener,
             KillcountUpdateListener setKillcountListener,
             Runnable configureDropsListener,
+            Runnable deleteCustomEncounterListener,
             Runnable clearEncounterListener) {
         this.encounter = encounter;
         this.stats = stats;
@@ -66,6 +68,7 @@ public class EncounterPanel extends JPanel {
         this.expandedStateListener = expandedStateListener;
         this.setKillcountListener = setKillcountListener;
         this.configureDropsListener = configureDropsListener;
+        this.deleteCustomEncounterListener = deleteCustomEncounterListener;
         this.clearEncounterListener = clearEncounterListener;
 
         setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -470,15 +473,51 @@ public class EncounterPanel extends JPanel {
 
         popupMenu.add(setKillcountItem);
 
-        JMenuItem configureDropsItem = new JMenuItem("Configure Tracked Drops...");
+        if (deleteCustomEncounterListener != null) {
+            JMenuItem editCustomItem = new JMenuItem("Edit Custom Encounter...");
 
-        configureDropsItem.addActionListener(actionEvent -> {
-            if (configureDropsListener != null) {
-                configureDropsListener.run();
-            }
-        });
+            editCustomItem.addActionListener(actionEvent -> {
+                if (configureDropsListener != null) {
+                    configureDropsListener.run();
+                }
+            });
 
-        popupMenu.add(configureDropsItem);
+            popupMenu.add(editCustomItem);
+
+            JMenuItem deleteCustomItem = new JMenuItem("Delete Custom Encounter");
+
+            deleteCustomItem.addActionListener(actionEvent -> {
+                int result = JOptionPane.showConfirmDialog(
+                        this,
+                        "Delete the custom encounter "
+                                + encounter.getDisplayName()
+                                + "?\n\n"
+                                + "Its saved kill count, dry streak, and tracked-drop configuration will also be deleted.\n\n"
+                                + "This cannot be undone.",
+                        "Delete Custom Encounter",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE
+                );
+
+                if (result != JOptionPane.YES_OPTION) {
+                    return;
+                }
+
+                deleteCustomEncounterListener.run();
+            });
+
+            popupMenu.add(deleteCustomItem);
+        } else {
+            JMenuItem configureDropsItem = new JMenuItem("Configure Tracked Drops...");
+
+            configureDropsItem.addActionListener(actionEvent -> {
+                if (configureDropsListener != null) {
+                    configureDropsListener.run();
+                }
+            });
+
+            popupMenu.add(configureDropsItem);
+        }
 
         popupMenu.addSeparator();
 

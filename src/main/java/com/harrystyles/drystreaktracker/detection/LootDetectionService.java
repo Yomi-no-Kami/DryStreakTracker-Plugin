@@ -141,6 +141,17 @@ public class LootDetectionService {
 
         EncounterDefinition encounter = encounterRegistry.getByNpcId(npcId);
 
+        /*
+         * A custom NPC may have multiple visual variants with different
+         * NPC IDs.
+         *
+         * If the exact ID has not been registered yet, use exact NPC
+         * name + exact combat level to find the player's custom encounter.
+         */
+        if (encounter == null) {
+            encounter = trackerManager.getCustomEncounterByNpc(npc.getName(), npc.getCombatLevel());
+        }
+
         if (encounter == null) {
             return;
         }

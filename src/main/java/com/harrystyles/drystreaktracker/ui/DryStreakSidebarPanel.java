@@ -9,17 +9,15 @@ import com.harrystyles.drystreaktracker.encounter.tracking.EncounterTrackerManag
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.*;
 
 import com.harrystyles.drystreaktracker.encounter.tracking.RecentDrop;
+import com.harrystyles.drystreaktracker.wiki.WikiDropService;
 import lombok.extern.slf4j.Slf4j;
 
 import net.runelite.api.ItemComposition;
@@ -43,6 +41,7 @@ public class DryStreakSidebarPanel extends PluginPanel {
     private final EncounterTrackerManager trackerManager;
     private final ItemManager itemManager;
     private final DiscordWebhookService discordWebhookService;
+    private final WikiDropService wikiDropService;
 
     private final ClientThread clientThread;
 
@@ -64,7 +63,7 @@ public class DryStreakSidebarPanel extends PluginPanel {
     private boolean loggedIn;
 
     @Inject
-    public DryStreakSidebarPanel(EncounterRegistry encounterRegistry, EncounterTrackerManager trackerManager, ItemManager itemManager, DiscordWebhookService discordWebhookService, ClientThread clientThread) {
+    public DryStreakSidebarPanel(EncounterRegistry encounterRegistry, EncounterTrackerManager trackerManager, ItemManager itemManager, DiscordWebhookService discordWebhookService, ClientThread clientThread, WikiDropService wikiDropService) {
         super();
 
         this.encounterRegistry = encounterRegistry;
@@ -72,6 +71,7 @@ public class DryStreakSidebarPanel extends PluginPanel {
         this.itemManager = itemManager;
         this.discordWebhookService = discordWebhookService;
         this.clientThread = clientThread;
+        this.wikiDropService = wikiDropService;
 
         setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
         setBackground(ColorScheme.DARK_GRAY_COLOR);
@@ -660,57 +660,42 @@ public class DryStreakSidebarPanel extends PluginPanel {
 
             boolean expanded = expandedStates.getOrDefault(encounter.getEncounterId(), false);
 
-            EncounterPanel encounterPanel =
-                    new EncounterPanel(encounter, stats, displayData, itemManager, expanded, isExpanded -> expandedStates.put(encounter.getEncounterId(), isExpanded), (totalKillcount, dryKillcount, longestDryKillcount) ->
-                    {
+            EncounterPanel encounterPanel = new EncounterPanel(
+                    encounter,
+                    stats,
+                    displayData,
+                    itemManager,
+                    expanded,
+                    isExpanded -> expandedStates.put(encounter.getEncounterId(), isExpanded),
+                    (totalKillcount, dryKillcount, longestDryKillcount) -> {
                         if (trackerManager.setEncounterKillcounts(encounter.getEncounterId(), totalKillcount, dryKillcount, longestDryKillcount)) {
                             refresh();
                         }
-                    }, () ->
-                    {
-                        Map<Integer, String> itemNames = new HashMap<>();
+                    },
+                    () -> {
+                        if (trackerManager.isCustomEncounter(encounter.getEncounterId())) {
+                            editCustomEncounter(encounter);
+                        } else {
+                            configureTrackedDrops(encounter);
+                        }
+                    },
+                    trackerManager.isCustomEncounter(encounter.getEncounterId()) ? () -> {
+                        if (!trackerManager.removeCustomEncounter(encounter.getEncounterId())) {
+                            return;
+                        }
 
-                        clientThread.invokeLater(() -> {
-                            for (EncounterDropDefinition drop : encounter.getTrackedDrops()) {
-                                if (drop == null) {
-                                    continue;
-                                }
+                        expandedStates.remove(encounter.getEncounterId());
 
-                                ItemComposition itemComposition = itemManager.getItemComposition(drop.getItemId());
-
-                                if (itemComposition != null) {
-                                    itemNames.put(drop.getItemId(), itemComposition.getName());
-                                }
-                            }
-
-                            SwingUtilities.invokeLater(() -> {
-                                TrackedDropsDialog dialog = new TrackedDropsDialog(
-                                        this,
-                                        encounter,
-                                        itemManager,
-                                        itemNames::get,
-                                        itemId -> trackerManager.isDropEnabled(encounter.getEncounterId(), itemId),
-                                        (itemId, enabled) -> trackerManager.setDropEnabled(encounter.getEncounterId(), itemId, enabled, false),
-                                        trackerManager::save,
-                                        () -> {
-                                            if (trackerManager.resetDropPreferences(encounter.getEncounterId())) {
-                                                refresh();
-                                            }
-                                        }
-                                );
-
-                                dialog.show();
-                            });
-                        });
-                    }, () ->
-                    {
+                        refresh();
+                    } : null,
+                    () -> {
                         trackerManager.clearEncounterData(encounter.getEncounterId());
 
                         expandedStates.remove(encounter.getEncounterId());
 
                         refresh();
                     }
-                    );
+            );
 
             encounterContainer.add(encounterPanel);
 
@@ -803,6 +788,125 @@ public class DryStreakSidebarPanel extends PluginPanel {
         revalidate();
         repaint();
     }
+
+    private void configureTrackedDrops(EncounterDefinition encounter) {
+        Map<Integer, String> itemNames = new HashMap<>();
+
+        clientThread.invokeLater(() -> {
+            for (EncounterDropDefinition drop : encounter.getTrackedDrops()) {
+                if (drop == null) {
+                    continue;
+                }
+
+                ItemComposition itemComposition = itemManager.getItemComposition(drop.getItemId());
+
+                if (itemComposition != null) {
+                    itemNames.put(drop.getItemId(), itemComposition.getName());
+                }
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                TrackedDropsDialog dialog = new TrackedDropsDialog(
+                        this,
+                        encounter,
+                        itemManager,
+                        itemNames::get,
+                        itemId -> trackerManager.isDropEnabled(encounter.getEncounterId(), itemId),
+                        (itemId, enabled) -> trackerManager.setDropEnabled(encounter.getEncounterId(), itemId, enabled, false),
+                        trackerManager::save,
+                        () -> {
+                            if (trackerManager.resetDropPreferences(encounter.getEncounterId())) {
+                                refresh();
+                            }
+                        }
+                );
+
+                dialog.show();
+            });
+        });
+    }
+
+    private void editCustomEncounter(EncounterDefinition encounter) {
+        if (encounter == null || encounter.getNpcIds().isEmpty()) {
+            return;
+        }
+
+        Integer npcId = encounter.getNpcIds().iterator().next();
+
+        if (npcId == null || npcId <= 0) {
+            return;
+        }
+
+        CustomNpcTrackerDialog dialog = new CustomNpcTrackerDialog(
+                this,
+                encounter.getDisplayName(),
+                npcId,
+                encounter,
+                wikiDropService,
+                itemManager,
+                selectedItemIds -> updateCustomEncounter(encounter, selectedItemIds),
+                () -> {
+                    if (trackerManager.removeCustomEncounter(encounter.getEncounterId())) {
+                        expandedStates.remove(encounter.getEncounterId());
+                        refresh();
+                    }
+                }
+        );
+
+        dialog.show();
+    }
+
+    private void updateCustomEncounter(EncounterDefinition existingEncounter, Set<Integer> selectedItemIds) {
+        if (existingEncounter == null || selectedItemIds == null) {
+            return;
+        }
+
+        EncounterDefinition updatedEncounter = new EncounterDefinition();
+
+        updatedEncounter.setEncounterId(existingEncounter.getEncounterId());
+        updatedEncounter.setDisplayName(existingEncounter.getDisplayName());
+        updatedEncounter.setCombatLevel(existingEncounter.getCombatLevel());
+        updatedEncounter.setImageFileName(existingEncounter.getImageFileName());
+        updatedEncounter.setLootType(existingEncounter.getLootType());
+        updatedEncounter.setNpcIds(existingEncounter.getNpcIds());
+        updatedEncounter.setLootSourceNames(existingEncounter.getLootSourceNames());
+        updatedEncounter.setKillcountNames(existingEncounter.getKillcountNames());
+        updatedEncounter.setPetDropIds(existingEncounter.getPetDropIds());
+
+        List<EncounterDropDefinition> trackedDrops = new ArrayList<>();
+
+        for (Integer itemId : selectedItemIds) {
+            if (itemId == null || itemId <= 0) {
+                continue;
+            }
+
+            EncounterDropDefinition drop = new EncounterDropDefinition();
+
+            drop.setItemId(itemId);
+            drop.setEnabledByDefault(true);
+
+            trackedDrops.add(drop);
+        }
+
+        updatedEncounter.setTrackedDrops(trackedDrops);
+
+        if (!trackerManager.saveCustomEncounter(updatedEncounter)) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Could not update the custom encounter for "
+                            + existingEncounter.getDisplayName()
+                            + ".",
+                    "Custom NPC Tracker",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        refreshItemDisplayData();
+        refresh();
+    }
+
     /**
      * Resolves an item's display name and sprite.
      * <p>

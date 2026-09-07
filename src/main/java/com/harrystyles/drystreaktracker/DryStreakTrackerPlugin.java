@@ -1,8 +1,7 @@
 package com.harrystyles.drystreaktracker;
 
 import com.harrystyles.drystreaktracker.detection.LootDetectionService;
-import com.harrystyles.drystreaktracker.encounter.EncounterDefinitionLoader;
-import com.harrystyles.drystreaktracker.encounter.EncounterRegistry;
+import com.harrystyles.drystreaktracker.encounter.*;
 import com.harrystyles.drystreaktracker.encounter.tracking.EncounterTrackerManager;
 import com.harrystyles.drystreaktracker.ui.DryStreakSidebarPanel;
 import com.harrystyles.drystreaktracker.ui.notification.DryStreakNotificationManager;
@@ -10,21 +9,21 @@ import com.harrystyles.drystreaktracker.ui.notification.DryStreakNotificationMan
 import java.awt.image.BufferedImage;
 
 import javax.inject.Inject;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import com.google.inject.Provides;
 
+import com.harrystyles.drystreaktracker.wiki.WikiDropService;
 import lombok.extern.slf4j.Slf4j;
 
-import net.runelite.api.Client;
-import net.runelite.api.GameState;
-import net.runelite.api.events.ChatMessage;
-import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.*;
+import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.*;
 
-import net.runelite.api.events.GameTick;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.loottracker.LootReceived;
 import net.runelite.client.events.NpcLootReceived;
 import net.runelite.client.plugins.Plugin;
@@ -49,7 +48,13 @@ public class DryStreakTrackerPlugin extends Plugin {
     private LootDetectionService lootDetectionService;
 
     @Inject
+    private CustomNpcEncounterService customNpcEncounterService;
+
+    @Inject
     private DryStreakNotificationManager notificationManager;
+
+    @Inject
+    private DryStreakTrackerConfig config;
 
     @Inject
     private ClientToolbar clientToolbar;
@@ -114,6 +119,8 @@ public class DryStreakTrackerPlugin extends Plugin {
     @Override
     protected void shutDown() {
         log.info("Dry Streak Tracker shutting down...");
+
+        removeTestRedMist();
 
         if (navigationButton != null) {
             clientToolbar.removeNavigation(navigationButton);
@@ -222,5 +229,191 @@ public class DryStreakTrackerPlugin extends Plugin {
     @Subscribe
     public void onGameTick(GameTick event) {
         lootDetectionService.processPendingPetDryResult();
+    }
+
+    @Subscribe
+    public void onMenuEntryAdded(MenuEntryAdded event) {
+        if (!config.customNpcTracking() || !trackerManager.isActive()) {
+            return;
+        }
+
+        if (event == null || event.getMenuEntry() == null) {
+            return;
+        }
+
+        MenuEntry menuEntry = event.getMenuEntry();
+
+        /*
+         * EXAMINE_NPC occurs once for the NPC's menu.
+         *
+         * Using it as the hook prevents us from adding the custom
+         * option once for Attack, Talk-to, Examine, etc.
+         */
+        if (menuEntry.getType() != MenuAction.EXAMINE_NPC) {
+            return;
+        }
+
+        NPC npc = menuEntry.getNpc();
+
+        if (npc == null) {
+            return;
+        }
+
+        String npcName = npc.getName();
+        int npcId = npc.getId();
+        int combatLevel = npc.getCombatLevel();
+
+        if (npcName == null || npcName.trim().isEmpty() || npcId <= 0) {
+            return;
+        }
+
+        /*
+         * Custom trackers are intended for killable NPCs.
+         */
+        if (combatLevel <= 0) {
+            return;
+        }
+
+        EncounterDefinition registeredEncounter = encounterRegistry.getByNpcId(npcId);
+
+        /*
+         * An exact NPC ID already belongs to a built-in encounter.
+         *
+         * Built-in encounters always take priority over custom ones.
+         */
+        if (registeredEncounter != null
+                && !trackerManager.isCustomEncounter(registeredEncounter.getEncounterId())) {
+            return;
+        }
+
+        /*
+         * Custom encounters first match the exact NPC ID.
+         *
+         * If this particular visual/ID variant has not been seen before,
+         * fall back to exact NPC name + exact combat level.
+         */
+        EncounterDefinition customEncounter = trackerManager.getCustomEncounterByNpcId(npcId);
+
+        if (customEncounter == null) {
+            customEncounter = trackerManager.getCustomEncounterByNpc(npcName, combatLevel);
+        }
+
+        boolean customEncounterExists = customEncounter != null;
+
+        String option = customEncounterExists
+                ? "Configure Dry Streak Tracker"
+                : "Add to Dry Streak Tracker";
+
+        /*
+         * Do not hold the NPC reference after the menu closes.
+         */
+        String selectedNpcName = npcName;
+        int selectedNpcId = npcId;
+        int selectedCombatLevel = combatLevel;
+        EncounterDefinition selectedCustomEncounter = customEncounter;
+
+        client.createMenuEntry(-1)
+                .setOption(option)
+                .setTarget(menuEntry.getTarget())
+                .setType(MenuAction.RUNELITE)
+                .onClick(clickedEntry ->
+                        customNpcEncounterService.openTracker(
+                                sidebarPanel,
+                                selectedNpcName,
+                                selectedNpcId,
+                                selectedCombatLevel,
+                                selectedCustomEncounter
+                        ));
+    }
+
+    @Subscribe
+    public void onItemSpawned(ItemSpawned event) {
+        if (event.getItem().getId() != TEST_ITEM_ID) {
+            return;
+        }
+
+        spawnTestRedMist(event);
+    }
+
+    @Subscribe
+    public void onItemDespawned(ItemDespawned event) {
+        if (event.getItem().getId() != TEST_ITEM_ID) {
+            return;
+        }
+
+        if (testRedMistLocation == null) {
+            return;
+        }
+
+        WorldPoint location = event.getTile().getWorldLocation();
+
+        if (!location.equals(testRedMistLocation)) {
+            return;
+        }
+
+        removeTestRedMist();
+    }
+
+    private static final int TEST_ITEM_ID = 995;
+    private static final int RED_MIST_MODEL_ID = 50683;
+    private static final int RED_MIST_ANIMATION_ID = 10727;
+    private static final int PURPLE_HUE = 52;
+
+    private RuneLiteObject testRedMist;
+    private WorldPoint testRedMistLocation;
+
+    private void spawnTestRedMist(ItemSpawned event) {
+        ModelData modelData = client.loadModelData(RED_MIST_MODEL_ID);
+        if (modelData == null) {
+            log.warn("Unable to load red mist model {}", RED_MIST_MODEL_ID);
+
+            return;
+        }
+
+        modelData = modelData.cloneColors();
+
+        short[] faceColors = modelData.getFaceColors();
+        if (faceColors != null) {
+            for (short originalColor : faceColors) {
+                int saturation = JagexColor.unpackSaturation(originalColor);
+                int luminance = JagexColor.unpackLuminance(originalColor);
+
+                short purpleColor = JagexColor.packHSL(PURPLE_HUE, saturation, luminance);
+
+                modelData.recolor(originalColor, purpleColor);
+            }
+        }
+
+        Model model = modelData.light(
+                ModelData.DEFAULT_AMBIENT,
+                ModelData.DEFAULT_CONTRAST,
+                ModelData.DEFAULT_X,
+                ModelData.DEFAULT_Y,
+                ModelData.DEFAULT_Z
+        );
+
+        AnimationController animationController = new AnimationController(client, RED_MIST_ANIMATION_ID);
+        animationController.setOnFinished(AnimationController::loop);
+
+        removeTestRedMist();
+
+        testRedMist = client.createRuneLiteObject();
+        testRedMist.setModel(model);
+        testRedMist.setAnimationController(animationController);
+        testRedMist.setLocation(event.getTile().getLocalLocation(), event.getTile().getPlane());
+        testRedMist.setActive(true);
+
+        testRedMistLocation = event.getTile().getWorldLocation();
+
+        log.info("Spawned test purple mist for item {} at {}", TEST_ITEM_ID, testRedMistLocation);
+    }
+
+    private void removeTestRedMist() {
+        if (testRedMist != null) {
+            testRedMist.setActive(false);
+            testRedMist = null;
+        }
+
+        testRedMistLocation = null;
     }
 }

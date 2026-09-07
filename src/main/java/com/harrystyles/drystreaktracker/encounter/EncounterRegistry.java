@@ -169,6 +169,49 @@ public class EncounterRegistry {
         return encountersByLootSourceName.containsKey(normalizeLootSourceName(sourceName));
     }
 
+    /**
+     * Removes one encounter from every registry index.
+     *
+     * Used for player-created encounters when changing
+     * accounts or deleting a custom tracker.
+     */
+    public void unregister(String encounterId) {
+        if (encounterId == null || encounterId.trim().isEmpty()) {
+            return;
+        }
+
+        EncounterDefinition encounter = encountersById.remove(encounterId.trim());
+
+        if (encounter == null) {
+            return;
+        }
+
+        for (Integer npcId : encounter.getNpcIds()) {
+            if (npcId == null) {
+                continue;
+            }
+
+            EncounterDefinition registered = encountersByNpcId.get(npcId);
+
+            if (registered == encounter) {
+                encountersByNpcId.remove(npcId);
+            }
+        }
+
+        for (String lootSourceName : encounter.getLootSourceNames()) {
+            if (lootSourceName == null || lootSourceName.trim().isEmpty()) {
+                continue;
+            }
+
+            String normalizedName = normalizeLootSourceName(lootSourceName);
+
+            EncounterDefinition registered = encountersByLootSourceName.get(normalizedName);
+
+            if (registered == encounter) {
+                encountersByLootSourceName.remove(normalizedName);
+            }
+        }
+    }
 
     public Collection<EncounterDefinition> getAll() {
         return Collections.unmodifiableCollection(encountersById.values());

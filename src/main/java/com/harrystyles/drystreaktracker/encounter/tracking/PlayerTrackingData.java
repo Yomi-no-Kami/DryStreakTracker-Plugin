@@ -25,6 +25,11 @@ public class PlayerTrackingData {
     private List<RecentDrop> recentDrops = new ArrayList<>();
 
     /**
+     * Player-created NPC encounter definitions.
+     */
+    private List<EncounterDefinition> customEncounters = new ArrayList<>();
+
+    /**
      * Player-specific tracked drop overrides by encounter ID.
      *
      * Drops not explicitly enabled or disabled here follow
@@ -103,6 +108,80 @@ public class PlayerTrackingData {
         }
 
         getDropPreferences().remove(encounterId);
+    }
+
+    public List<EncounterDefinition> getCustomEncounters() {
+        if (customEncounters == null) {
+            customEncounters = new ArrayList<>();
+        }
+
+        return customEncounters;
+    }
+
+    public EncounterDefinition getCustomEncounter(String encounterId) {
+        if (encounterId == null) {
+            return null;
+        }
+
+        for (EncounterDefinition encounter : getCustomEncounters()) {
+            if (encounter != null && encounterId.equals(encounter.getEncounterId())) {
+                return encounter;
+            }
+        }
+
+        return null;
+    }
+
+    public EncounterDefinition getCustomEncounterByNpcId(int npcId) {
+        for (EncounterDefinition encounter : getCustomEncounters()) {
+            if (encounter != null && encounter.getNpcIds().contains(npcId)) {
+                return encounter;
+            }
+        }
+
+        return null;
+    }
+
+    public EncounterDefinition getCustomEncounterByNpc(String npcName, int combatLevel) {
+        if (npcName == null || npcName.trim().isEmpty() || combatLevel <= 0) {
+            return null;
+        }
+
+        String normalizedName = npcName.trim();
+
+        for (EncounterDefinition encounter : getCustomEncounters()) {
+            if (encounter == null
+                    || encounter.getDisplayName() == null
+                    || encounter.getCombatLevel() == null) {
+                continue;
+            }
+
+            if (encounter.getDisplayName().trim().equalsIgnoreCase(normalizedName)
+                    && encounter.getCombatLevel() == combatLevel) {
+                return encounter;
+            }
+        }
+
+        return null;
+    }
+
+    public void putCustomEncounter(EncounterDefinition encounter) {
+        if (encounter == null || encounter.getEncounterId() == null) {
+            return;
+        }
+
+        removeCustomEncounter(encounter.getEncounterId());
+
+        getCustomEncounters().add(encounter);
+    }
+
+    public void removeCustomEncounter(String encounterId) {
+        if (encounterId == null) {
+            return;
+        }
+
+        getCustomEncounters().removeIf(encounter ->
+                encounter != null && encounterId.equals(encounter.getEncounterId()));
     }
 
     public EncounterStats getEncounter(String encounterId) {

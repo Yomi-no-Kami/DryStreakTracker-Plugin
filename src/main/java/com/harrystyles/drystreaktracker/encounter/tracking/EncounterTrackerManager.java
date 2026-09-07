@@ -1,14 +1,9 @@
 package com.harrystyles.drystreaktracker.encounter.tracking;
 
-import com.harrystyles.drystreaktracker.encounter.EncounterDefinition;
-import com.harrystyles.drystreaktracker.encounter.EncounterDropDefinition;
-import com.harrystyles.drystreaktracker.encounter.EncounterRegistry;
-import com.harrystyles.drystreaktracker.encounter.EncounterStats;
+import com.harrystyles.drystreaktracker.encounter.*;
 import com.harrystyles.drystreaktracker.storage.DryStreakStorage;
 
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -81,20 +76,12 @@ public class EncounterTrackerManager {
 
         String normalizedName = playerName.trim();
 
-        /*
-         * Avoid reloading the same account if RuneLite
-         * sends LOGGED_IN more than once.
-         */
         if (active && currentPlayerName != null && currentPlayerName.equalsIgnoreCase(normalizedName)) {
             log.debug("Tracker already active for {}", normalizedName);
 
             return;
         }
 
-        /**
-         * If another account was active, save that account
-         * before switching.
-         */
         if (active) {
             stopForPlayer();
         }
@@ -107,15 +94,18 @@ public class EncounterTrackerManager {
             trackingData = new PlayerTrackingData();
         }
 
-        /*
-         * Kill events from the previous account must never
-         * carry over to the new account.
-         */
         processedKillEvents.clear();
+
+        registerCustomEncounters();
 
         active = true;
 
-        log.info("Started tracking for account {}. " + "Loaded {} tracked encounters.", currentPlayerName, trackingData.getEncounters().size());
+        log.info(
+                "Started tracking for account {}. Loaded {} tracked encounters and {} custom encounters.",
+                currentPlayerName,
+                trackingData.getEncounters().size(),
+                trackingData.getCustomEncounters().size()
+        );
     }
 
     /**
@@ -132,6 +122,12 @@ public class EncounterTrackerManager {
         log.info("Stopping tracker for account {}", currentPlayerName);
 
         save();
+
+        /*
+         * Custom encounter definitions belong only to the
+         * currently logged-in RuneScape account.
+         */
+        unregisterCustomEncounters();
 
         processedKillEvents.clear();
 
@@ -413,25 +409,14 @@ public class EncounterTrackerManager {
 
         String playerName = currentPlayerName;
 
-        /*
-         * Replace the current in-memory data with a completely
-         * fresh data object.
-         */
+        unregisterCustomEncounters();
+
         trackingData = new PlayerTrackingData();
 
-        /*
-         * Old kill event fingerprints must also be removed.
-         */
         processedKillEvents.clear();
 
-        /*
-         * Remove the persisted account data.
-         */
         storage.clear(playerName);
 
-        /*
-         * Save the fresh empty data immediately.
-         */
         save();
 
         log.info("Cleared all tracking data for account {}", playerName);
@@ -710,6 +695,213 @@ public class EncounterTrackerManager {
         save();
 
         return true;
+    }
+
+    public EncounterDefinition getCustomEncounterByNpcId(int npcId) {
+        if (!isActive()) {
+            return null;
+        }
+
+        return trackingData.getCustomEncounterByNpcId(npcId);
+    }
+
+    public EncounterDefinition getCustomEncounterByNpc(String npcName, int combatLevel) {
+        if (!isActive()) {
+            return null;
+        }
+
+        return trackingData.getCustomEncounterByNpc(npcName, combatLevel);
+    }
+
+    public boolean isCustomEncounter(String encounterId) {
+        if (!isActive() || encounterId == null) {
+            return false;
+        }
+
+        return trackingData.getCustomEncounter(encounterId) != null;
+    }
+
+    public boolean saveCustomEncounter(EncounterDefinition encounter) {
+        if (!isActive() || encounter == null) {
+            return false;
+        }
+
+        if (encounter.getEncounterId() == null || encounter.getEncounterId().trim().isEmpty()) {
+            return false;
+        }
+
+        if (encounter.getNpcIds().isEmpty()) {
+            return false;
+        }
+
+        encounter.setLootType(EncounterLootType.GROUND_LOOT);
+
+        EncounterDefinition oldCustomEncounter =
+                trackingData.getCustomEncounter(encounter.getEncounterId());
+
+        /*
+         * During editing the existing definition must temporarily
+         * be removed from the registry so its NPC ID is available.
+         */
+        if (oldCustomEncounter != null) {
+            encounterRegistry.unregister(oldCustomEncounter.getEncounterId());
+        }
+
+        for (Integer npcId : encounter.getNpcIds()) {
+            if (npcId == null) {
+                continue;
+            }
+
+            EncounterDefinition conflict = encounterRegistry.getByNpcId(npcId);
+
+            if (conflict != null) {
+                if (oldCustomEncounter != null) {
+                    try {
+                        encounterRegistry.register(oldCustomEncounter);
+                    } catch (Exception restoreError) {
+                        log.warn(
+                                "Could not restore custom encounter {} after registration conflict",
+                                oldCustomEncounter.getEncounterId(),
+                                restoreError
+                        );
+                    }
+                }
+
+                log.warn(
+                        "Cannot save custom encounter {} because NPC ID {} is already registered to {}",
+                        encounter.getEncounterId(),
+                        npcId,
+                        conflict.getEncounterId()
+                );
+
+                return false;
+            }
+        }
+
+        try {
+            encounterRegistry.register(encounter);
+        } catch (Exception e) {
+            if (oldCustomEncounter != null) {
+                try {
+                    encounterRegistry.register(oldCustomEncounter);
+                } catch (Exception restoreError) {
+                    log.warn(
+                            "Could not restore custom encounter {} after failed update",
+                            oldCustomEncounter.getEncounterId(),
+                            restoreError
+                    );
+                }
+            }
+
+            log.warn("Could not register custom encounter {}", encounter.getEncounterId(), e);
+
+            return false;
+        }
+
+        trackingData.putCustomEncounter(encounter);
+
+        save();
+
+        log.info(
+                "Saved custom encounter {} with {} NPC ID(s) and {} tracked drop(s)",
+                encounter.getEncounterId(),
+                encounter.getNpcIds().size(),
+                encounter.getTrackedDrops().size()
+        );
+
+        return true;
+    }
+
+    public boolean removeCustomEncounter(String encounterId) {
+        if (!isActive() || encounterId == null || encounterId.trim().isEmpty()) {
+            return false;
+        }
+
+        EncounterDefinition encounter = trackingData.getCustomEncounter(encounterId);
+
+        if (encounter == null) {
+            return false;
+        }
+
+        encounterRegistry.unregister(encounterId);
+
+        trackingData.removeCustomEncounter(encounterId);
+        trackingData.removeEncounter(encounterId);
+        trackingData.clearDropPreferences(encounterId);
+
+        processedKillEvents.clear();
+
+        save();
+
+        log.info("Removed custom encounter {}", encounterId);
+
+        return true;
+    }
+
+    private void registerCustomEncounters() {
+        if (trackingData == null) {
+            return;
+        }
+
+        for (EncounterDefinition encounter : new ArrayList<>(trackingData.getCustomEncounters())) {
+            if (encounter == null
+                    || encounter.getEncounterId() == null
+                    || encounter.getEncounterId().trim().isEmpty()) {
+                continue;
+            }
+
+            encounter.setLootType(EncounterLootType.GROUND_LOOT);
+
+            boolean conflict = false;
+
+            for (Integer npcId : encounter.getNpcIds()) {
+                if (npcId == null) {
+                    continue;
+                }
+
+                EncounterDefinition existing = encounterRegistry.getByNpcId(npcId);
+
+                if (existing != null) {
+                    log.warn(
+                            "Custom encounter {} could not be loaded because NPC ID {} is already registered to {}",
+                            encounter.getEncounterId(),
+                            npcId,
+                            existing.getEncounterId()
+                    );
+
+                    conflict = true;
+
+                    break;
+                }
+            }
+
+            if (conflict) {
+                continue;
+            }
+
+            try {
+                encounterRegistry.register(encounter);
+            } catch (Exception e) {
+                log.warn("Could not register custom encounter {}", encounter.getEncounterId(), e);
+            }
+        }
+    }
+
+    private void unregisterCustomEncounters() {
+        if (trackingData == null) {
+            return;
+        }
+
+        List<EncounterDefinition> customEncounters =
+                new ArrayList<>(trackingData.getCustomEncounters());
+
+        for (EncounterDefinition encounter : customEncounters) {
+            if (encounter == null || encounter.getEncounterId() == null) {
+                continue;
+            }
+
+            encounterRegistry.unregister(encounter.getEncounterId());
+        }
     }
 
     private int getRuneLiteKillcount(EncounterDefinition definition) {

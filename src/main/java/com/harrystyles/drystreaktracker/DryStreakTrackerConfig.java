@@ -23,11 +23,21 @@ public interface DryStreakTrackerConfig extends Config {
             section = generalSection
     )
 
+
     default boolean trackPets() {
         return false;
     }
 
-
+    @ConfigItem(
+            keyName = "customNpcTracking",
+            name = "Custom NPC tracking",
+            description = "Adds a right-click option to NPCs for creating custom encounters. The NPC's drop table is loaded from the OSRS Wiki so you can choose which drops should end your dry streak.",
+            position = 1,
+            section = generalSection
+    )
+    default boolean customNpcTracking() {
+        return false;
+    }
 
     /**
      * Chatbox group/settings
