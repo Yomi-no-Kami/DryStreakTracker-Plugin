@@ -28,7 +28,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [13247]
   },
   {
     "encounterId": "scurrius",
@@ -44,7 +44,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [28801]
   },
   {
     "encounterId": "giant_mole",
@@ -59,7 +59,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [12646]
   },
   {
     "encounterId": "deranged_archaeologist",
@@ -89,7 +89,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [12643]
   },
   {
     "encounterId": "dagannoth_rex",
@@ -108,7 +108,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [12645]
   },
   {
     "encounterId": "dagannoth_prime",
@@ -123,7 +123,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [12644]
   },
   {
     "encounterId": "sarachnis",
@@ -142,7 +142,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [23495]
   },
   {
     "encounterId": "kalphite_queen",
@@ -173,7 +173,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [12647]
   },
   {
     "encounterId": "kreearra",
@@ -212,7 +212,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [12649]
   },
   {
     "encounterId": "commander_zilyana",
@@ -251,7 +251,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [12651]
   },
   {
     "encounterId": "general_graardor",
@@ -290,7 +290,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [12650]
   },
   {
     "encounterId": "kril_tsutsaroth",
@@ -329,7 +329,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [12652]
   },
   {
     "encounterId": "the_hueycoatl",
@@ -355,7 +355,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [30152]
   },
   {
     "encounterId": "corporeal_beast",
@@ -386,7 +386,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [12816]
   },
   {
     "encounterId": "nex",
@@ -422,7 +422,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [26348]
   },
   {
     "encounterId": "chaos_fanatic",
@@ -441,7 +441,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [11995]
   },
   {
     "encounterId": "crazy_archaeologist",
@@ -483,7 +483,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [13181]
   },
   {
     "encounterId": "king_black_dragon",
@@ -506,7 +506,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [12653]
   },
   {
     "encounterId": "chaos_elemental",
@@ -521,7 +521,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [11995]
   },
   {
     "encounterId": "revenant_maledictus",
@@ -607,7 +607,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [13179]
   },
   {
     "encounterId": "vetion",
@@ -638,7 +638,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [13179]
   },
   {
     "encounterId": "spindel",
@@ -669,7 +669,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [13177]
   },
   {
     "encounterId": "venenatis",
@@ -700,7 +700,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [13177]
   },
   {
     "encounterId": "artio",
@@ -731,7 +731,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [13178]
   },
   {
     "encounterId": "callisto",
@@ -762,7 +762,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [13178]
   },
   {
     "encounterId": "brutus",
@@ -785,7 +785,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [33124]
   },
   {
     "encounterId": "amoxliatl",
@@ -804,7 +804,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [30154]
   },
   {
     "encounterId": "mad_angel",
@@ -823,7 +823,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [34042]
   },
   {
     "encounterId": "zulrah",
@@ -864,7 +864,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [12921]
   },
   {
     "encounterId": "vorkath",
@@ -895,7 +895,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [21992]
   },
   {
     "encounterId": "phantom_muspah",
@@ -920,7 +920,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [27590]
   },
   {
     "encounterId": "the_nightmare",
@@ -967,7 +967,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [24491]
   },
   {
     "encounterId": "phosanis_nightmare",
@@ -1019,7 +1019,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [24491]
   },
   {
     "encounterId": "yama",
@@ -1046,7 +1046,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [30888]
   },
   {
     "encounterId": "duke_sucellus",
@@ -1094,7 +1094,7 @@
         "enabledByDefault": false
       }
     ],
-    "petDropIds": []
+    "petDropIds": [28250]
   },
   {
     "encounterId": "the_leviathan",
@@ -1144,7 +1144,7 @@
         "enabledByDefault": false
       }
     ],
-    "petDropIds": []
+    "petDropIds": [28252]
   },
   {
     "encounterId": "the_whisperer",
@@ -1194,7 +1194,7 @@
         "enabledByDefault": false
       }
     ],
-    "petDropIds": []
+    "petDropIds": [28246]
   },
   {
     "encounterId": "vardorvis",
@@ -1241,7 +1241,7 @@
         "enabledByDefault": false
       }
     ],
-    "petDropIds": []
+    "petDropIds": [28248]
   },
   {
     "encounterId": "skotizo",
@@ -1264,7 +1264,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [21273]
   },
   {
     "encounterId": "shellbane_gryphon",
@@ -1283,7 +1283,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [31285]
   },
   {
     "encounterId": "grotesque_guardians",
@@ -1318,7 +1318,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [21748]
   },
   {
     "encounterId": "abyssal_sire",
@@ -1356,7 +1356,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [12655]
   },
   {
     "encounterId": "thermonuclear_smoke_devil",
@@ -1383,7 +1383,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [12648]
   },
   {
     "encounterId": "alchemical_hydra",
@@ -1435,7 +1435,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [22746]
   },
   {
     "encounterId": "zalcano",
@@ -1459,7 +1459,7 @@
         "enabledByDefault": true
       }
     ],
-    "petDropIds": []
+    "petDropIds": [23760]
   },
   {
     "encounterId": "tekton",
