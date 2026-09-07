@@ -1,5 +1,6 @@
 package com.harrystyles.drystreaktracker;
 
+import com.harrystyles.drystreaktracker.cosmetic.SmokeLootbeamManager;
 import com.harrystyles.drystreaktracker.detection.LootDetectionService;
 import com.harrystyles.drystreaktracker.encounter.*;
 import com.harrystyles.drystreaktracker.encounter.tracking.EncounterTrackerManager;
@@ -23,6 +24,7 @@ import net.runelite.api.events.*;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.loottracker.LootReceived;
 import net.runelite.client.events.NpcLootReceived;
@@ -49,6 +51,9 @@ public class DryStreakTrackerPlugin extends Plugin {
 
     @Inject
     private CustomNpcEncounterService customNpcEncounterService;
+
+    @Inject
+    private SmokeLootbeamManager smokeLootbeamManager;
 
     @Inject
     private DryStreakNotificationManager notificationManager;
@@ -120,7 +125,7 @@ public class DryStreakTrackerPlugin extends Plugin {
     protected void shutDown() {
         log.info("Dry Streak Tracker shutting down...");
 
-        removeTestRedMist();
+        smokeLootbeamManager.clear();
 
         if (navigationButton != null) {
             clientToolbar.removeNavigation(navigationButton);
@@ -152,6 +157,7 @@ public class DryStreakTrackerPlugin extends Plugin {
         }
 
         if (gameState == GameState.LOGIN_SCREEN) {
+            smokeLootbeamManager.clear();
             lootDetectionService.clearProcessedLootEvents();
 
             trackerManager.stopForPlayer();
@@ -181,13 +187,11 @@ public class DryStreakTrackerPlugin extends Plugin {
 
                     trackerManager.startForPlayer(playerName);
 
-                    SwingUtilities.invokeLater(() ->
-                            {
-                                sidebarPanel.setLoggedIn(true);
+                    SwingUtilities.invokeLater(() -> {
+                        sidebarPanel.setLoggedIn(true);
 
-                                sidebarPanel.refresh();
-                            }
-                    );
+                        sidebarPanel.refresh();
+                    });
 
                     sidebarPanel.refreshItemDisplayData();
                 }
@@ -328,92 +332,21 @@ public class DryStreakTrackerPlugin extends Plugin {
 
     @Subscribe
     public void onItemSpawned(ItemSpawned event) {
-        if (event.getItem().getId() != TEST_ITEM_ID) {
-            return;
-        }
-
-        spawnTestRedMist(event);
+        smokeLootbeamManager.handleItemSpawned(event);
     }
 
     @Subscribe
     public void onItemDespawned(ItemDespawned event) {
-        if (event.getItem().getId() != TEST_ITEM_ID) {
-            return;
-        }
-
-        if (testRedMistLocation == null) {
-            return;
-        }
-
-        WorldPoint location = event.getTile().getWorldLocation();
-
-        if (!location.equals(testRedMistLocation)) {
-            return;
-        }
-
-        removeTestRedMist();
+        smokeLootbeamManager.handleItemDespawned(event);
     }
 
-    private static final int TEST_ITEM_ID = 995;
-    private static final int RED_MIST_MODEL_ID = 50683;
-    private static final int RED_MIST_ANIMATION_ID = 10727;
-    private static final int PURPLE_HUE = 52;
-
-    private RuneLiteObject testRedMist;
-    private WorldPoint testRedMistLocation;
-
-    private void spawnTestRedMist(ItemSpawned event) {
-        ModelData modelData = client.loadModelData(RED_MIST_MODEL_ID);
-        if (modelData == null) {
-            log.warn("Unable to load red mist model {}", RED_MIST_MODEL_ID);
-
-            return;
-        }
-
-        modelData = modelData.cloneColors();
-
-        short[] faceColors = modelData.getFaceColors();
-        if (faceColors != null) {
-            for (short originalColor : faceColors) {
-                int saturation = JagexColor.unpackSaturation(originalColor);
-                int luminance = JagexColor.unpackLuminance(originalColor);
-
-                short purpleColor = JagexColor.packHSL(PURPLE_HUE, saturation, luminance);
-
-                modelData.recolor(originalColor, purpleColor);
-            }
-        }
-
-        Model model = modelData.light(
-                ModelData.DEFAULT_AMBIENT,
-                ModelData.DEFAULT_CONTRAST,
-                ModelData.DEFAULT_X,
-                ModelData.DEFAULT_Y,
-                ModelData.DEFAULT_Z
-        );
-
-        AnimationController animationController = new AnimationController(client, RED_MIST_ANIMATION_ID);
-        animationController.setOnFinished(AnimationController::loop);
-
-        removeTestRedMist();
-
-        testRedMist = client.createRuneLiteObject();
-        testRedMist.setModel(model);
-        testRedMist.setAnimationController(animationController);
-        testRedMist.setLocation(event.getTile().getLocalLocation(), event.getTile().getPlane());
-        testRedMist.setActive(true);
-
-        testRedMistLocation = event.getTile().getWorldLocation();
-
-        log.info("Spawned test purple mist for item {} at {}", TEST_ITEM_ID, testRedMistLocation);
+    @Subscribe
+    public void onItemQuantityChanged(ItemQuantityChanged event) {
+        smokeLootbeamManager.handleItemQuantityChanged(event);
     }
 
-    private void removeTestRedMist() {
-        if (testRedMist != null) {
-            testRedMist.setActive(false);
-            testRedMist = null;
-        }
-
-        testRedMistLocation = null;
+    @Subscribe
+    public void onConfigChanged(ConfigChanged event) {
+        smokeLootbeamManager.handleConfigChanged(event);
     }
 }

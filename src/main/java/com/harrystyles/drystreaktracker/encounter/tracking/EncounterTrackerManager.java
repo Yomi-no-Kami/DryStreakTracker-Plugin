@@ -96,9 +96,13 @@ public class EncounterTrackerManager {
 
         processedKillEvents.clear();
 
-        registerCustomEncounters();
+        boolean customEncountersMigrated = registerCustomEncounters();
 
         active = true;
+
+        if (customEncountersMigrated) {
+            save();
+        }
 
         log.info(
                 "Started tracking for account {}. Loaded {} tracked encounters and {} custom encounters.",
@@ -838,10 +842,91 @@ public class EncounterTrackerManager {
         return true;
     }
 
-    private void registerCustomEncounters() {
-        if (trackingData == null) {
-            return;
+    private boolean migrateCustomEncounterToBuiltIn(EncounterDefinition customEncounter, EncounterDefinition builtInEncounter) {
+        if (trackingData == null
+                || customEncounter == null
+                || builtInEncounter == null
+                || customEncounter.getEncounterId() == null
+                || builtInEncounter.getEncounterId() == null) {
+            return false;
         }
+
+        String customEncounterId = customEncounter.getEncounterId();
+        String builtInEncounterId = builtInEncounter.getEncounterId();
+
+        EncounterStats customStats = trackingData.getEncounter(customEncounterId);
+        EncounterStats builtInStats = trackingData.getEncounter(builtInEncounterId);
+
+        /*
+         * If both encounter IDs already contain statistics, do not
+         * automatically combine them.
+         *
+         * Their tracked kill ranges may overlap, so adding the values
+         * together could double-count player progress.
+         */
+        if (customStats != null && builtInStats != null) {
+            log.warn(
+                    "Cannot automatically migrate custom encounter {} to built-in encounter {} because both already contain saved statistics",
+                    customEncounterId,
+                    builtInEncounterId
+            );
+
+            return false;
+        }
+
+        if (customStats != null) {
+            trackingData.removeEncounter(customEncounterId);
+
+            customStats.migrateToDefinition(builtInEncounter);
+
+            trackingData.putEncounter(customStats);
+
+            log.info(
+                    "Migrated saved statistics from custom encounter {} to built-in encounter {}",
+                    customEncounterId,
+                    builtInEncounterId
+            );
+        }
+
+        for (RecentDrop recentDrop : trackingData.getRecentDrops()) {
+            if (recentDrop == null
+                    || recentDrop.getEncounterId() == null
+                    || !customEncounterId.equals(recentDrop.getEncounterId())) {
+                continue;
+            }
+
+            recentDrop.migrateToEncounter(
+                    builtInEncounterId,
+                    builtInEncounter.getDisplayName(),
+                    builtInEncounter.getImageUrl()
+            );
+        }
+
+        /*
+         * Custom drop selections belonged to the custom definition.
+         *
+         * The new built-in encounter should use its own configured
+         * tracked drops and defaults instead.
+         */
+        trackingData.clearDropPreferences(customEncounterId);
+
+        trackingData.removeCustomEncounter(customEncounterId);
+
+        log.info(
+                "Replaced custom encounter {} with built-in encounter {}",
+                customEncounterId,
+                builtInEncounterId
+        );
+
+        return true;
+    }
+
+    private boolean registerCustomEncounters() {
+        if (trackingData == null) {
+            return false;
+        }
+
+        boolean trackingDataChanged = false;
 
         for (EncounterDefinition encounter : new ArrayList<>(trackingData.getCustomEncounters())) {
             if (encounter == null
@@ -852,7 +937,7 @@ public class EncounterTrackerManager {
 
             encounter.setLootType(EncounterLootType.GROUND_LOOT);
 
-            boolean conflict = false;
+            EncounterDefinition conflictingEncounter = null;
 
             for (Integer npcId : encounter.getNpcIds()) {
                 if (npcId == null) {
@@ -861,21 +946,58 @@ public class EncounterTrackerManager {
 
                 EncounterDefinition existing = encounterRegistry.getByNpcId(npcId);
 
-                if (existing != null) {
+                if (existing == null) {
+                    continue;
+                }
+
+                /*
+                 * Another saved custom encounter was registered earlier
+                 * during this same load.
+                 *
+                 * This is not a built-in upgrade and must not trigger
+                 * migration.
+                 */
+                if (trackingData.getCustomEncounter(existing.getEncounterId()) != null) {
                     log.warn(
-                            "Custom encounter {} could not be loaded because NPC ID {} is already registered to {}",
+                            "Custom encounter {} could not be loaded because NPC ID {} is already registered to custom encounter {}",
                             encounter.getEncounterId(),
                             npcId,
                             existing.getEncounterId()
                     );
 
-                    conflict = true;
+                    conflictingEncounter = existing;
 
                     break;
                 }
+
+                /*
+                 * The NPC ID now belongs to a built-in encounter.
+                 *
+                 * This can happen when encounters.json gains official
+                 * support for an NPC which the player previously created
+                 * as a custom encounter.
+                 */
+                conflictingEncounter = existing;
+
+                log.info(
+                        "Custom encounter {} now overlaps built-in encounter {} through NPC ID {}",
+                        encounter.getEncounterId(),
+                        existing.getEncounterId(),
+                        npcId
+                );
+
+                break;
             }
 
-            if (conflict) {
+            if (conflictingEncounter != null) {
+                boolean builtInConflict =
+                        trackingData.getCustomEncounter(conflictingEncounter.getEncounterId()) == null;
+
+                if (builtInConflict
+                        && migrateCustomEncounterToBuiltIn(encounter, conflictingEncounter)) {
+                    trackingDataChanged = true;
+                }
+
                 continue;
             }
 
@@ -885,6 +1007,8 @@ public class EncounterTrackerManager {
                 log.warn("Could not register custom encounter {}", encounter.getEncounterId(), e);
             }
         }
+
+        return trackingDataChanged;
     }
 
     private void unregisterCustomEncounters() {

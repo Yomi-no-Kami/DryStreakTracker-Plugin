@@ -1,6 +1,7 @@
 package com.harrystyles.drystreaktracker.detection;
 
 import com.harrystyles.drystreaktracker.DryStreakTrackerConfig;
+import com.harrystyles.drystreaktracker.cosmetic.SmokeLootbeamManager;
 import com.harrystyles.drystreaktracker.discord.DiscordWebhookService;
 import com.harrystyles.drystreaktracker.discord.DropScreenshotService;
 import com.harrystyles.drystreaktracker.encounter.EncounterDefinition;
@@ -57,6 +58,8 @@ public class LootDetectionService {
 
     private final DropScreenshotService dropScreenshotService;
 
+    private final SmokeLootbeamManager smokeLootbeamManager;
+
     /**
      * Pet tracking
      */
@@ -87,7 +90,8 @@ public class LootDetectionService {
             ItemManager itemManager,
             DryStreakSidebarPanel sidebarPanel,
             DiscordWebhookService discordWebhookService,
-            DropScreenshotService dropScreenshotService) {
+            DropScreenshotService dropScreenshotService,
+            SmokeLootbeamManager smokeLootbeamManager) {
         this.client = client;
 
         this.encounterRegistry = encounterRegistry;
@@ -104,6 +108,7 @@ public class LootDetectionService {
 
         this.discordWebhookService = discordWebhookService;
         this.dropScreenshotService = dropScreenshotService;
+        this.smokeLootbeamManager = smokeLootbeamManager;
 
     }
 
@@ -335,6 +340,18 @@ public class LootDetectionService {
 
         if (!recorded) {
             return;
+        }
+
+        /*
+         * Smoke Lootbeams only apply to normal ground loot which was
+         * actually received from a successfully recorded encounter.
+         *
+         * ItemSpawned itself is deliberately not trusted to determine
+         * ownership because it also fires for static world spawns and
+         * other unrelated ground items.
+         */
+        if (encounter.getLootType() == EncounterLootType.GROUND_LOOT && !qualifyingDrops.isEmpty()) {
+            smokeLootbeamManager.markEarnedDrops(qualifyingDrops.keySet());
         }
 
         /*

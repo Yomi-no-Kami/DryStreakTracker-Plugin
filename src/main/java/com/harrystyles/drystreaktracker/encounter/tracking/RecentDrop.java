@@ -76,4 +76,15 @@ public class RecentDrop {
     public long getAcquiredAt() {
         return acquiredAt;
     }
+
+    public void migrateToEncounter(String encounterId, String encounterName, String encounterImageUrl) {
+        if (encounterId == null || encounterId.trim().isEmpty()) {
+            return;
+        }
+
+        this.encounterId = encounterId;
+        this.encounterName = encounterName;
+        this.encounterImageUrl = encounterImageUrl;
+    }
+
 }

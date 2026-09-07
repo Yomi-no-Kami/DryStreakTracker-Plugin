@@ -1,5 +1,6 @@
 package com.harrystyles.drystreaktracker;
 
+import com.harrystyles.drystreaktracker.cosmetic.SmokeLootbeamColor;
 import net.runelite.client.config.*;
 
 @ConfigGroup("drystreaktracker")
@@ -62,7 +63,6 @@ public interface DryStreakTrackerConfig extends Config {
     }
 
 
-
     /**
      * Notification Group/Settings
      */
@@ -84,10 +84,48 @@ public interface DryStreakTrackerConfig extends Config {
         return true;
     }
 
+
+
+
+    /**
+     * Cosmetic Effects group/settings
+     */
+    @ConfigSection(
+            name = "Cosmetic Effects",
+            description = "Configure cosmetic effects used by Dry Streak Tracker",
+            position = 3
+    )
+    String cosmeticEffectsSection = "cosmeticEffects";
+
+    @ConfigItem(
+            keyName = "enableSmokeLootbeams",
+            name = "Enable Smoke Lootbeams",
+            description = "Show an animated customizable smoke effect over tracked ground drops",
+            position = 0,
+            section = cosmeticEffectsSection
+    )
+    default boolean enableSmokeLootbeams() {
+        return true;
+    }
+
+    @ConfigItem(
+            keyName = "smokeLootbeamColor",
+            name = "Smoke color",
+            description = "Choose the color used by Smoke Lootbeams",
+            position = 1,
+            section = cosmeticEffectsSection
+    )
+    default SmokeLootbeamColor smokeLootbeamColor() {
+        return SmokeLootbeamColor.PURPLE;
+    }
+
+
+
+
     @ConfigSection(
             name = "Discord Integration",
             description = "Discord integration settings",
-            position = 3
+            position = 4
     )
     String discordSection = "discord";
 
@@ -160,7 +198,7 @@ public interface DryStreakTrackerConfig extends Config {
     @ConfigSection(
             name = "Debugging",
             description = "Configure Dry Streak Tracker debug settings",
-            position = 4
+            position = 5
     )
     String debuggingSection = "debugging";
 

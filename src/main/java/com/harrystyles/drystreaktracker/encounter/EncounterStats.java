@@ -220,6 +220,34 @@ public class EncounterStats {
     }
 
     /**
+     * Reassigns these saved statistics to a different encounter
+     * definition without changing any tracked progress.
+     *
+     * Used when a player-created encounter becomes an official
+     * built-in encounter in a later plugin version.
+     */
+    public void migrateToDefinition(EncounterDefinition definition) {
+        if (definition == null
+                || definition.getEncounterId() == null
+                || definition.getEncounterId().trim().isEmpty()) {
+            return;
+        }
+
+        encounterId = definition.getEncounterId();
+        displayName = definition.getDisplayName();
+        npcIds = new HashSet<>(definition.getNpcIds());
+
+        /*
+         * All statistics remain untouched.
+         *
+         * This is only changing which encounter definition
+         * owns the saved progress.
+         */
+        newDryRecordThisKill = false;
+    }
+
+
+    /**
      * Manually synchronizes the encounter counters with the player's
      * existing progress.
      * <p>
