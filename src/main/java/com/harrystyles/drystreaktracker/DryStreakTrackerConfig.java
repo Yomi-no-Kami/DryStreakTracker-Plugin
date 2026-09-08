@@ -105,7 +105,7 @@ public interface DryStreakTrackerConfig extends Config {
             section = cosmeticEffectsSection
     )
     default boolean enableSmokeLootbeams() {
-        return true;
+        return false;
     }
 
     @ConfigItem(
