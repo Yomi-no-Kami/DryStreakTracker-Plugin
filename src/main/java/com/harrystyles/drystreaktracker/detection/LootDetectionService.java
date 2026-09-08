@@ -28,7 +28,10 @@ import net.runelite.api.GameState;
 import net.runelite.api.ItemComposition;
 import net.runelite.api.NPC;
 
+import net.runelite.api.events.ActorDeath;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.InteractingChanged;
+import net.runelite.api.events.NpcDespawned;
 import net.runelite.client.events.NpcLootReceived;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.ItemStack;
@@ -79,37 +82,27 @@ public class LootDetectionService {
     private final Map<String, Integer> processedNpcLootThisTick = new HashMap<>();
     private int processedNpcLootTick = -1;
 
+    /**
+     * Death lifecycle tracking for NPC-based GROUND_LOOT encounters.
+     */
+    private final GroundLootKillTracker groundLootKillTracker;
 
     @Inject
-    public LootDetectionService(
-            Client client,
-            EncounterRegistry encounterRegistry,
-            EncounterTrackerManager trackerManager,
-            DryStreakNotificationManager notificationManager,
-            DryStreakTrackerConfig config,
-            ItemManager itemManager,
-            DryStreakSidebarPanel sidebarPanel,
-            DiscordWebhookService discordWebhookService,
-            DropScreenshotService dropScreenshotService,
-            SmokeLootbeamManager smokeLootbeamManager) {
+    public LootDetectionService(Client client, EncounterRegistry encounterRegistry, EncounterTrackerManager trackerManager,
+        DryStreakNotificationManager notificationManager, DryStreakTrackerConfig config, ItemManager itemManager,
+        DryStreakSidebarPanel sidebarPanel, DiscordWebhookService discordWebhookService, DropScreenshotService dropScreenshotService,
+        SmokeLootbeamManager smokeLootbeamManager, GroundLootKillTracker groundLootKillTracker) {
         this.client = client;
-
         this.encounterRegistry = encounterRegistry;
-
         this.trackerManager = trackerManager;
-
         this.notificationManager = notificationManager;
-
         this.config = config;
-
         this.itemManager = itemManager;
-
         this.sidebarPanel = sidebarPanel;
-
         this.discordWebhookService = discordWebhookService;
         this.dropScreenshotService = dropScreenshotService;
         this.smokeLootbeamManager = smokeLootbeamManager;
-
+        this.groundLootKillTracker = groundLootKillTracker;
     }
 
 
@@ -142,7 +135,7 @@ public class LootDetectionService {
 
         Collection<ItemStack> items = event.getItems();
 
-        log.debug("NpcLootReceived: npc={} id={} items={}", npc.getName(), npcId, items == null ? 0 : items.size());
+        log.debug("NpcLootReceived: npc={} id={} tick={} items={}", npc.getName(), npcId, client.getTickCount(), items == null ? 0 : items.size());
 
         EncounterDefinition encounter = encounterRegistry.getByNpcId(npcId);
 
@@ -150,8 +143,8 @@ public class LootDetectionService {
          * A custom NPC may have multiple visual variants with different
          * NPC IDs.
          *
-         * If the exact ID has not been registered yet, use exact NPC
-         * name + exact combat level to find the player's custom encounter.
+         * Built-in encounters always win by exact NPC ID. Custom name +
+         * combat level is only used when no registered NPC ID matched.
          */
         if (encounter == null) {
             encounter = trackerManager.getCustomEncounterByNpc(npc.getName(), npc.getCombatLevel());
@@ -161,14 +154,22 @@ public class LootDetectionService {
             return;
         }
 
-        /**
-         * Extra safety check.
-         *
-         * Anything found by NPC id should have been loaded
-         * from encounters.json.
-         */
         if (encounter.getLootType() != EncounterLootType.GROUND_LOOT) {
             log.debug("Ignoring NpcLootReceived for {} because lootType={}", encounter.getEncounterId(), encounter.getLootType());
+
+            return;
+        }
+
+        GroundLootKillTracker.PendingDeath pendingDeath = groundLootKillTracker.consumePendingDeath(encounter, npc);
+
+        /*
+         * If this exact death was already completed through the no-loot
+         * fallback, this is late loot from the same NPC.
+         */
+        if (pendingDeath == null && groundLootKillTracker.wasDeathFinalized(encounter, npc)) {
+            log.debug("Ignoring late NpcLootReceived for already finalized ground-loot NPC death {} ({})", npc.getName(), npc.getId());
+
+            rememberNpcLootEvent(encounter, items);
 
             return;
         }
@@ -179,11 +180,21 @@ public class LootDetectionService {
             petMessageMatchedBeforeLoot = petAcquisitionTracker.matchEncounterLootToPendingPetMessage(encounter, client.getTickCount());
         }
 
-        String eventKey = createNpcKillEventKey(npc, items);
+        String eventKey = pendingDeath != null
+                ? pendingDeath.createEventKey()
+                : createNpcKillEventKey(npc, items);
 
         rememberNpcLootEvent(encounter, items);
 
         processEncounterLoot(encounter, items, eventKey, petMessageMatchedBeforeLoot);
+
+        /*
+         * This applies to both official and custom GROUND_LOOT encounters.
+         *
+         * It also protects against RuneLite delivering NpcLootReceived
+         * before ActorDeath.
+         */
+        groundLootKillTracker.finalizeDeath(encounter, npc, client.getTickCount());
     }
 
 
@@ -254,9 +265,8 @@ public class LootDetectionService {
 
             if (groundLootEncounter != null) {
                 /*
-                 * A matching NpcLootReceived already processed this
-                 * exact loot during this tick, so this is RuneLite's
-                 * normal duplicate LootReceived event.
+                 * A matching NpcLootReceived already processed this exact loot
+                 * during this tick.
                  */
                 if (consumeNpcLootEvent(groundLootEncounter, event.getItems())) {
                     log.debug("Ignoring paired LootReceived for {} because NpcLootReceived already processed it", groundLootEncounter.getEncounterId());
@@ -265,11 +275,21 @@ public class LootDetectionService {
                 }
 
                 /*
-                 * No matching NpcLootReceived was seen.
-                 *
-                 * This is the fallback case we observed when RuneLite
-                 * detected an existing ground stack increasing.
+                 * LootReceived does not provide the NPC object, so pair it to
+                 * the oldest pending death for this encounter.
                  */
+                GroundLootKillTracker.PendingDeath pendingDeath = groundLootKillTracker.consumePendingDeath(groundLootEncounter);
+
+                /*
+                 * If there is no pending death and this encounter was just
+                 * finalized, this may be a late duplicate fallback event.
+                 */
+                if (pendingDeath == null && groundLootKillTracker.wasEncounterRecentlyFinalized(groundLootEncounter)) {
+                    log.debug("Ignoring late LootReceived fallback for already finalized ground-loot encounter {}", groundLootEncounter.getEncounterId());
+
+                    return;
+                }
+
                 log.debug("Processing NPC LootReceived fallback for {}", groundLootEncounter.getEncounterId());
 
                 boolean petMessageMatchedBeforeLoot = false;
@@ -278,9 +298,23 @@ public class LootDetectionService {
                     petMessageMatchedBeforeLoot = petAcquisitionTracker.matchEncounterLootToPendingPetMessage(groundLootEncounter, client.getTickCount());
                 }
 
-                String eventKey = createNpcLootFallbackEventKey(groundLootEncounter, event);
+                String eventKey = pendingDeath != null
+                        ? pendingDeath.createEventKey()
+                        : createNpcLootFallbackEventKey(groundLootEncounter, event);
 
                 processEncounterLoot(groundLootEncounter, event.getItems(), eventKey, petMessageMatchedBeforeLoot);
+
+                /*
+                 * When a pending death was available we know exactly which
+                 * NPC was completed and can retain its exact identity.
+                 *
+                 * Otherwise generic LootReceived gives us no NPC object.
+                 */
+                if (pendingDeath != null) {
+                    groundLootKillTracker.finalizeDeath(pendingDeath, client.getTickCount());
+                } else {
+                    groundLootKillTracker.finalizeEncounter(groundLootEncounter, client.getTickCount());
+                }
 
                 return;
             }
@@ -291,6 +325,35 @@ public class LootDetectionService {
         }
 
         log.debug("No encounter registered for LootReceived source '{}'", sourceName);
+    }
+
+    /**
+     * Handles actual NPC deaths for custom encounters.
+     *
+     * Custom NPC tracking must not depend entirely on loot events because
+     * some NPC kills legitimately produce no loot.
+     *
+     * The death itself is not recorded immediately. It is held briefly so
+     * RuneLite has time to provide NpcLootReceived or LootReceived first.
+     */
+    public void handleActorDeath(ActorDeath event) {
+        groundLootKillTracker.handleActorDeath(event);
+    }
+
+    /**
+     * Marks a pending custom NPC death as having finished its
+     * death animation and left the scene.
+     *
+     * The no-loot grace period begins here instead of ActorDeath
+     * because many NPCs do not spawn their loot until several
+     * ticks after ActorDeath fires.
+     */
+    public void handleNpcDespawned(NpcDespawned event) {
+        groundLootKillTracker.handleNpcDespawned(event);
+    }
+
+    public void handleInteractingChanged(InteractingChanged event) {
+        groundLootKillTracker.handleInteractingChanged(event);
     }
 
 
@@ -442,6 +505,60 @@ public class LootDetectionService {
             }
         }
     }
+
+    /**
+     * Finishes custom NPC deaths which never produced a loot event.
+     *
+     * ActorDeath only tells us that the NPC has started dying.
+     * Some NPCs have several ticks of death animation before their
+     * ground loot is actually created.
+     *
+     * Therefore the normal no-loot timer begins at NpcDespawned,
+     * not ActorDeath.
+     */
+    public void processPendingGroundLootDeaths() {
+        if (!canProcess()) {
+            return;
+        }
+
+        int currentTick = client.getTickCount();
+
+        for (GroundLootKillTracker.PendingDeath pendingDeath : groundLootKillTracker.pollNoLootDeaths()) {
+            recordNoLootGroundLootDeath(pendingDeath, currentTick);
+        }
+    }
+
+    private void recordNoLootGroundLootDeath(GroundLootKillTracker.PendingDeath pendingDeath, int currentTick) {
+        if (pendingDeath == null) {
+            return;
+        }
+
+        EncounterDefinition encounter = encounterRegistry.getById(pendingDeath.getEncounterId());
+
+        if (encounter == null
+                || encounter.getLootType() != EncounterLootType.GROUND_LOOT) {
+            return;
+        }
+
+        /*
+         * Empty loot is intentional.
+         *
+         * processEncounterLoot() will record one kill with no qualifying
+         * drop, which increments the encounter's dry streak normally.
+         */
+        processEncounterLoot(encounter, Collections.emptyList(), pendingDeath.createEventKey(), false);
+
+        groundLootKillTracker.finalizeDeath(pendingDeath, currentTick);
+
+        log.debug(
+                "Recorded no-loot ground-loot NPC death for {} deathTick={} despawnTick={} finalizedTick={}",
+                encounter.getEncounterId(),
+                pendingDeath.getDeathTick(),
+                pendingDeath.getDespawnTick(),
+                currentTick
+        );
+    }
+
     /**
      * Releases a delayed dry result once the pet acquisition
      * matching window has expired.
@@ -1043,6 +1160,8 @@ public class LootDetectionService {
         processedNpcLootThisTick.clear();
         processedNpcLootTick = -1;
 
+        groundLootKillTracker.clear();
+
         trackerManager.clearProcessedKillEvents();
     }
 
@@ -1065,4 +1184,5 @@ public class LootDetectionService {
 
         client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", message, null);
     }
+
 }

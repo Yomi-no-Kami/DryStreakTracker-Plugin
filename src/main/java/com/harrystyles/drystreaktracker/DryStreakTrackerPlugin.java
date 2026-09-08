@@ -218,6 +218,28 @@ public class DryStreakTrackerPlugin extends Plugin {
     }
 
     /**
+     * NPC deaths used to make GROUND_LOOT tracking independent
+     * from whether the NPC actually produces loot.
+     */
+    @Subscribe
+    public void onActorDeath(ActorDeath event) {
+        lootDetectionService.handleActorDeath(event);
+    }
+    /**
+     * Marks the end of a GROUND_LOOT NPC's death animation so
+     * the no-loot fallback can safely begin.
+     */
+    @Subscribe
+    public void onNpcDespawned(NpcDespawned event) {
+        lootDetectionService.handleNpcDespawned(event);
+    }
+    @Subscribe
+    public void onInteractingChanged(InteractingChanged event) {
+        lootDetectionService.handleInteractingChanged(event);
+    }
+
+
+    /**
      * RuneScape game messages used for pet acquisition detection.
      */
     @Subscribe
@@ -232,6 +254,7 @@ public class DryStreakTrackerPlugin extends Plugin {
 
     @Subscribe
     public void onGameTick(GameTick event) {
+        lootDetectionService.processPendingGroundLootDeaths();
         lootDetectionService.processPendingPetDryResult();
     }
 
