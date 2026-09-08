@@ -37,6 +37,7 @@ import javax.swing.WindowConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.util.AsyncBufferedImage;
@@ -44,6 +45,7 @@ import net.runelite.client.util.AsyncBufferedImage;
 /**
  * Creates or edits one player-created NPC encounter.
  */
+@Slf4j
 public class CustomNpcTrackerDialog {
     private final Component parent;
     private final String npcName;
@@ -272,7 +274,7 @@ public class CustomNpcTrackerDialog {
     }
 
     private void showLoadFailure(Throwable error) {
-        error.printStackTrace();
+        log.warn("Unable to load custom NPC drop table from the OSRS Wiki for {} ({})", npcName, npcId, error);
 
         dropsPanel.removeAll();
 
