@@ -77,6 +77,43 @@ Select **Reset to Defaults** at any time to restore the plugin's default tracked
 
 Changing your tracked drop settings only affects future drops. It does not remove or change drops you have already received or your existing tracking history.
 
+## Custom NPC Tracking
+
+Want to track an NPC that isn't already supported? You can create your own tracker directly in-game.
+
+Enable **Custom NPC Tracking** in the plugin settings, then right-click the NPC you want to track and select **Add to Dry Streak Tracker**.
+
+![](screenshots-readme/readme10.png)
+
+The plugin will load the NPC's drop table and let you choose which drops should count as uniques.
+
+![](screenshots-readme/readme13.png)
+
+Select the drops you want to track and choose **Create Tracker**. Your custom NPC will then appear in the Dry Streak Tracker side panel and begin tracking automatically when you kill it.
+
+You can also leave all drops unchecked if you only want to track kills and your current dry streak without having a drop reset it.
+
+### Editing a Custom NPC Tracker
+
+Right-click the NPC again and select **Configure Dry Streak Tracker** to change its tracked drops or edit/delete the custom tracker through the encounter panel.
+
+![](screenshots-readme/readme12.png)
+
+Custom NPC trackers and their progress are saved separately for each RuneScape account.
+
+## Smoke Lootbeams
+
+Smoke Lootbeams add an animated smoke effect above tracked unique drops you receive on the ground, making those special drops a little harder to miss.
+
+![](screenshots-readme/readme9.png)
+
+Smoke Lootbeams can be enabled or disabled under **Cosmetic Effects** in the plugin settings.
+
+You can also choose your preferred smoke color.
+
+The effect is cosmetic only and does not change how drops or dry streaks are tracked.
+
+
 ## Notifications & Discord
 
 Dry Streak Tracker can notify you when you:
