@@ -20,6 +20,8 @@ import javax.swing.SwingUtilities;
 
 import lombok.extern.slf4j.Slf4j;
 
+import net.runelite.api.NPC;
+import net.runelite.api.NPCComposition;
 import net.runelite.client.game.ItemManager;
 
 @Slf4j
@@ -178,4 +180,29 @@ public class CustomNpcEncounterService {
     private String createEncounterId(int npcId) {
         return "custom_npc_" + npcId;
     }
+
+    public boolean canCreateCustomTracker(NPC npc) {
+        if (npc == null || npc.getCombatLevel() <= 0) {
+            return false;
+        }
+
+        NPCComposition composition = npc.getTransformedComposition();
+
+        if (composition == null) {
+            composition = npc.getComposition();
+        }
+
+        if (composition == null || composition.getActions() == null) {
+            return false;
+        }
+
+        for (String action : composition.getActions()) {
+            if ("Attack".equalsIgnoreCase(action)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

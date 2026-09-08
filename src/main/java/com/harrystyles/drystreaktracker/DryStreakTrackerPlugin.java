@@ -272,9 +272,9 @@ public class DryStreakTrackerPlugin extends Plugin {
         }
 
         /*
-         * Custom trackers are intended for killable NPCs.
+         * Custom trackers are intended for killable NPCs with an Attack option
          */
-        if (combatLevel <= 0) {
+        if (!customNpcEncounterService.canCreateCustomTracker(npc)) {
             return;
         }
 
