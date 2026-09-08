@@ -1760,5 +1760,21 @@
       }
     ],
     "petDropIds": []
+  },
+  {
+    "encounterId": "aquanite",
+    "displayName": "Aquanite",
+    "imageFileName": "Aquanite.png",
+    "npcIds": [
+      15497,
+      15498
+    ],
+    "trackedDrops": [
+      {
+        "itemId": 32876,
+        "enabledByDefault": true
+      }
+    ],
+    "petDropIds": []
   }
 ]
