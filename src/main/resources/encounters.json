@@ -930,8 +930,7 @@
       "Nightmare"
     ],
     "npcIds": [
-      9433,
-      378
+      9433
     ],
     "trackedDrops": [
       {
@@ -974,8 +973,7 @@
     "displayName": "Phosani's Nightmare",
     "imageFileName": "The_Nightmare.png",
     "npcIds": [
-      9424,
-      377
+      9424
     ],
     "trackedDrops": [
       {
@@ -1053,8 +1051,7 @@
     "displayName": "Duke Sucellus",
     "imageFileName": "Duke_Sucellus.png",
     "npcIds": [
-      12191,
-      12192
+      12191
     ],
     "trackedDrops": [
       {
@@ -1340,7 +1337,7 @@
     "displayName": "Kraken",
     "imageFileName": "Kraken.png",
     "npcIds": [
-      0
+      494
     ],
     "trackedDrops": [
       {
@@ -1442,8 +1439,7 @@
     "displayName": "Zalcano",
     "imageFileName": "Zalcano.png",
     "npcIds": [
-      9049,
-      9050
+      9049
     ],
     "trackedDrops": [
       {
