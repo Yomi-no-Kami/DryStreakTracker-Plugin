@@ -418,23 +418,55 @@ public class EncounterPanel extends JPanel {
 
         title.setBorder(BorderFactory.createEmptyBorder(0, 0, 6, 0));
 
+        title.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         panel.add(title);
 
         Map<Integer, Integer> receivedDrops = stats.getReceivedDrops();
 
         if (receivedDrops == null || receivedDrops.isEmpty()) {
-            panel.add(new JLabel("No tracked drops received yet."));
+            JLabel emptyLabel = new JLabel("No tracked drops received yet.");
+
+            emptyLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+            panel.add(emptyLabel);
 
             return panel;
         }
 
-        JPanel itemsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
+        /*
+         * Build explicit rows instead of relying on FlowLayout
+         * wrapping.
+         *
+         * FlowLayout can visually wrap items without increasing
+         * its preferred height, which caused drops after the first
+         * four to be clipped by the encounter panel.
+         */
+        JPanel rowsPanel = new JPanel();
 
-        itemsPanel.setOpaque(false);
+        rowsPanel.setLayout(new BoxLayout(rowsPanel, BoxLayout.Y_AXIS));
 
-        itemsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        rowsPanel.setOpaque(false);
+
+        rowsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JPanel currentRow = null;
+
+        int itemIndex = 0;
 
         for (Map.Entry<Integer, Integer> entry : receivedDrops.entrySet()) {
+            if (itemIndex % 4 == 0) {
+                currentRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
+
+                currentRow.setOpaque(false);
+
+                currentRow.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+                currentRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, 48));
+
+                rowsPanel.add(currentRow);
+            }
+
             int itemId = entry.getKey();
 
             int quantity = entry.getValue();
@@ -447,10 +479,12 @@ public class EncounterPanel extends JPanel {
 
             DropItemPanel dropItemPanel = new DropItemPanel(itemManager, itemId, quantity, itemName, itemImage);
 
-            itemsPanel.add(dropItemPanel);
+            currentRow.add(dropItemPanel);
+
+            itemIndex++;
         }
 
-        panel.add(itemsPanel);
+        panel.add(rowsPanel);
 
         return panel;
     }

@@ -74,21 +74,23 @@ public class DropItemPanel extends JPanel {
 
         icon.setToolTipText(itemName);
 
-        if (itemImage != null) {
-            /**
-             * Cached image is already available.
-             */
+        /*
+         * ItemManager.getImage() returns an AsyncBufferedImage.
+         *
+         * The object may already exist before the actual item sprite has
+         * finished loading, so a non-null Image does not necessarily mean
+         * the sprite is ready to be copied/scaled.
+         *
+         * When the cached image is asynchronous, attach it directly to the
+         * JLabel so RuneLite updates the icon when loading finishes.
+         */
+        if (itemImage instanceof AsyncBufferedImage) {
+            ((AsyncBufferedImage) itemImage).addTo(icon);
+        } else if (itemImage != null) {
             Image scaledImage = itemImage.getScaledInstance(ICON_SIZE, ICON_SIZE, Image.SCALE_SMOOTH);
 
             icon.setIcon(new ImageIcon(scaledImage));
         } else {
-            /**
-             * Cached image was not available yet.
-             *
-             * Ask RuneLite for the sprite asynchronously.
-             * addTo(icon) will update the JLabel automatically
-             * when the sprite finishes loading.
-             */
             AsyncBufferedImage asyncImage = itemManager.getImage(itemId);
 
             if (asyncImage != null) {

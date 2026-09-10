@@ -87,6 +87,10 @@
       {
         "itemId": 6733,
         "enabledByDefault": true
+      },
+      {
+        "itemId": 6739,
+        "enabledByDefault": true
       }
     ],
     "petDropIds": [12643]
@@ -106,6 +110,10 @@
       {
         "itemId": 6737,
         "enabledByDefault": true
+      },
+      {
+        "itemId": 6739,
+        "enabledByDefault": true
       }
     ],
     "petDropIds": [12645]
@@ -120,6 +128,10 @@
     "trackedDrops": [
       {
         "itemId": 6731,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 6739,
         "enabledByDefault": true
       }
     ],
