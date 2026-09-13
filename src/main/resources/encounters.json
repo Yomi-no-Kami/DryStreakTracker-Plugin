@@ -1399,8 +1399,7 @@
     "displayName": "Alchemical Hydra",
     "imageFileName": "Alchemical_Hydra_%28serpentine%29.png",
     "npcIds": [
-      8621,
-      8622
+      8621
     ],
     "trackedDrops": [
       {
@@ -1474,11 +1473,6 @@
     "displayName": "Tekton",
     "imageFileName": "Tekton.png",
     "npcIds": [
-      7540,
-      7541,
-      7542,
-      7545,
-      7543,
       7544
     ],
     "trackedDrops": [
