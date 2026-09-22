@@ -40,6 +40,7 @@ public class EncounterStats {
     private int lastDropKillcount;
 
     /**
+     * -------------------NOT USED ANYMORE DO NOT DELETE---------------------------------
      * Player's actual boss KC when the most recent tracked
      * drop was received.
      * <p>
@@ -52,7 +53,7 @@ public class EncounterStats {
      * at the player's actual KC of 2,500 and a unique is received.
      * lastDropTotalKillcount = 2500
      */
-    private int lastDropTotalKillcount;
+    private int lastDropTotalKillcount; // DO NOT DELETE THIS. KEEPING SO IT DOESN'T POSSIBLY BREAK EXISTING GSON
 
     /**
      * Length of the dry streak that ended when the most
@@ -317,7 +318,7 @@ public class EncounterStats {
         }
     }
 
-    public void recordDrop(int currentKillcount, int totalKillcount, int itemId, int quantity) {
+    public void recordDrop(int currentKillcount, int itemId, int quantity) {
         lastActivityTime = System.currentTimeMillis();
 
         lastKnownKillcount = currentKillcount;
@@ -326,8 +327,6 @@ public class EncounterStats {
         totalTrackedDrops++;
 
         lastDropKillcount = currentKillcount;
-
-        lastDropTotalKillcount = totalKillcount;
 
         /*
          * The drop itself happened on the next kill after
@@ -375,7 +374,7 @@ public class EncounterStats {
      * by recordDrop(), so this must not increment the kill count or
      * reset the dry streak again.
      */
-    public void recordAdditionalDropOnLastKill(int totalKillcount, int itemId, int quantity) {
+    public void recordAdditionalDropOnLastKill(int itemId, int quantity) {
         if (totalKillsTracked <= 0) {
             return;
         }
@@ -385,7 +384,6 @@ public class EncounterStats {
         totalTrackedDrops++;
 
         lastDropKillcount = lastKnownKillcount;
-        lastDropTotalKillcount = totalKillcount;
 
         receivedDrops.merge(itemId, quantity, Integer::sum);
     }
@@ -404,7 +402,7 @@ public class EncounterStats {
      * If another tracked drop was already received on the
      * same kill, the pet is added as an additional drop.
      */
-    public void recordPetOnLastKill(int totalKillcount, int itemId, int quantity) {
+    public void recordPetOnLastKill(int itemId, int quantity) {
         if (totalKillsTracked <= 0) {
             return;
         }
@@ -421,8 +419,6 @@ public class EncounterStats {
         totalTrackedDrops++;
 
         lastDropKillcount = lastKnownKillcount;
-
-        lastDropTotalKillcount = totalKillcount;
 
         /*
          * A positive currentDryStreak means the loot event was

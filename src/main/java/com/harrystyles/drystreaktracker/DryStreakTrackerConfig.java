@@ -73,17 +73,6 @@ public interface DryStreakTrackerConfig extends Config {
     )
     String notificationSection = "notifications";
 
-    @ConfigItem(
-            keyName = "showNotifications",
-            name = "Show notification pop-ups",
-            description = "Show pop-up notifications for drops, pets, and dry streak records",
-            position = 0,
-            section = notificationSection
-    )
-    default boolean showNotifications() {
-        return true;
-    }
-
 
 
 

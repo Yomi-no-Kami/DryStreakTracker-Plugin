@@ -12,7 +12,6 @@ import com.harrystyles.drystreaktracker.encounter.tracking.EncounterTrackerManag
 import com.harrystyles.drystreaktracker.encounter.tracking.RecentDrop;
 import com.harrystyles.drystreaktracker.ui.DryStreakSidebarPanel;
 import com.harrystyles.drystreaktracker.ui.ItemDisplayData;
-import com.harrystyles.drystreaktracker.ui.notification.DryStreakNotificationManager;
 
 import java.awt.Image;
 import java.util.*;
@@ -48,8 +47,6 @@ public class LootDetectionService {
     private final EncounterRegistry encounterRegistry;
 
     private final EncounterTrackerManager trackerManager;
-
-    private final DryStreakNotificationManager notificationManager;
 
     private final DryStreakTrackerConfig config;
 
@@ -89,13 +86,12 @@ public class LootDetectionService {
 
     @Inject
     public LootDetectionService(Client client, EncounterRegistry encounterRegistry, EncounterTrackerManager trackerManager,
-        DryStreakNotificationManager notificationManager, DryStreakTrackerConfig config, ItemManager itemManager,
+        DryStreakTrackerConfig config, ItemManager itemManager,
         DryStreakSidebarPanel sidebarPanel, DiscordWebhookService discordWebhookService, DropScreenshotService dropScreenshotService,
         SmokeLootbeamManager smokeLootbeamManager, GroundLootKillTracker groundLootKillTracker) {
         this.client = client;
         this.encounterRegistry = encounterRegistry;
         this.trackerManager = trackerManager;
-        this.notificationManager = notificationManager;
         this.config = config;
         this.itemManager = itemManager;
         this.sidebarPanel = sidebarPanel;
@@ -481,7 +477,6 @@ public class LootDetectionService {
             }
 
             if (stats != null && stats.isNewDryRecordThisKill()) {
-                sendDryRecordNotification(encounter, stats);
 
                 if (config.showChatboxMessages()) {
                     sendDryRecordChatboxMessage(encounter, stats);
@@ -498,7 +493,6 @@ public class LootDetectionService {
         }
 
         if (stats != null && stats.isNewDryRecordThisKill()) {
-            sendDryRecordNotification(encounter, stats);
 
             if (config.showChatboxMessages()) {
                 sendDryRecordChatboxMessage(encounter, stats);
@@ -591,8 +585,6 @@ public class LootDetectionService {
         clearPendingPetDryResult();
 
         if (newDryRecord) {
-            sendDryRecordNotification(encounter, dryStreak);
-
             if (config.showChatboxMessages()) {
                 sendDryRecordChatboxMessage(encounter, dryStreak);
             }
@@ -658,8 +650,7 @@ public class LootDetectionService {
     }
 
     /**
-     * Handles recent-drop history, Discord uploads and
-     * notifications after a tracked item has been recorded.
+     * Handles recent-drop history and Discord uploads after a tracked item has been recorded.
      *
      * This method does not modify encounter kill totals.
      */
@@ -724,36 +715,13 @@ public class LootDetectionService {
 
 
     /**
-     * Displays notification and chat information for a
+     * Displays chat information for a
      * successfully recorded tracked drop.
      */
     private void handleRecordedDrop(EncounterDefinition encounter, int itemId, int quantity, boolean pet) {
         String itemName = getItemName(itemId);
 
         EncounterStats stats = trackerManager.getStats(encounter.getEncounterId());
-
-        String notificationText =
-                "<col=FFFF00>"
-                        + encounter.getDisplayName()
-                        + "</col>"
-                        + "<br>"
-                        + "<col=FFFFFF>"
-                        + itemName
-                        + " x"
-                        + quantity
-                        + "</col>";
-
-        if (stats != null && stats.getLastCompletedDryStreak() > 0) {
-            notificationText +=
-                    "<br>"
-                            + "<col=FFFFFF>"
-                            + "Dry streak ended at "
-                            + stats.getLastCompletedDryStreak()
-                            + " KC. Dry streak reset"
-                            + "</col>";
-        }
-
-        notificationManager.notify(pet ? "PET RECEIVED" : "DROP RECEIVED", notificationText, 0x00FF00);
 
         if (config.showChatboxMessages()) {
             sendDropChatboxMessage(encounter, itemName, quantity, pet, stats);
@@ -1033,40 +1001,6 @@ public class LootDetectionService {
         }
 
         return "Item " + itemId;
-    }
-
-    private void sendDryRecordNotification(EncounterDefinition encounter, int recordStreak) {
-        if (encounter == null) {
-            return;
-        }
-
-        String text =
-                "<col=FFFF00>"
-                        + encounter.getDisplayName()
-                        + "</col>"
-                        + "<br>"
-                        + "<col=FFFFFF>"
-                        + recordStreak
-                        + " kc Dry"
-                        + "</col>";
-
-        notificationManager.notify("DRY STREAK RECORD", text, 0xFF0000);
-    }
-
-    /**
-     * Displays an in-game notification when the player
-     * surpasses their previous longest dry streak.
-     */
-    private void sendDryRecordNotification(EncounterDefinition encounter, EncounterStats stats) {
-        if (encounter == null || stats == null) {
-            return;
-        }
-
-        int recordStreak = stats.getCurrentDryStreak() > 0
-                ? stats.getCurrentDryStreak()
-                : stats.getLastCompletedDryStreak();
-
-        sendDryRecordNotification(encounter, recordStreak);
     }
 
     private void sendDryRecordChatboxMessage(EncounterDefinition encounter, int recordStreak) {

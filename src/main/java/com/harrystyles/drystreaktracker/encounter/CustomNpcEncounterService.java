@@ -121,10 +121,9 @@ public class CustomNpcEncounterService {
         encounter.setTrackedDrops(trackedDrops);
 
         /*
-         * Custom encounters intentionally do not use RuneLite
-         * boss-KC data or normal pet tracking.
+         * Custom encounters intentionally do not use LootReceived
+         * source names or normal pet tracking.
          */
-        encounter.setKillcountNames(new HashSet<>());
         encounter.setLootSourceNames(new HashSet<>());
         encounter.setPetDropIds(new HashSet<>());
 

@@ -24,7 +24,7 @@ public class RecentDrop {
     public RecentDrop() {
     }
 
-    public RecentDrop(String playerName, String encounterId, String encounterName, String encounterImageUrl, int itemId, int quantity, int dropKillcount, int totalKillcount, int geValue, long acquiredAt) {
+    public RecentDrop(String playerName, String encounterId, String encounterName, String encounterImageUrl, int itemId, int quantity, int dropKillcount, int geValue, long acquiredAt) {
         this.playerName = playerName;
         this.encounterId = encounterId;
         this.encounterName = encounterName;
@@ -32,7 +32,6 @@ public class RecentDrop {
         this.itemId = itemId;
         this.quantity = quantity;
         this.dropKillcount = dropKillcount;
-        this.totalKillcount = totalKillcount;
         this.geValue = geValue;
         this.acquiredAt = acquiredAt;
     }

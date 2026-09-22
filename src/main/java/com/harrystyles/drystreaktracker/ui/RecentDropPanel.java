@@ -121,20 +121,7 @@ public class RecentDropPanel extends JPanel {
          */
         String killcount = drop.getDropKillcount() + " kc";
 
-        if (drop.getTotalKillcount() > 0) {
-            killcount += " (" + drop.getTotalKillcount() + ")";
-        }
-
         JLabel killcountLabel = createInformationLabel("Unique took", killcount, "#ffffff");
-
-        if (drop.getTotalKillcount() > 0) {
-            killcountLabel.setToolTipText(
-                    drop.getDropKillcount()
-                            + " kc to receive this unique. "
-                            + drop.getTotalKillcount()
-                            + " was your RuneLite boss kc when the drop was received."
-            );
-        }
 
         informationPanel.add(killcountLabel);
 

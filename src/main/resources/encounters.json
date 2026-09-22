@@ -347,9 +347,6 @@
     "encounterId": "the_hueycoatl",
     "displayName": "The Hueycoatl",
     "imageFileName": "The_Hueycoatl.png",
-    "killcountNames": [
-      "Hueycoatl"
-    ],
     "npcIds": [
       14009
     ],
@@ -938,9 +935,6 @@
     "encounterId": "the_nightmare",
     "displayName": "The Nightmare",
     "imageFileName": "The_Nightmare.png",
-    "killcountNames": [
-      "Nightmare"
-    ],
     "npcIds": [
       9433
     ],
@@ -1109,9 +1103,6 @@
     "encounterId": "the_leviathan",
     "displayName": "The Leviathan",
     "imageFileName": "The_Leviathan.png",
-    "killcountNames": [
-      "Leviathan"
-    ],
     "npcIds": [
       12214
     ],
@@ -1159,9 +1150,6 @@
     "encounterId": "the_whisperer",
     "displayName": "The Whisperer",
     "imageFileName": "The_Whisperer.png",
-    "killcountNames": [
-      "Whisperer"
-    ],
     "npcIds": [
       12204
     ],
@@ -1774,6 +1762,71 @@
     "trackedDrops": [
       {
         "itemId": 32876,
+        "enabledByDefault": true
+      }
+    ],
+    "petDropIds": []
+  },
+  {
+    "encounterId": "moss_giant",
+    "displayName": "Moss Giant",
+    "imageFileName": "Moss_giant_%28level_42%2C_3%29.png",
+    "npcIds": [
+      2090,
+      2091,
+      2092,
+      2093,
+      3851,
+      3852,
+      7262,
+      8736,
+      12844,
+      12845,
+      12846,
+      12847,
+      14422
+    ],
+    "trackedDrops": [
+      {
+        "itemId": 22374,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 6800,
+        "enabledByDefault": true
+      }
+    ],
+    "petDropIds": []
+  },
+  {
+    "encounterId": "hill_giant",
+    "displayName": "Hill Giant",
+    "imageFileName": "Hill_Giant.png",
+    "npcIds": [
+      2098,
+      2099,
+      2100,
+      2101,
+      2102,
+      2103,
+      7261,
+      10374,
+      10375,
+      10376,
+      12848,
+      12849,
+      12850,
+      13502,
+      13503,
+      13504
+    ],
+    "trackedDrops": [
+      {
+        "itemId": 20754,
+        "enabledByDefault": true
+      },
+      {
+        "itemId": 6800,
         "enabledByDefault": true
       }
     ],

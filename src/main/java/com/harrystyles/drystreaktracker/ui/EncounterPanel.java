@@ -15,13 +15,13 @@ import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.game.SkillIconManager;
 import net.runelite.client.ui.ColorScheme;
 
 public class EncounterPanel extends JPanel {
@@ -360,30 +360,18 @@ public class EncounterPanel extends JPanel {
                 + stats.getLongestDryStreak()
                 + "</font></html>"));
 
+
         String lastDropText = "<html><font color='#c8c8c8'>Last Drop: </font>";
 
         if (stats.getTotalTrackedDrops() == 0) {
             lastDropText += "<font color='#ffffff'>None</font>";
         } else {
-            lastDropText += "<font color='#ffffff'>" + stats.getLastDropKillcount() + " KC</font>";
-
-            if (stats.getLastDropTotalKillcount() > 0) {
-                lastDropText += " <font color='#ffffff'>(" + stats.getLastDropTotalKillcount() + " KC)</font>";
-            }
+            lastDropText += "<font color='#ffffff'>" + stats.getLastDropKillcount() + " kc</font>";
         }
 
         lastDropText += "</html>";
 
-        JLabel lastDropLabel = new JLabel(lastDropText);
-
-        if (stats.getLastDropTotalKillcount() > 0) {
-            lastDropLabel.setToolTipText(
-                    stats.getLastDropTotalKillcount()
-                            + " is a snapshot of your total boss KC when your last tracked drop was received."
-            );
-        }
-
-        statisticsPanel.add(lastDropLabel);
+        statisticsPanel.add(new JLabel(lastDropText));
 
         panel.add(statisticsPanel, BorderLayout.NORTH);
 

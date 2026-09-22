@@ -52,18 +52,6 @@ public class EncounterDefinition {
     private Set<String> lootSourceNames = new HashSet<>();
 
     /**
-     * RuneLite boss killcount names used when looking up
-     * the player's actual KC.
-     * <p>
-     * If multiple names are supplied, their killcounts are
-     * added together.
-     * <p>
-     * If no names are supplied, RuneLite KC is not tracked
-     * for this encounter.
-     */
-    private Set<String> killcountNames = new HashSet<>();
-
-    /**
      * Drops which may be tracked for this encounter.
      *
      * Each drop defines whether it is enabled by default.
@@ -141,18 +129,6 @@ public class EncounterDefinition {
 
     public EncounterLootType getLootType() {
         return lootType;
-    }
-
-    public Set<String> getKillcountNames() {
-        if (killcountNames == null) {
-            killcountNames = new HashSet<>();
-        }
-
-        return killcountNames;
-    }
-
-    public void setKillcountNames(Set<String> killcountNames) {
-        this.killcountNames = killcountNames == null ? new HashSet<>() : new HashSet<>(killcountNames);
     }
 
 
@@ -278,7 +254,6 @@ public class EncounterDefinition {
                 ", lootType=" + lootType +
                 ", npcIds=" + npcIds +
                 ", lootSourceNames=" + lootSourceNames +
-                ", killcountNames=" + killcountNames +
                 ", trackedDrops=" + trackedDrops +
                 ", petDropIds=" + petDropIds +
                 '}';

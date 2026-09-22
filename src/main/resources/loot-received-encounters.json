@@ -6,9 +6,6 @@
     "lootSourceNames": [
       "Branda the Fire Queen"
     ],
-    "killcountNames": [
-      "Royal Titans"
-    ],
     "trackedDrops": [
       {
         "itemId": 30631,
@@ -29,9 +26,6 @@
     "imageFileName": "Eldric_the_Ice_King.png",
     "lootSourceNames": [
       "Eldric the Ice King"
-    ],
-    "killcountNames": [
-      "Royal Titans"
     ],
     "trackedDrops": [
       {
@@ -237,9 +231,6 @@
     "lootSourceNames": [
       "Lunar Chest"
     ],
-    "killcountNames": [
-      "Lunar Chest"
-    ],
     "trackedDrops": [
       {
         "itemId": 29000,
@@ -304,6 +295,10 @@
       {
         "itemId": 22372,
         "enabledByDefault": true
+      },
+      {
+        "itemId": 22374,
+        "enabledByDefault": false
       }
     ],
     "petDropIds": [
@@ -320,6 +315,10 @@
       {
         "itemId": 20756,
         "enabledByDefault": true
+      },
+      {
+        "itemId": 20754,
+        "enabledByDefault": false
       }
     ],
     "petDropIds": [
@@ -406,9 +405,6 @@
     "imageFileName": "Sol_Heredit_%28sitting%29.png",
     "lootSourceNames": [
       "Fortis Colosseum"
-    ],
-    "killcountNames": [
-      "Sol Heredit"
     ],
     "trackedDrops": [
       {
@@ -557,10 +553,6 @@
     "imageFileName": "Tumeken%27s_Warden_%28level-544%29.png",
     "lootSourceNames": [
       "Tombs of Amascut"
-    ],
-    "killcountNames": [
-      "Tombs of Amascut",
-      "Tombs of Amascut: Expert Mode"
     ],
     "trackedDrops": [
       {

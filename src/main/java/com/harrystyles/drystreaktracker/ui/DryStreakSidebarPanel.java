@@ -870,7 +870,6 @@ public class DryStreakSidebarPanel extends PluginPanel {
         updatedEncounter.setLootType(existingEncounter.getLootType());
         updatedEncounter.setNpcIds(existingEncounter.getNpcIds());
         updatedEncounter.setLootSourceNames(existingEncounter.getLootSourceNames());
-        updatedEncounter.setKillcountNames(existingEncounter.getKillcountNames());
         updatedEncounter.setPetDropIds(existingEncounter.getPetDropIds());
 
         List<EncounterDropDefinition> trackedDrops = new ArrayList<>();

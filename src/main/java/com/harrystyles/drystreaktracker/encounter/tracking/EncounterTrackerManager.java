@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.client.config.ConfigManager;
 
 /**
  * Handles all player encounter tracking.
@@ -29,8 +28,6 @@ public class EncounterTrackerManager {
 
     private final EncounterRegistry encounterRegistry;
     private final DryStreakStorage storage;
-
-    private final ConfigManager configManager;
 
     /**
      * Tracking data for the currently logged-in player.
@@ -54,10 +51,9 @@ public class EncounterTrackerManager {
     private final Set<String> processedKillEvents = new HashSet<>();
 
     @Inject
-    public EncounterTrackerManager(EncounterRegistry encounterRegistry, DryStreakStorage storage, ConfigManager configManager) {
+    public EncounterTrackerManager(EncounterRegistry encounterRegistry, DryStreakStorage storage) {
         this.encounterRegistry = encounterRegistry;
         this.storage = storage;
-        this.configManager = configManager;
     }
 
     /**
@@ -220,9 +216,7 @@ public class EncounterTrackerManager {
         int newKillcount = stats.getLastKnownKillcount() + 1;
 
         if (dropItemId != null) {
-            int totalKillcount = getRuneLiteKillcount(definition);
-
-            stats.recordDrop(newKillcount, totalKillcount, dropItemId, dropQuantity);
+            stats.recordDrop(newKillcount, dropItemId, dropQuantity);
 
             log.info("{} kill #{} recorded with tracked drop. " + "Current dry streak: {}", definition.getDisplayName(), newKillcount, stats.getCurrentDryStreak());
         } else {
@@ -261,9 +255,7 @@ public class EncounterTrackerManager {
             return false;
         }
 
-        int totalKillcount = getRuneLiteKillcount(definition);
-
-        stats.recordAdditionalDropOnLastKill(totalKillcount, itemId, quantity);
+        stats.recordAdditionalDropOnLastKill(itemId, quantity);
 
         save();
 
@@ -307,9 +299,7 @@ public class EncounterTrackerManager {
             return false;
         }
 
-        int totalKillcount = getRuneLiteKillcount(definition);
-
-        stats.recordPetOnLastKill(totalKillcount, petItemId, 1);
+        stats.recordPetOnLastKill(petItemId, 1);
 
         save();
 
@@ -512,8 +502,6 @@ public class EncounterTrackerManager {
             return;
         }
 
-        int totalKillcount = stats.getLastDropTotalKillcount();
-
         RecentDrop recentDrop = new RecentDrop(
                 currentPlayerName,
                 encounterId,
@@ -522,7 +510,6 @@ public class EncounterTrackerManager {
                 itemId,
                 quantity,
                 stats.getLastCompletedDryStreak(),
-                totalKillcount,
                 geValue,
                 System.currentTimeMillis()
         );
@@ -1026,49 +1013,5 @@ public class EncounterTrackerManager {
 
             encounterRegistry.unregister(encounter.getEncounterId());
         }
-    }
-
-    private int getRuneLiteKillcount(EncounterDefinition definition) {
-        if (definition == null) {
-            return 0;
-        }
-
-        Set<String> killcountNames = definition.getKillcountNames();
-
-        if (killcountNames == null || killcountNames.isEmpty()) {
-            return 0;
-        }
-
-        int totalKillcount = 0;
-
-        for (String killcountName : killcountNames) {
-            totalKillcount += getStoredKillcount(killcountName);
-        }
-
-        return totalKillcount;
-    }
-
-    private int getStoredKillcount(String bossName) {
-        if (bossName == null || bossName.trim().isEmpty()) {
-            return 0;
-        }
-
-        String bossKey = bossName.trim().replace(":", "").toLowerCase(Locale.ROOT);
-
-        Integer killcount = configManager.getRSProfileConfiguration(
-                "killcount",
-                bossKey,
-                int.class
-        );
-
-        if (killcount == null) {
-            log.debug("No RuneLite Boss killcount found using key '{}'", bossKey);
-
-            return 0;
-        }
-
-        log.debug("RuneLite Boss killcount using key '{}': {}", bossKey, killcount);
-
-        return killcount;
     }
 }

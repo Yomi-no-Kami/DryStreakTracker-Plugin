@@ -5,7 +5,6 @@ import com.harrystyles.drystreaktracker.detection.LootDetectionService;
 import com.harrystyles.drystreaktracker.encounter.*;
 import com.harrystyles.drystreaktracker.encounter.tracking.EncounterTrackerManager;
 import com.harrystyles.drystreaktracker.ui.DryStreakSidebarPanel;
-import com.harrystyles.drystreaktracker.ui.notification.DryStreakNotificationManager;
 
 import java.awt.image.BufferedImage;
 
@@ -56,9 +55,6 @@ public class DryStreakTrackerPlugin extends Plugin {
     private SmokeLootbeamManager smokeLootbeamManager;
 
     @Inject
-    private DryStreakNotificationManager notificationManager;
-
-    @Inject
     private DryStreakTrackerConfig config;
 
     @Inject
@@ -73,6 +69,8 @@ public class DryStreakTrackerPlugin extends Plugin {
     private ClientThread clientThread;
 
     private NavigationButton navigationButton;
+
+    private boolean playerInitializationPending;
 
     @Provides
     DryStreakTrackerConfig provideConfig(ConfigManager configManager) {
@@ -107,13 +105,11 @@ public class DryStreakTrackerPlugin extends Plugin {
 
         clientToolbar.addNavigation(navigationButton);
 
-        notificationManager.start();
-
         sidebarPanel.setLoggedIn(false
         );
 
         if (client.getGameState() == GameState.LOGGED_IN) {
-            startCurrentPlayer();
+            playerInitializationPending = true;
         } else {
             SwingUtilities.invokeLater(() -> sidebarPanel.setLoggedIn(false));
         }
@@ -133,8 +129,6 @@ public class DryStreakTrackerPlugin extends Plugin {
             navigationButton = null;
         }
 
-        notificationManager.stop();
-
         trackerManager.stop();
 
         encounterRegistry.clear();
@@ -151,15 +145,15 @@ public class DryStreakTrackerPlugin extends Plugin {
         GameState gameState = event.getGameState();
 
         if (gameState == GameState.LOGGED_IN) {
-            startCurrentPlayer();
-
+            playerInitializationPending = true;
             return;
         }
 
         if (gameState == GameState.LOGIN_SCREEN) {
+            playerInitializationPending = false;
+
             smokeLootbeamManager.clear();
             lootDetectionService.clearProcessedLootEvents();
-
             trackerManager.stopForPlayer();
 
             SwingUtilities.invokeLater(() -> sidebarPanel.setLoggedIn(false));
@@ -167,35 +161,30 @@ public class DryStreakTrackerPlugin extends Plugin {
     }
 
     private void startCurrentPlayer() {
-        clientThread.invokeLater(() ->
-                {
-                    if (client.getLocalPlayer() == null) {
-                        clientThread.invokeLater(this::startCurrentPlayer);
+        Player player = client.getLocalPlayer();
 
-                        return;
-                    }
+        if (player == null) {
+            return;
+        }
 
-                    String playerName = client.getLocalPlayer().getName();
+        String playerName = player.getName();
 
-                    if (playerName == null || playerName.trim().isEmpty()) {
-                        clientThread.invokeLater(this::startCurrentPlayer);
+        if (playerName == null || playerName.trim().isEmpty()) {
+            return;
+        }
 
-                        return;
-                    }
+        playerInitializationPending = false;
 
-                    log.info("Logged in as {}", playerName);
+        log.info("Logged in as {}", playerName);
 
-                    trackerManager.startForPlayer(playerName);
+        trackerManager.startForPlayer(playerName);
 
-                    SwingUtilities.invokeLater(() -> {
-                        sidebarPanel.setLoggedIn(true);
+        SwingUtilities.invokeLater(() -> {
+            sidebarPanel.setLoggedIn(true);
+            sidebarPanel.refresh();
+        });
 
-                        sidebarPanel.refresh();
-                    });
-
-                    sidebarPanel.refreshItemDisplayData();
-                }
-        );
+        sidebarPanel.refreshItemDisplayData();
     }
 
     /**
@@ -254,6 +243,10 @@ public class DryStreakTrackerPlugin extends Plugin {
 
     @Subscribe
     public void onGameTick(GameTick event) {
+        if (playerInitializationPending && client.getGameState() == GameState.LOGGED_IN) {
+            startCurrentPlayer();
+        }
+
         lootDetectionService.processPendingGroundLootDeaths();
         lootDetectionService.processPendingPetDryResult();
     }
