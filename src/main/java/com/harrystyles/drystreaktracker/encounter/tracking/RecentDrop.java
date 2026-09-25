@@ -17,14 +17,14 @@ public class RecentDrop {
 
     private int totalKillcount;
 
-    private int geValue;
+    private long geValue;
 
     private long acquiredAt;
 
     public RecentDrop() {
     }
 
-    public RecentDrop(String playerName, String encounterId, String encounterName, String encounterImageUrl, int itemId, int quantity, int dropKillcount, int geValue, long acquiredAt) {
+    public RecentDrop(String playerName, String encounterId, String encounterName, String encounterImageUrl, int itemId, int quantity, int dropKillcount, long geValue, long acquiredAt) {
         this.playerName = playerName;
         this.encounterId = encounterId;
         this.encounterName = encounterName;
@@ -68,7 +68,7 @@ public class RecentDrop {
         return totalKillcount;
     }
 
-    public int getGeValue() {
+    public long getGeValue() {
         return geValue;
     }
 

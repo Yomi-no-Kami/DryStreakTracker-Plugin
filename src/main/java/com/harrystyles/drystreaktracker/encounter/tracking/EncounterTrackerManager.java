@@ -489,7 +489,7 @@ public class EncounterTrackerManager {
         log.info("Cleared tracking data for encounter {}", encounterId);
     }
 
-    public void recordRecentDrop(String encounterId, int itemId, int quantity, int geValue) {
+    public void recordRecentDrop(String encounterId, int itemId, int quantity, long geValue) {
         if (!isActive()) {
             return;
         }
