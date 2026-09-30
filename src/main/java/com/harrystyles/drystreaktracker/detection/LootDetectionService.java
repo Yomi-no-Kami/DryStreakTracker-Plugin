@@ -133,7 +133,17 @@ public class LootDetectionService {
 
         log.debug("NpcLootReceived: npc={} id={} tick={} items={}", npc.getName(), npcId, client.getTickCount(), items == null ? 0 : items.size());
 
+        if (items != null) {
+            for (ItemStack item : items) {
+                log.info("[DST DEBUG] NpcLootReceived item: id={} qty={}", item.getId(), item.getQuantity());
+            }
+        }
+
         EncounterDefinition encounter = encounterRegistry.getByNpcId(npcId);
+
+        log.info("[DST DEBUG] Registry lookup by NPC ID {} -> {}",
+                npcId,
+                encounter == null ? "NO MATCH" : encounter.getEncounterId());
 
         /*
          * A custom NPC may have multiple visual variants with different
@@ -333,6 +343,19 @@ public class LootDetectionService {
      * RuneLite has time to provide NpcLootReceived or LootReceived first.
      */
     public void handleActorDeath(ActorDeath event) {
+        if (event != null && event.getActor() instanceof NPC) {
+            NPC npc = (NPC) event.getActor();
+
+            EncounterDefinition encounter = encounterRegistry.getByNpcId(npc.getId());
+
+            log.info("[DST DEBUG] ActorDeath: npc='{}' id={} combat={} tick={} registryMatch={}",
+                    npc.getName(),
+                    npc.getId(),
+                    npc.getCombatLevel(),
+                    client.getTickCount(),
+                    encounter == null ? "NO MATCH" : encounter.getEncounterId());
+        }
+
         groundLootKillTracker.handleActorDeath(event);
     }
 
@@ -345,6 +368,19 @@ public class LootDetectionService {
      * ticks after ActorDeath fires.
      */
     public void handleNpcDespawned(NpcDespawned event) {
+        if (event != null && event.getNpc() != null) {
+            NPC npc = event.getNpc();
+
+            EncounterDefinition encounter = encounterRegistry.getByNpcId(npc.getId());
+
+            log.info("[DST DEBUG] NpcDespawned: npc='{}' id={} combat={} tick={} registryMatch={}",
+                    npc.getName(),
+                    npc.getId(),
+                    npc.getCombatLevel(),
+                    client.getTickCount(),
+                    encounter == null ? "NO MATCH" : encounter.getEncounterId());
+        }
+
         groundLootKillTracker.handleNpcDespawned(event);
     }
 
@@ -369,7 +405,12 @@ public class LootDetectionService {
         if (encounter == null) {
             return;
         }
-
+        log.info("[DST DEBUG] processEncounterLoot: encounter='{}' eventKey='{}' tick={} itemCount={} petMatched={}",
+                encounter.getEncounterId(),
+                eventKey,
+                client.getTickCount(),
+                items == null ? 0 : items.size(),
+                petMessageMatchedBeforeLoot);
         /*
          * Only normal tracked items are searched here.
          *
@@ -377,6 +418,21 @@ public class LootDetectionService {
          * pet acquisition game message.
          */
         Map<Integer, Integer> qualifyingDrops = findQualifyingDrops(encounter, items);
+
+        log.info("[DST DEBUG] Qualifying tracked drops for '{}': {}",
+                encounter.getEncounterId(),
+                qualifyingDrops);
+
+        if (items != null) {
+            for (ItemStack item : items) {
+                log.info("[DST DEBUG] Item check for '{}': itemId={} qty={} configured={} enabled={}",
+                        encounter.getEncounterId(),
+                        item.getId(),
+                        item.getQuantity(),
+                        encounter.isTrackedDrop(item.getId()),
+                        trackerManager.isDropEnabled(encounter.getEncounterId(), item.getId()));
+            }
+        }
 
         Integer firstDropItemId = null;
         int firstDropQuantity = 0;
@@ -395,9 +451,23 @@ public class LootDetectionService {
          * the dry streak. Any additional tracked items are attached to
          * this same kill below.
          */
+        log.info("[DST DEBUG] Calling recordKill: encounter='{}' eventKey='{}' trackedDrop={} quantity={}",
+                encounter.getEncounterId(),
+                eventKey,
+                firstDropItemId,
+                firstDropQuantity);
+
         boolean recorded = trackerManager.recordKill(encounter.getEncounterId(), eventKey, firstDropItemId, firstDropQuantity);
 
+        log.info("[DST DEBUG] recordKill result for '{}': {}",
+                encounter.getEncounterId(),
+                recorded);
+
         if (!recorded) {
+            log.warn("[DST DEBUG] KILL WAS NOT RECORDED for encounter='{}' eventKey='{}'",
+                    encounter.getEncounterId(),
+                    eventKey);
+
             return;
         }
 

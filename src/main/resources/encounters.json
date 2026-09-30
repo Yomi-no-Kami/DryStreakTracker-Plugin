@@ -1048,6 +1048,18 @@
       {
         "itemId": 30759,
         "enabledByDefault": true
+      },
+      {
+        "itemId": 30803,
+        "enabledByDefault": false
+      },
+      {
+        "itemId": 30763,
+        "enabledByDefault": false
+      },
+      {
+        "itemId": 30765,
+        "enabledByDefault": false
       }
     ],
     "petDropIds": [30888]

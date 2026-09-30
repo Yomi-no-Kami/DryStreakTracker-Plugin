@@ -57,6 +57,9 @@ public class GroundLootKillTracker {
      */
     private static final int DESPAWN_LOOT_WAIT_TICKS = 2;
 
+    private static final int YAMA_NPC_ID = 14176;
+    private static final int YAMA_DESPAWN_LOOT_WAIT_TICKS = 4;
+
     /*
      * Emergency fallback only.
      *
@@ -342,7 +345,11 @@ public class GroundLootKillTracker {
             if (pendingDeath.despawnTick >= 0) {
                 int ticksSinceDespawn = currentTick - pendingDeath.despawnTick;
 
-                if (ticksSinceDespawn <= DESPAWN_LOOT_WAIT_TICKS) {
+                int lootWaitTicks = pendingDeath.npcId == YAMA_NPC_ID
+                        ? YAMA_DESPAWN_LOOT_WAIT_TICKS
+                        : DESPAWN_LOOT_WAIT_TICKS;
+
+                if (ticksSinceDespawn <= lootWaitTicks) {
                     continue;
                 }
 

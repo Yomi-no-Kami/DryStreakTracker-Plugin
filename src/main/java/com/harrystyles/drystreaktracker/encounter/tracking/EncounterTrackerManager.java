@@ -213,6 +213,14 @@ public class EncounterTrackerManager {
 
         EncounterStats stats = trackingData.getOrCreateEncounter(definition);
 
+        log.info("[DST DEBUG] recordKill entered: encounter='{}' currentKC={} currentDry={} dropItemId={} quantity={} eventKey='{}'",
+                encounterId,
+                stats.getTotalKillsTracked(),
+                stats.getCurrentDryStreak(),
+                dropItemId,
+                dropQuantity,
+                killEventKey);
+
         int newKillcount = stats.getLastKnownKillcount() + 1;
 
         if (dropItemId != null) {
@@ -224,6 +232,12 @@ public class EncounterTrackerManager {
 
             log.debug("{} kill #{} recorded as dry. " + "Current dry streak: {}", definition.getDisplayName(), newKillcount, stats.getCurrentDryStreak());
         }
+
+        log.info("[DST DEBUG] recordKill completed: encounter='{}' newKC={} newDry={} totalDrops={}",
+                encounterId,
+                stats.getTotalKillsTracked(),
+                stats.getCurrentDryStreak(),
+                stats.getTotalTrackedDrops());
 
         save();
 
