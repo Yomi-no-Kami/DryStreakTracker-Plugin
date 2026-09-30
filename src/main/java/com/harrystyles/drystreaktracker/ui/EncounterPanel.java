@@ -45,6 +45,7 @@ public class EncounterPanel extends JPanel {
     private final Runnable configureDropsListener;
     private final Runnable deleteCustomEncounterListener;
     private final Runnable clearEncounterListener;
+    private final Runnable addMissingDropListener;
 
     private JLabel expandIndicator;
     private boolean expanded;
@@ -58,6 +59,7 @@ public class EncounterPanel extends JPanel {
             Consumer<Boolean> expandedStateListener,
             KillcountUpdateListener setKillcountListener,
             Runnable configureDropsListener,
+            Runnable addMissingDropListener,
             Runnable deleteCustomEncounterListener,
             Runnable clearEncounterListener) {
         this.encounter = encounter;
@@ -68,6 +70,7 @@ public class EncounterPanel extends JPanel {
         this.expandedStateListener = expandedStateListener;
         this.setKillcountListener = setKillcountListener;
         this.configureDropsListener = configureDropsListener;
+        this.addMissingDropListener = addMissingDropListener;
         this.deleteCustomEncounterListener = deleteCustomEncounterListener;
         this.clearEncounterListener = clearEncounterListener;
 
@@ -115,7 +118,6 @@ public class EncounterPanel extends JPanel {
         add(detailsPanel, BorderLayout.CENTER);
 
         updatePanelHeight();
-
     }
 
     private JPanel createSummaryPanel() {
@@ -481,8 +483,7 @@ public class EncounterPanel extends JPanel {
      * Displays the encounter context menu when the user
      * right-clicks the encounter header.
      */
-    private void showPopupMenuIfNeeded(
-            MouseEvent event) {
+    private void showPopupMenuIfNeeded(MouseEvent event) {
         if (!event.isPopupTrigger()) {
             return;
         }
@@ -505,7 +506,33 @@ public class EncounterPanel extends JPanel {
             });
 
             popupMenu.add(editCustomItem);
+        } else {
+            JMenuItem configureDropsItem = new JMenuItem("Configure Tracked Drops...");
 
+            configureDropsItem.addActionListener(actionEvent -> {
+                if (configureDropsListener != null) {
+                    configureDropsListener.run();
+                }
+            });
+
+            popupMenu.add(configureDropsItem);
+        }
+
+        /*
+         * Both built-in and custom encounters can manually add
+         * one of their configured tracked drops.
+         */
+        JMenuItem addMissingDropItem = new JMenuItem("Add Missing Drop...");
+
+        addMissingDropItem.addActionListener(actionEvent -> {
+            if (addMissingDropListener != null) {
+                addMissingDropListener.run();
+            }
+        });
+
+        popupMenu.add(addMissingDropItem);
+
+        if (deleteCustomEncounterListener != null) {
             JMenuItem deleteCustomItem = new JMenuItem("Delete Custom Encounter");
 
             deleteCustomItem.addActionListener(actionEvent -> {
@@ -529,41 +556,31 @@ public class EncounterPanel extends JPanel {
             });
 
             popupMenu.add(deleteCustomItem);
-        } else {
-            JMenuItem configureDropsItem = new JMenuItem("Configure Tracked Drops...");
-
-            configureDropsItem.addActionListener(actionEvent -> {
-                if (configureDropsListener != null) {
-                    configureDropsListener.run();
-                }
-            });
-
-            popupMenu.add(configureDropsItem);
         }
 
         popupMenu.addSeparator();
 
         JMenuItem clearItem = new JMenuItem("Clear encounter data");
 
-        clearItem.addActionListener(actionEvent ->
-                {
-                    int result = JOptionPane.showConfirmDialog(
-                            this,
-                            "Clear all Dry Streak Tracker data for "
-                                    + encounter.getDisplayName()
-                                    + "?",
-                            "Clear Encounter Data",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        clearItem.addActionListener(actionEvent -> {
+            int result = JOptionPane.showConfirmDialog(
+                    this,
+                    "Clear all Dry Streak Tracker data for "
+                            + encounter.getDisplayName()
+                            + "?",
+                    "Clear Encounter Data",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
 
-                    if (result != JOptionPane.YES_OPTION) {
-                        return;
-                    }
+            if (result != JOptionPane.YES_OPTION) {
+                return;
+            }
 
-                    if (clearEncounterListener != null) {
-                        clearEncounterListener.run();
-                    }
-                }
-        );
+            if (clearEncounterListener != null) {
+                clearEncounterListener.run();
+            }
+        });
 
         popupMenu.add(clearItem);
 

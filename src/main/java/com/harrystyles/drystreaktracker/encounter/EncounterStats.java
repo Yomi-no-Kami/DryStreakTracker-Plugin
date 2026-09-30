@@ -454,4 +454,18 @@ public class EncounterStats {
         receivedDrops.merge(itemId, petQuantity, Integer::sum);
     }
 
+    /**
+     * Adds a missing historical tracked drop without changing
+     * any kill count or dry streak statistics.
+     */
+    public void addMissingDrop(int itemId, int quantity) {
+        if (itemId <= 0 || quantity <= 0) {
+            return;
+        }
+
+        totalTrackedDrops++;
+
+        getReceivedDrops().merge(itemId, quantity, Integer::sum);
+    }
+
 }

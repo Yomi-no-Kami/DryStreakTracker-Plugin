@@ -679,6 +679,7 @@ public class DryStreakSidebarPanel extends PluginPanel {
                             configureTrackedDrops(encounter);
                         }
                     },
+                    () -> addMissingDrop(encounter),
                     trackerManager.isCustomEncounter(encounter.getEncounterId()) ? () -> {
                         if (!trackerManager.removeCustomEncounter(encounter.getEncounterId())) {
                             return;
@@ -946,5 +947,246 @@ public class DryStreakSidebarPanel extends PluginPanel {
 
     public JPanel getEncounterContainer() {
         return encounterContainer;
+    }
+
+    private void addMissingDrop(EncounterDefinition encounter) {
+        if (encounter == null) {
+            return;
+        }
+
+        List<MissingDropItem> items = new ArrayList<>();
+
+        clientThread.invokeLater(() -> {
+            for (EncounterDropDefinition drop : encounter.getTrackedDrops()) {
+                if (drop == null) {
+                    continue;
+                }
+
+                int itemId = drop.getItemId();
+
+                if (!trackerManager.isDropEnabled(encounter.getEncounterId(), itemId)) {
+                    continue;
+                }
+
+                ItemComposition itemComposition = itemManager.getItemComposition(itemId);
+
+                String itemName = itemComposition != null
+                        ? itemComposition.getName()
+                        : "Item " + itemId;
+
+                Image itemImage = itemManager.getImage(itemId);
+
+                ImageIcon icon = itemImage != null
+                        ? new ImageIcon(itemImage)
+                        : null;
+
+                items.add(new MissingDropItem(itemId, itemName, icon));
+            }
+
+            SwingUtilities.invokeLater(() ->
+                    showAddMissingDropDialog(encounter, items));
+        });
+    }
+
+    private void showAddMissingDropDialog(EncounterDefinition encounter, List<MissingDropItem> items) {
+        if (items == null || items.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "There are no enabled tracked drops for this encounter.",
+                    "Add Missing Drop",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+            return;
+        }
+
+        JComboBox<MissingDropItem> dropComboBox = new JComboBox<>();
+
+        for (MissingDropItem item : items) {
+            dropComboBox.addItem(item);
+        }
+
+        dropComboBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(
+                    JList<?> list,
+                    Object value,
+                    int index,
+                    boolean isSelected,
+                    boolean cellHasFocus) {
+
+                JLabel label = (JLabel) super.getListCellRendererComponent(
+                        list,
+                        value,
+                        index,
+                        isSelected,
+                        cellHasFocus
+                );
+
+                if (value instanceof MissingDropItem) {
+                    MissingDropItem item = (MissingDropItem) value;
+
+                    label.setText(item.getItemName());
+                    label.setIcon(item.getIcon());
+                    label.setIconTextGap(8);
+                    label.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
+                }
+
+                return label;
+            }
+        });
+
+        dropComboBox.setMaximumRowCount(8);
+
+        JTextField dropKillcountField = new JTextField(8);
+        JTextField quantityField = new JTextField("1", 8);
+
+        JPanel inputPanel = new JPanel(new GridLayout(0, 2, 8, 8));
+
+        inputPanel.add(new JLabel("Drop:"));
+        inputPanel.add(dropComboBox);
+
+        inputPanel.add(new JLabel("Unique took:"));
+        inputPanel.add(dropKillcountField);
+
+        inputPanel.add(new JLabel("Quantity:"));
+        inputPanel.add(quantityField);
+
+        JPanel messagePanel = new JPanel(new BorderLayout(0, 8));
+
+        messagePanel.setOpaque(false);
+
+        JLabel description = new JLabel(
+                "<html>Add a previously missed tracked drop.<br>"
+                        + "KC and dry streak statistics will not be changed.</html>"
+        );
+
+        messagePanel.add(description, BorderLayout.NORTH);
+        messagePanel.add(inputPanel, BorderLayout.CENTER);
+
+        int result = JOptionPane.showConfirmDialog(
+                this,
+                messagePanel,
+                "Add Missing Drop - " + encounter.getDisplayName(),
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        MissingDropItem selectedItem =
+                (MissingDropItem) dropComboBox.getSelectedItem();
+
+        if (selectedItem == null) {
+            return;
+        }
+
+        int dropKillcount;
+        int quantity;
+
+        try {
+            dropKillcount = Integer.parseInt(
+                    dropKillcountField.getText().trim()
+            );
+
+            quantity = Integer.parseInt(
+                    quantityField.getText().trim()
+            );
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Unique took and Quantity must be whole numbers.",
+                    "Invalid Missing Drop",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        if (dropKillcount <= 0) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Unique took must be greater than 0.",
+                    "Invalid Missing Drop",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        if (quantity <= 0) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Quantity must be greater than 0.",
+                    "Invalid Missing Drop",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            return;
+        }
+
+        int itemId = selectedItem.getItemId();
+
+        clientThread.invokeLater(() -> {
+            long itemPrice = itemManager.getItemPrice(itemId);
+
+            long geValue = itemPrice > 0
+                    ? itemPrice * (long) quantity
+                    : 0L;
+
+            boolean added = trackerManager.addMissingDrop(
+                    encounter.getEncounterId(),
+                    itemId,
+                    quantity,
+                    dropKillcount,
+                    geValue
+            );
+
+            if (!added) {
+                SwingUtilities.invokeLater(() ->
+                        JOptionPane.showMessageDialog(
+                                this,
+                                "The missing drop could not be added.",
+                                "Add Missing Drop",
+                                JOptionPane.ERROR_MESSAGE
+                        )
+                );
+
+                return;
+            }
+            
+            refreshItemDisplayData();
+        });
+    }
+
+    private static class MissingDropItem {
+        private final int itemId;
+        private final String itemName;
+        private final ImageIcon icon;
+
+        private MissingDropItem(int itemId, String itemName, ImageIcon icon) {
+            this.itemId = itemId;
+            this.itemName = itemName;
+            this.icon = icon;
+        }
+
+        private int getItemId() {
+            return itemId;
+        }
+
+        private String getItemName() {
+            return itemName;
+        }
+
+        private ImageIcon getIcon() {
+            return icon;
+        }
+
+        @Override
+        public String toString() {
+            return itemName;
+        }
     }
 }

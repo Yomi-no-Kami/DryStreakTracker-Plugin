@@ -1028,4 +1028,92 @@ public class EncounterTrackerManager {
             encounterRegistry.unregister(encounter.getEncounterId());
         }
     }
+
+    /**
+     * Manually adds a missing tracked drop.
+     *
+     * This only updates the encounter's received drop totals and
+     * creates a RecentDrop entry. Kill count and dry streak
+     * statistics are intentionally left untouched.
+     */
+    public boolean addMissingDrop(String encounterId, int itemId, int quantity, int dropKillcount, long geValue) {
+        if (!isActive()) {
+            return false;
+        }
+
+        if (encounterId == null || encounterId.trim().isEmpty()) {
+            return false;
+        }
+
+        if (itemId <= 0 || quantity <= 0 || dropKillcount <= 0) {
+            return false;
+        }
+
+        EncounterDefinition definition = encounterRegistry.getById(encounterId);
+
+        if (definition == null) {
+            return false;
+        }
+
+        /*
+         * Only items configured as tracked drops for this encounter
+         * may be manually added.
+         */
+        if (definition.getTrackedDrop(itemId) == null) {
+            return false;
+        }
+
+        /*
+         * Respect the player's tracked-drop configuration.
+         */
+        if (!isDropEnabled(encounterId, itemId)) {
+            return false;
+        }
+
+        EncounterStats stats = trackingData.getEncounter(encounterId);
+
+        if (stats == null) {
+            return false;
+        }
+
+        /*
+         * Only update the received item totals.
+         *
+         * This intentionally does not touch KC, current dry streak,
+         * longest dry streak, last completed dry streak, or any other
+         * encounter progression.
+         */
+        stats.addMissingDrop(itemId, quantity);
+
+        /*
+         * Create a normal RecentDrop so the manually added item
+         * appears in Recent Drops / submissions.
+         */
+        RecentDrop recentDrop = new RecentDrop(
+                currentPlayerName,
+                encounterId,
+                definition.getDisplayName(),
+                definition.getImageUrl(),
+                itemId,
+                quantity,
+                dropKillcount,
+                geValue,
+                System.currentTimeMillis()
+        );
+
+        trackingData.addRecentDrop(recentDrop);
+
+        save();
+
+        log.info(
+                "Manually added missing tracked drop {} x{} to {} with unique took {}",
+                itemId,
+                quantity,
+                definition.getDisplayName(),
+                dropKillcount
+        );
+
+        return true;
+    }
+
 }
