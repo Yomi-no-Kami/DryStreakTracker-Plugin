@@ -145,7 +145,7 @@ public class DryStreakStorage {
 
         configManager.unsetConfiguration(CONFIG_GROUP, dataKey);
 
-        log.info("Cleared saved tracking data for account {}", playerName);
+        log.debug("Cleared saved tracking data for account {}", playerName);
     }
 
     /**

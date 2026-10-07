@@ -270,6 +270,16 @@ public class EncounterStats {
         longestDryStreak = longestDryKillcount;
 
         /*
+         * If this encounter already has a tracked drop, Total KC and
+         * Current Dry Streak tell us where the most recent drop occurred.
+         *
+         * Example:
+         * 300 total KC - 40 dry = last drop at 260 KC.
+         */
+        lastDropKillcount = totalKillcount - dryKillcount;
+
+        
+        /*
          * Manual synchronization must never represent a new record kill.
          */
         newDryRecordThisKill = false;

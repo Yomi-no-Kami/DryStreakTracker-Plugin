@@ -100,7 +100,7 @@ public class EncounterTrackerManager {
             save();
         }
 
-        log.info(
+        log.debug(
                 "Started tracking for account {}. Loaded {} tracked encounters and {} custom encounters.",
                 currentPlayerName,
                 trackingData.getEncounters().size(),
@@ -119,7 +119,7 @@ public class EncounterTrackerManager {
             return;
         }
 
-        log.info("Stopping tracker for account {}", currentPlayerName);
+        log.debug("Stopping tracker for account {}", currentPlayerName);
 
         save();
 
@@ -149,7 +149,7 @@ public class EncounterTrackerManager {
 
         processedKillEvents.clear();
 
-        log.info("Encounter tracker initialized. " + "Waiting for player login.");
+        log.debug("Encounter tracker initialized. " + "Waiting for player login.");
     }
 
     /**
@@ -213,7 +213,7 @@ public class EncounterTrackerManager {
 
         EncounterStats stats = trackingData.getOrCreateEncounter(definition);
 
-        log.info("[DST DEBUG] recordKill entered: encounter='{}' currentKC={} currentDry={} dropItemId={} quantity={} eventKey='{}'",
+        log.debug("[DST DEBUG] recordKill entered: encounter='{}' currentKC={} currentDry={} dropItemId={} quantity={} eventKey='{}'",
                 encounterId,
                 stats.getTotalKillsTracked(),
                 stats.getCurrentDryStreak(),
@@ -226,14 +226,14 @@ public class EncounterTrackerManager {
         if (dropItemId != null) {
             stats.recordDrop(newKillcount, dropItemId, dropQuantity);
 
-            log.info("{} kill #{} recorded with tracked drop. " + "Current dry streak: {}", definition.getDisplayName(), newKillcount, stats.getCurrentDryStreak());
+            log.debug("{} kill #{} recorded with tracked drop. " + "Current dry streak: {}", definition.getDisplayName(), newKillcount, stats.getCurrentDryStreak());
         } else {
             stats.recordDryKill(newKillcount);
 
             log.debug("{} kill #{} recorded as dry. " + "Current dry streak: {}", definition.getDisplayName(), newKillcount, stats.getCurrentDryStreak());
         }
 
-        log.info("[DST DEBUG] recordKill completed: encounter='{}' newKC={} newDry={} totalDrops={}",
+        log.debug("[DST DEBUG] recordKill completed: encounter='{}' newKC={} newDry={} totalDrops={}",
                 encounterId,
                 stats.getTotalKillsTracked(),
                 stats.getCurrentDryStreak(),
@@ -273,7 +273,7 @@ public class EncounterTrackerManager {
 
         save();
 
-        log.info("{} additional tracked drop {} recorded on existing kill #{}", definition.getDisplayName(), itemId, stats.getLastKnownKillcount());
+        log.debug("{} additional tracked drop {} recorded on existing kill #{}", definition.getDisplayName(), itemId, stats.getLastKnownKillcount());
 
         return true;
     }
@@ -317,7 +317,7 @@ public class EncounterTrackerManager {
 
         save();
 
-        log.info("{} pet {} recorded on existing kill #{}", definition.getDisplayName(), petItemId, stats.getLastKnownKillcount());
+        log.debug("{} pet {} recorded on existing kill #{}", definition.getDisplayName(), petItemId, stats.getLastKnownKillcount());
 
         return true;
     }
@@ -427,7 +427,7 @@ public class EncounterTrackerManager {
 
         save();
 
-        log.info("Cleared all tracking data for account {}", playerName);
+        log.debug("Cleared all tracking data for account {}", playerName);
     }
 
     /**
@@ -467,7 +467,7 @@ public class EncounterTrackerManager {
 
         save();
 
-        log.info("Manually synchronized {} to total KC {}, dry KC {}, and longest dry KC {}", encounterId, totalKillcount, dryKillcount, longestDryKillcount);
+        log.debug("Manually synchronized {} to total KC {}, dry KC {}, and longest dry KC {}", encounterId, totalKillcount, dryKillcount, longestDryKillcount);
 
         return true;
     }
@@ -500,7 +500,7 @@ public class EncounterTrackerManager {
          */
         save();
 
-        log.info("Cleared tracking data for encounter {}", encounterId);
+        log.debug("Cleared tracking data for encounter {}", encounterId);
     }
 
     public void recordRecentDrop(String encounterId, int itemId, int quantity, long geValue) {
@@ -550,7 +550,7 @@ public class EncounterTrackerManager {
 
         save();
 
-        log.info("Cleared recent drops for account {}", currentPlayerName);
+        log.debug("Cleared recent drops for account {}", currentPlayerName);
     }
 
     public void removeRecentDrop(RecentDrop recentDrop) {
@@ -562,7 +562,7 @@ public class EncounterTrackerManager {
 
         save();
 
-        log.info(
+        log.debug(
                 "Removed recent drop {} from {}",
                 recentDrop.getItemId(),
                 recentDrop.getEncounterName()
@@ -580,7 +580,7 @@ public class EncounterTrackerManager {
 
         save();
 
-        log.info("Cleared tracker data for account {}", currentPlayerName);
+        log.debug("Cleared tracker data for account {}", currentPlayerName);
     }
 
     /**
@@ -807,7 +807,7 @@ public class EncounterTrackerManager {
 
         save();
 
-        log.info(
+        log.debug(
                 "Saved custom encounter {} with {} NPC ID(s) and {} tracked drop(s)",
                 encounter.getEncounterId(),
                 encounter.getNpcIds().size(),
@@ -838,7 +838,7 @@ public class EncounterTrackerManager {
 
         save();
 
-        log.info("Removed custom encounter {}", encounterId);
+        log.debug("Removed custom encounter {}", encounterId);
 
         return true;
     }
@@ -882,7 +882,7 @@ public class EncounterTrackerManager {
 
             trackingData.putEncounter(customStats);
 
-            log.info(
+            log.debug(
                     "Migrated saved statistics from custom encounter {} to built-in encounter {}",
                     customEncounterId,
                     builtInEncounterId
@@ -913,7 +913,7 @@ public class EncounterTrackerManager {
 
         trackingData.removeCustomEncounter(customEncounterId);
 
-        log.info(
+        log.debug(
                 "Replaced custom encounter {} with built-in encounter {}",
                 customEncounterId,
                 builtInEncounterId
@@ -980,7 +980,7 @@ public class EncounterTrackerManager {
                  */
                 conflictingEncounter = existing;
 
-                log.info(
+                log.debug(
                         "Custom encounter {} now overlaps built-in encounter {} through NPC ID {}",
                         encounter.getEncounterId(),
                         existing.getEncounterId(),
@@ -1105,7 +1105,7 @@ public class EncounterTrackerManager {
 
         save();
 
-        log.info(
+        log.debug(
                 "Manually added missing tracked drop {} x{} to {} with unique took {}",
                 itemId,
                 quantity,

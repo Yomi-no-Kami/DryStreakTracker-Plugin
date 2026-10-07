@@ -119,7 +119,7 @@ public class DryStreakTrackerPlugin extends Plugin {
 
     @Override
     protected void shutDown() {
-        log.info("Dry Streak Tracker shutting down...");
+        log.debug("Dry Streak Tracker shutting down...");
 
         smokeLootbeamManager.clear();
 
@@ -175,7 +175,7 @@ public class DryStreakTrackerPlugin extends Plugin {
 
         playerInitializationPending = false;
 
-        log.info("Logged in as {}", playerName);
+        log.debug("Logged in as {}", playerName);
 
         trackerManager.startForPlayer(playerName);
 

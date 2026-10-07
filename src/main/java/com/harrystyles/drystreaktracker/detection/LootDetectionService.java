@@ -135,13 +135,13 @@ public class LootDetectionService {
 
         if (items != null) {
             for (ItemStack item : items) {
-                log.info("[DST DEBUG] NpcLootReceived item: id={} qty={}", item.getId(), item.getQuantity());
+                log.debug("[DST DEBUG] NpcLootReceived item: id={} qty={}", item.getId(), item.getQuantity());
             }
         }
 
         EncounterDefinition encounter = encounterRegistry.getByNpcId(npcId);
 
-        log.info("[DST DEBUG] Registry lookup by NPC ID {} -> {}",
+        log.debug("[DST DEBUG] Registry lookup by NPC ID {} -> {}",
                 npcId,
                 encounter == null ? "NO MATCH" : encounter.getEncounterId());
 
@@ -348,7 +348,7 @@ public class LootDetectionService {
 
             EncounterDefinition encounter = encounterRegistry.getByNpcId(npc.getId());
 
-            log.info("[DST DEBUG] ActorDeath: npc='{}' id={} combat={} tick={} registryMatch={}",
+            log.debug("[DST DEBUG] ActorDeath: npc='{}' id={} combat={} tick={} registryMatch={}",
                     npc.getName(),
                     npc.getId(),
                     npc.getCombatLevel(),
@@ -373,7 +373,7 @@ public class LootDetectionService {
 
             EncounterDefinition encounter = encounterRegistry.getByNpcId(npc.getId());
 
-            log.info("[DST DEBUG] NpcDespawned: npc='{}' id={} combat={} tick={} registryMatch={}",
+            log.debug("[DST DEBUG] NpcDespawned: npc='{}' id={} combat={} tick={} registryMatch={}",
                     npc.getName(),
                     npc.getId(),
                     npc.getCombatLevel(),
@@ -405,7 +405,7 @@ public class LootDetectionService {
         if (encounter == null) {
             return;
         }
-        log.info("[DST DEBUG] processEncounterLoot: encounter='{}' eventKey='{}' tick={} itemCount={} petMatched={}",
+        log.debug("[DST DEBUG] processEncounterLoot: encounter='{}' eventKey='{}' tick={} itemCount={} petMatched={}",
                 encounter.getEncounterId(),
                 eventKey,
                 client.getTickCount(),
@@ -419,13 +419,13 @@ public class LootDetectionService {
          */
         Map<Integer, Integer> qualifyingDrops = findQualifyingDrops(encounter, items);
 
-        log.info("[DST DEBUG] Qualifying tracked drops for '{}': {}",
+        log.debug("[DST DEBUG] Qualifying tracked drops for '{}': {}",
                 encounter.getEncounterId(),
                 qualifyingDrops);
 
         if (items != null) {
             for (ItemStack item : items) {
-                log.info("[DST DEBUG] Item check for '{}': itemId={} qty={} configured={} enabled={}",
+                log.debug("[DST DEBUG] Item check for '{}': itemId={} qty={} configured={} enabled={}",
                         encounter.getEncounterId(),
                         item.getId(),
                         item.getQuantity(),
@@ -451,7 +451,7 @@ public class LootDetectionService {
          * the dry streak. Any additional tracked items are attached to
          * this same kill below.
          */
-        log.info("[DST DEBUG] Calling recordKill: encounter='{}' eventKey='{}' trackedDrop={} quantity={}",
+        log.debug("[DST DEBUG] Calling recordKill: encounter='{}' eventKey='{}' trackedDrop={} quantity={}",
                 encounter.getEncounterId(),
                 eventKey,
                 firstDropItemId,
@@ -459,7 +459,7 @@ public class LootDetectionService {
 
         boolean recorded = trackerManager.recordKill(encounter.getEncounterId(), eventKey, firstDropItemId, firstDropQuantity);
 
-        log.info("[DST DEBUG] recordKill result for '{}': {}",
+        log.debug("[DST DEBUG] recordKill result for '{}': {}",
                 encounter.getEncounterId(),
                 recorded);
 

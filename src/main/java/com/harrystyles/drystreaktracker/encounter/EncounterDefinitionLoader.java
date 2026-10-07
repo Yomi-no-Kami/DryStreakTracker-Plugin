@@ -77,7 +77,7 @@ public class EncounterDefinitionLoader {
             registry.register(definition);
         }
 
-        log.info("Encounter registry initialized with {} encounters", registry.size());
+        log.debug("Encounter registry initialized with {} encounters", registry.size());
     }
 
 
@@ -126,7 +126,7 @@ public class EncounterDefinitionLoader {
                 definition.setLootType(lootType);
             }
 
-            log.info("Loaded {} encounters from {} as {}", definitions.length, resource, lootType);
+            log.debug("Loaded {} encounters from {} as {}", definitions.length, resource, lootType);
 
             return definitions;
         } catch (JsonParseException e) {

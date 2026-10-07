@@ -144,7 +144,7 @@ public class CustomNpcEncounterService {
 
         refreshSidebar(sidebarPanel);
 
-        log.info(
+        log.debug(
                 "Configured custom NPC tracker for {} ({}, combat {}) with {} tracked drops",
                 npcName,
                 npcId,
