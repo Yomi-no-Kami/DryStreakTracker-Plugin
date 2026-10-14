@@ -126,6 +126,41 @@ public class DryStreakSidebarPanel extends PluginPanel {
                 LinkBrowser.browse("https://github.com/Yomi-no-Kami/DryStreakTracker-Plugin#dry-streak-tracker")
         );
 
+        JButton restoreDataButton = new JButton("↺");
+
+        restoreDataButton.setFocusPainted(false);
+        restoreDataButton.setBorderPainted(false);
+        restoreDataButton.setContentAreaFilled(false);
+        restoreDataButton.setForeground(ColorScheme.BRAND_ORANGE);
+        restoreDataButton.setFont(restoreDataButton.getFont().deriveFont(Font.BOLD, 17f));
+        restoreDataButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        restoreDataButton.setToolTipText("Restore tracking data from a previous RuneScape username");
+        restoreDataButton.setPreferredSize(new Dimension(24, 22));
+
+        restoreDataButton.addActionListener(event -> {
+            if (!trackerManager.isActive()) {
+                JOptionPane.showMessageDialog(this, "You must be logged in to restore tracking data.");
+                return;
+            }
+
+            RestoreLegacyDataDialog dialog = new RestoreLegacyDataDialog(
+                    this,
+                    trackerManager,
+                    clientThread,
+                    () -> {
+                        expandedStates.clear();
+
+                        synchronized (resolvedItemDisplayData) {
+                            resolvedItemDisplayData.clear();
+                        }
+
+                        refresh();
+                        clientThread.invokeLater(this::refreshItemDisplayData);
+                    }
+            );
+
+            dialog.setVisible(true);
+        });
 
         clearAllButton.setFocusPainted(false);
         clearAllButton.setBorderPainted(false);
@@ -204,6 +239,7 @@ public class DryStreakSidebarPanel extends PluginPanel {
                 title.setBounds(0, 0, width, height);
                 discordButton.setBounds(2, 0, 22, height);
                 helpButton.setBounds(24, 0, 22, height);
+                restoreDataButton.setBounds(40, 0, 22, height);
             }
         };
 
@@ -214,6 +250,7 @@ public class DryStreakSidebarPanel extends PluginPanel {
         titlePanel.add(title);
         titlePanel.add(discordButton);
         titlePanel.add(helpButton);
+        titlePanel.add(restoreDataButton);
 
         JPanel clearButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 5));
 

@@ -38,6 +38,7 @@ public class EncounterTrackerManager {
      * RuneScape character currently being tracked.
      */
     private String currentPlayerName;
+    private long currentAccountHash = -1L; // More reliable than player name tracking
 
     /**
      * Whether the tracker currently has an active
@@ -63,18 +64,15 @@ public class EncounterTrackerManager {
      *
      * @param playerName RuneScape character name.
      */
-    public void startForPlayer(String playerName) {
-        if (playerName == null || playerName.trim().isEmpty()) {
-            log.warn("Cannot start tracker: player name is empty");
-
+    public void startForPlayer(String playerName, long accountHash) {
+        if (playerName == null || playerName.trim().isEmpty() || accountHash == -1L) {
             return;
         }
 
         String normalizedName = playerName.trim();
 
-        if (active && currentPlayerName != null && currentPlayerName.equalsIgnoreCase(normalizedName)) {
-            log.debug("Tracker already active for {}", normalizedName);
-
+        if (active && currentAccountHash == accountHash) {
+            currentPlayerName = normalizedName;
             return;
         }
 
@@ -82,13 +80,16 @@ public class EncounterTrackerManager {
             stopForPlayer();
         }
 
-        currentPlayerName = normalizedName;
+        PlayerTrackingData loadedData = storage.load(normalizedName, accountHash);
 
-        trackingData = storage.load(currentPlayerName);
-
-        if (trackingData == null) {
-            trackingData = new PlayerTrackingData();
+        if (loadedData == null) {
+            log.error("Unable to load tracking data for {}. Tracking will not start.", normalizedName);
+            return;
         }
+
+        currentPlayerName = normalizedName;
+        currentAccountHash = accountHash;
+        trackingData = loadedData;
 
         processedKillEvents.clear();
 
@@ -100,12 +101,7 @@ public class EncounterTrackerManager {
             save();
         }
 
-        log.debug(
-                "Started tracking for account {}. Loaded {} tracked encounters and {} custom encounters.",
-                currentPlayerName,
-                trackingData.getEncounters().size(),
-                trackingData.getCustomEncounters().size()
-        );
+        log.debug("Started tracking for {} using account hash {}", currentPlayerName, currentAccountHash);
     }
 
     /**
@@ -133,6 +129,7 @@ public class EncounterTrackerManager {
 
         trackingData = null;
         currentPlayerName = null;
+        currentAccountHash = -1L;
         active = false;
     }
 
@@ -145,6 +142,7 @@ public class EncounterTrackerManager {
     public void start() {
         trackingData = null;
         currentPlayerName = null;
+        currentAccountHash = -1L;
         active = false;
 
         processedKillEvents.clear();
@@ -168,7 +166,9 @@ public class EncounterTrackerManager {
             return;
         }
 
-        storage.save(currentPlayerName, trackingData);
+        if (!storage.save(currentAccountHash, trackingData)) {
+            log.error("Failed to persist tracking data for {}", currentPlayerName);
+        }
     }
 
     /**
@@ -389,7 +389,7 @@ public class EncounterTrackerManager {
      * Returns whether a player is currently being tracked.
      */
     public boolean isActive() {
-        return active && currentPlayerName != null && trackingData != null;
+        return active && currentPlayerName != null && currentAccountHash != -1L && trackingData != null;
     }
 
     /**
@@ -411,23 +411,22 @@ public class EncounterTrackerManager {
     public void clearAllData() {
         if (!isActive()) {
             log.debug("Cannot clear account data: no player is logged in");
-
             return;
         }
 
-        String playerName = currentPlayerName;
+        PlayerTrackingData emptyData = new PlayerTrackingData();
+
+        if (!storage.save(currentAccountHash, emptyData)) {
+            log.error("Failed to clear tracking data for {}. Existing data was preserved.", currentPlayerName);
+            return;
+        }
 
         unregisterCustomEncounters();
 
-        trackingData = new PlayerTrackingData();
-
+        trackingData = emptyData;
         processedKillEvents.clear();
 
-        storage.clear(playerName);
-
-        save();
-
-        log.debug("Cleared all tracking data for account {}", playerName);
+        log.debug("Cleared all tracking data for account {}", currentPlayerName);
     }
 
     /**
@@ -1112,6 +1111,56 @@ public class EncounterTrackerManager {
                 definition.getDisplayName(),
                 dropKillcount
         );
+
+        return true;
+    }
+
+    public PlayerTrackingData previewLegacyData(String previousPlayerName) {
+        if (!isActive()) {
+            return null;
+        }
+
+        return storage.loadLegacyData(previousPlayerName);
+    }
+
+    public boolean restoreLegacyData(String previousPlayerName) {
+        if (!isActive()) {
+            return false;
+        }
+
+        PlayerTrackingData legacyData = storage.loadLegacyData(previousPlayerName);
+
+        if (legacyData == null) {
+            return false;
+        }
+
+        // Never overwrite existing progress or preferences.
+        if (!trackingData.getEncounters().isEmpty()
+                || !trackingData.getRecentDrops().isEmpty()
+                || !trackingData.getCustomEncounters().isEmpty()
+                || !trackingData.getDropPreferences().isEmpty()) {
+            log.warn("Cannot restore legacy data because {} already has tracking data", currentPlayerName);
+            return false;
+        }
+
+        // Persist the restored data before changing the active tracker.
+        if (!storage.save(currentAccountHash, legacyData)) {
+            log.error("Failed to restore legacy tracking data for {}", currentPlayerName);
+            return false;
+        }
+
+        unregisterCustomEncounters();
+
+        trackingData = legacyData;
+        processedKillEvents.clear();
+
+        boolean customEncountersMigrated = registerCustomEncounters();
+
+        if (customEncountersMigrated) {
+            save();
+        }
+
+        log.info("Restored legacy tracking data from {} for {}", previousPlayerName, currentPlayerName);
 
         return true;
     }

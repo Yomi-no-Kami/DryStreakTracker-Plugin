@@ -7,6 +7,11 @@ import com.harrystyles.drystreaktracker.encounter.tracking.EncounterTrackerManag
 import com.harrystyles.drystreaktracker.ui.DryStreakSidebarPanel;
 
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.swing.*;
@@ -20,6 +25,7 @@ import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 
+import net.runelite.api.widgets.Widget;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -32,6 +38,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.ImageUtil;
+import net.runelite.client.util.Text;
 
 @Slf4j
 @PluginDescriptor(name = "Dry Streak Tracker", description = "Tracks your dry streaks at Pvm/Skilling content."
@@ -129,6 +136,9 @@ public class DryStreakTrackerPlugin extends Plugin {
             navigationButton = null;
         }
 
+        clearPendingDoomCompletion();
+        previousDoomLoot.clear();
+
         trackerManager.stop();
 
         encounterRegistry.clear();
@@ -156,6 +166,9 @@ public class DryStreakTrackerPlugin extends Plugin {
             lootDetectionService.clearProcessedLootEvents();
             trackerManager.stopForPlayer();
 
+            clearPendingDoomCompletion();
+            previousDoomLoot.clear();
+
             SwingUtilities.invokeLater(() -> sidebarPanel.setLoggedIn(false));
         }
     }
@@ -169,6 +182,12 @@ public class DryStreakTrackerPlugin extends Plugin {
 
         String playerName = player.getName();
 
+        long accountHash = client.getAccountHash();
+
+        if (accountHash == -1L) {
+            return;
+        }
+
         if (playerName == null || playerName.trim().isEmpty()) {
             return;
         }
@@ -177,7 +196,14 @@ public class DryStreakTrackerPlugin extends Plugin {
 
         log.debug("Logged in as {}", playerName);
 
-        trackerManager.startForPlayer(playerName);
+        trackerManager.startForPlayer(playerName, accountHash);
+
+        if (!trackerManager.isActive()) {
+            log.error("Failed to initialize tracking for {}. Saved data will not be overwritten.", playerName);
+
+            SwingUtilities.invokeLater(() -> sidebarPanel.setLoggedIn(false));
+            return;
+        }
 
         SwingUtilities.invokeLater(() -> {
             sidebarPanel.setLoggedIn(true);
@@ -203,6 +229,11 @@ public class DryStreakTrackerPlugin extends Plugin {
      */
     @Subscribe
     public void onLootReceived(LootReceived event) {
+        if (event != null && event.getName() != null
+                && event.getName().equalsIgnoreCase("Doom of Mokhaiotl")) {
+            return;
+        }
+
         lootDetectionService.handleLootReceived(event);
     }
 
@@ -233,7 +264,10 @@ public class DryStreakTrackerPlugin extends Plugin {
      */
     @Subscribe
     public void onChatMessage(ChatMessage event) {
+
         lootDetectionService.handlePetAcquisitionMessage(event);
+
+        handleDoomCompletionMessage(event);
     }
 
     /**
@@ -249,6 +283,8 @@ public class DryStreakTrackerPlugin extends Plugin {
 
         lootDetectionService.processPendingGroundLootDeaths();
         lootDetectionService.processPendingPetDryResult();
+
+        processDoomRewardInterface();
     }
 
     @Subscribe
@@ -364,5 +400,210 @@ public class DryStreakTrackerPlugin extends Plugin {
     @Subscribe
     public void onConfigChanged(ConfigChanged event) {
         smokeLootbeamManager.handleConfigChanged(event);
+    }
+
+
+
+    private static final int DOOM_WIDGET_GROUP = 919;
+    private static final int DOOM_TITLE_WIDGET = 2;
+    private static final int DOOM_TITLE_CHILD = 1;
+    private static final int DOOM_LOOT_WIDGET = 19;
+
+    private static final Pattern DOOM_LEVEL_PATTERN = Pattern.compile("(?i)Level\\s+(\\d+)\\s+Complete!");
+    private static final Pattern DOOM_COMPLETION_MESSAGE = Pattern.compile("(?i)Delve\\s+level:\\s*(\\d+)\\s+duration:");
+
+    private int pendingDoomLevel = -1;
+    private int pendingDoomTick = -1;
+    private int lastRecordedDoomTick = -1;
+
+    private final Map<Integer, Integer> previousDoomLoot = new HashMap<>();
+
+    private void processDoomRewardInterface() {
+        if (client.getGameState() != GameState.LOGGED_IN || !trackerManager.isActive()) {
+            return;
+        }
+
+        if (pendingDoomLevel < 0 || pendingDoomTick < 0
+                || pendingDoomTick == lastRecordedDoomTick) {
+            return;
+        }
+
+        Widget titleWidget = client.getWidget(DOOM_WIDGET_GROUP, DOOM_TITLE_WIDGET);
+
+        if (titleWidget == null) {
+            return;
+        }
+
+        Widget[] titleChildren = titleWidget.getDynamicChildren();
+
+        if (titleChildren == null || titleChildren.length <= DOOM_TITLE_CHILD
+                || titleChildren[DOOM_TITLE_CHILD] == null) {
+            return;
+        }
+
+        String title = Text.removeTags(titleChildren[DOOM_TITLE_CHILD].getText());
+
+        if (title == null) {
+            return;
+        }
+
+        Matcher matcher = DOOM_LEVEL_PATTERN.matcher(title);
+
+        if (!matcher.find()) {
+            return;
+        }
+
+        int displayedLevel = Integer.parseInt(matcher.group(1));
+
+        if (displayedLevel != pendingDoomLevel) {
+            return;
+        }
+
+        Widget lootWidget = client.getWidget(DOOM_WIDGET_GROUP, DOOM_LOOT_WIDGET);
+
+        if (lootWidget == null || lootWidget.isHidden()) {
+            return;
+        }
+
+        Widget[] slots = lootWidget.getDynamicChildren();
+
+        if (slots == null) {
+            return;
+        }
+
+        Map<Integer, Integer> currentLoot = readDoomLoot(lootWidget);
+
+        EncounterDefinition encounter = encounterRegistry.getByLootSourceName("Doom of Mokhaiotl");
+
+        if (encounter == null) {
+            return;
+        }
+
+        String encounterId = encounter.getEncounterId();
+        Map<Integer, Integer> newTrackedDrops = new LinkedHashMap<>();
+
+        for (Map.Entry<Integer, Integer> entry : currentLoot.entrySet()) {
+            int itemId = entry.getKey();
+            int gainedQuantity = entry.getValue() - previousDoomLoot.getOrDefault(itemId, 0);
+
+            if (gainedQuantity > 0 && trackerManager.isDropEnabled(encounterId, itemId)) {
+                newTrackedDrops.put(itemId, gainedQuantity);
+            }
+        }
+
+        Integer firstDropId = null;
+        int firstDropQuantity = 0;
+
+        for (Map.Entry<Integer, Integer> entry : newTrackedDrops.entrySet()) {
+            firstDropId = entry.getKey();
+            firstDropQuantity = entry.getValue();
+            break;
+        }
+
+        String eventKey = "doom-delve-" + pendingDoomTick + "-" + pendingDoomLevel;
+
+        boolean recorded = trackerManager.recordKill(
+                encounterId, eventKey, firstDropId, firstDropQuantity);
+
+        if (!recorded) {
+            return;
+        }
+
+        boolean first = true;
+
+        for (Map.Entry<Integer, Integer> entry : newTrackedDrops.entrySet()) {
+            if (first) {
+                first = false;
+                continue;
+            }
+
+            trackerManager.recordAdditionalDropForLastKill(
+                    encounterId, entry.getKey(), entry.getValue());
+        }
+
+        log.info("[DOOM] Recorded level={} result={} trackedDrops={}",
+                pendingDoomLevel, newTrackedDrops.isEmpty() ? "DRY" : "DROP", newTrackedDrops);
+
+        previousDoomLoot.clear();
+        previousDoomLoot.putAll(currentLoot);
+
+        /*
+         * This completion has now been consumed.
+         * Reopening the interface cannot record another KC.
+         */
+        lastRecordedDoomTick = pendingDoomTick;
+        pendingDoomLevel = -1;
+        pendingDoomTick = -1;
+
+        SwingUtilities.invokeLater(() -> sidebarPanel.refresh());
+    }
+
+    private void clearPendingDoomCompletion() {
+        pendingDoomLevel = -1;
+        pendingDoomTick = -1;
+        lastRecordedDoomTick = -1;
+    }
+
+    private Map<Integer, Integer> readDoomLoot(Widget lootWidget) {
+        Map<Integer, Integer> items = new HashMap<>();
+
+        Widget[] slots = lootWidget.getDynamicChildren();
+
+        if (slots == null) {
+            return items;
+        }
+
+        for (Widget slot : slots) {
+            if (slot == null || slot.isHidden()) {
+                continue;
+            }
+
+            int itemId = slot.getItemId();
+            int quantity = slot.getItemQuantity();
+
+            if (itemId <= 0 || quantity <= 0) {
+                continue;
+            }
+
+            items.merge(itemId, quantity, Integer::sum);
+        }
+
+        return items;
+    }
+
+
+    private void handleDoomCompletionMessage(ChatMessage event) {
+        if (event == null || event.getType() != ChatMessageType.GAMEMESSAGE
+                || !trackerManager.isActive()) {
+            return;
+        }
+
+        String message = Text.removeTags(event.getMessage());
+
+        if (message == null) {
+            return;
+        }
+
+        Matcher matcher = DOOM_COMPLETION_MESSAGE.matcher(message);
+
+        if (!matcher.find()) {
+            return;
+        }
+
+        int level = Integer.parseInt(matcher.group(1));
+        int tick = client.getTickCount();
+
+        // Ignore duplicate messages for a completion already pending or recorded.
+        if (tick == pendingDoomTick || tick == lastRecordedDoomTick) {
+            return;
+        }
+
+        pendingDoomLevel = level;
+        pendingDoomTick = tick;
+
+        // A fresh level 1 completion starts a new loot accumulation.
+        if (level == 1) {
+            previousDoomLoot.clear();
+        }
     }
 }

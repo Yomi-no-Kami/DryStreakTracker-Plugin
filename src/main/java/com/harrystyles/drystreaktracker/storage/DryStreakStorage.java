@@ -1,5 +1,7 @@
 package com.harrystyles.drystreaktracker.storage;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.harrystyles.drystreaktracker.encounter.tracking.PlayerTrackingData;
 
 import com.google.gson.Gson;
@@ -161,6 +163,10 @@ public class DryStreakStorage {
         return DATA_KEY_PREFIX + sha256(normalizedName);
     }
 
+    private String createAccountDataKey(long accountHash) {
+        return DATA_KEY_PREFIX + "account_" + Long.toUnsignedString(accountHash);
+    }
+
     /**
      * Creates a SHA-256 hash.
      */
@@ -179,6 +185,140 @@ public class DryStreakStorage {
             return result.toString();
         } catch (Exception e) {
             throw new IllegalStateException("Unable to generate account storage key", e);
+        }
+    }
+
+    public PlayerTrackingData load(String playerName, long accountHash) {
+        if (playerName == null || playerName.trim().isEmpty() || accountHash == -1L) {
+            log.warn("Cannot load tracking data: player name or account hash unavailable");
+            return null;
+        }
+
+        try {
+            String accountKey = createAccountDataKey(accountHash);
+            String accountJson = configManager.getConfiguration(CONFIG_GROUP, accountKey);
+
+            // An existing account save always takes priority over legacy data.
+            if (accountJson != null) {
+                return loadFromJson(accountJson, accountKey);
+            }
+
+            // Existing users: migrate their username-based save once.
+            String oldKey = createDataKey(playerName);
+            String oldJson = configManager.getConfiguration(CONFIG_GROUP, oldKey);
+
+            if (oldJson != null) {
+                PlayerTrackingData data = loadFromJson(oldJson, oldKey);
+
+                if (data == null) {
+                    return null;
+                }
+
+                // Preserve the original username-based save as a backup.
+                if (!save(accountHash, data)) {
+                    log.error("Failed to migrate tracking data for {}", playerName);
+                    return null;
+                }
+
+                log.info("Migrated tracking data for {} to account-based storage", playerName);
+                return data;
+            }
+
+            return new PlayerTrackingData();
+        } catch (Exception e) {
+            log.error("Failed to load tracking data for {}", playerName, e);
+            return null;
+        }
+    }
+
+    public boolean save(long accountHash, PlayerTrackingData data) {
+        if (accountHash == -1L || data == null) {
+            return false;
+        }
+
+        try {
+            String dataKey = createAccountDataKey(accountHash);
+            String json = gson.toJson(data);
+
+            configManager.setConfiguration(CONFIG_GROUP, dataKey, json);
+
+            String savedJson = configManager.getConfiguration(CONFIG_GROUP, dataKey);
+
+            if (!json.equals(savedJson)) {
+                log.error("Tracking data write verification failed for account hash {}", accountHash);
+                return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            log.error("Failed to save tracking data for account hash {}", accountHash, e);
+            return false;
+        }
+    }
+
+    public void clear(long accountHash) {
+        if (accountHash == -1L) {
+            return;
+        }
+
+        if (!save(accountHash, new PlayerTrackingData())) {
+            log.error("Failed to clear tracking data for account hash {}", accountHash);
+        }
+    }
+
+    private PlayerTrackingData loadFromJson(String json, String key) {
+        try {
+            if (json == null || json.trim().isEmpty()) {
+                log.error("Tracking data is empty for {}", key);
+                return null;
+            }
+
+            String decoded = json.trim().startsWith("{") ? json : gson.fromJson(json, String.class);
+
+            if (decoded == null || !decoded.trim().startsWith("{")) {
+                log.error("Invalid tracking data format for {}", key);
+                return null;
+            }
+
+            JsonObject root = new JsonParser().parse(decoded).getAsJsonObject();
+
+            if (!root.has("version") || !root.has("encounters")
+                    || !root.get("encounters").isJsonObject()) {
+                log.error("Tracking data is missing required fields for {}", key);
+                return null;
+            }
+
+            PlayerTrackingData data = gson.fromJson(root, PlayerTrackingData.class);
+
+            if (data == null || data.getVersion() != 1 || data.getEncounters() == null) {
+                log.error("Unsupported or invalid tracking data for {}", key);
+                return null;
+            }
+
+            return data;
+        } catch (Exception e) {
+            log.error("Failed to parse tracking data for {}", key, e);
+            return null;
+        }
+    }
+
+    public PlayerTrackingData loadLegacyData(String previousPlayerName) {
+        if (previousPlayerName == null || previousPlayerName.trim().isEmpty()) {
+            return null;
+        }
+
+        try {
+            String oldKey = createDataKey(previousPlayerName);
+            String oldJson = configManager.getConfiguration(CONFIG_GROUP, oldKey);
+
+            if (oldJson == null) {
+                return null;
+            }
+
+            return loadFromJson(oldJson, oldKey);
+        } catch (Exception e) {
+            log.error("Failed to load legacy tracking data for {}", previousPlayerName, e);
+            return null;
         }
     }
 }
