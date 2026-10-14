@@ -200,7 +200,7 @@ public class DryStreakTrackerPlugin extends Plugin {
         trackerManager.startForPlayer(playerName, accountHash);
 
         if (!trackerManager.isActive()) {
-            log.error("Failed to initialize tracking for {}. Saved data will not be overwritten.", playerName);
+            log.debug("Failed to initialize tracking for {}. Saved data will not be overwritten.", playerName);
 
             SwingUtilities.invokeLater(() -> sidebarPanel.setLoggedIn(false));
             return;

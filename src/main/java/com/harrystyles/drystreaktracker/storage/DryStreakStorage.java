@@ -50,7 +50,7 @@ public class DryStreakStorage {
      */
     public PlayerTrackingData load(String playerName) {
         if (playerName == null || playerName.trim().isEmpty()) {
-            log.warn("Cannot load tracking data: player name is empty");
+            log.debug("Cannot load tracking data: player name is empty");
 
             return new PlayerTrackingData();
         }
@@ -91,12 +91,12 @@ public class DryStreakStorage {
                 return data != null ? data : new PlayerTrackingData();
             }
 
-            log.warn("Saved tracking data for {} has an unexpected format", playerName
+            log.debug("Saved tracking data for {} has an unexpected format", playerName
             );
 
             return new PlayerTrackingData();
         } catch (Exception e) {
-            log.error("Failed to parse saved tracking data for account {}. " + "Starting with empty tracking data.", playerName, e);
+            log.debug("Failed to parse saved tracking data for account {}. " + "Starting with empty tracking data.", playerName, e);
 
             return new PlayerTrackingData();
         }
@@ -110,7 +110,7 @@ public class DryStreakStorage {
      */
     public void save(String playerName, PlayerTrackingData data) {
         if (playerName == null || playerName.trim().isEmpty()) {
-            log.warn("Cannot save tracking data: player name is empty");
+            log.debug("Cannot save tracking data: player name is empty");
 
             return;
         }
@@ -128,7 +128,7 @@ public class DryStreakStorage {
 
             log.debug("Saved tracking data for account {}", playerName);
         } catch (Exception e) {
-            log.error("Failed to save tracking data for account {}", playerName, e);
+            log.debug("Failed to save tracking data for account {}", playerName, e);
         }
     }
 
@@ -190,7 +190,7 @@ public class DryStreakStorage {
 
     public PlayerTrackingData load(String playerName, long accountHash) {
         if (playerName == null || playerName.trim().isEmpty() || accountHash == -1L) {
-            log.warn("Cannot load tracking data: player name or account hash unavailable");
+            log.debug("Cannot load tracking data: player name or account hash unavailable");
             return null;
         }
 
@@ -216,17 +216,17 @@ public class DryStreakStorage {
 
                 // Preserve the original username-based save as a backup.
                 if (!save(accountHash, data)) {
-                    log.error("Failed to migrate tracking data for {}", playerName);
+                    log.debug("Failed to migrate tracking data for {}", playerName);
                     return null;
                 }
 
-                log.info("Migrated tracking data for {} to account-based storage", playerName);
+                log.debug("Migrated tracking data for {} to account-based storage", playerName);
                 return data;
             }
 
             return new PlayerTrackingData();
         } catch (Exception e) {
-            log.error("Failed to load tracking data for {}", playerName, e);
+            log.debug("Failed to load tracking data for {}", playerName, e);
             return null;
         }
     }
@@ -245,13 +245,13 @@ public class DryStreakStorage {
             String savedJson = configManager.getConfiguration(CONFIG_GROUP, dataKey);
 
             if (!json.equals(savedJson)) {
-                log.error("Tracking data write verification failed for account hash {}", accountHash);
+                log.debug("Tracking data write verification failed for account hash {}", accountHash);
                 return false;
             }
 
             return true;
         } catch (Exception e) {
-            log.error("Failed to save tracking data for account hash {}", accountHash, e);
+            log.debug("Failed to save tracking data for account hash {}", accountHash, e);
             return false;
         }
     }
@@ -262,21 +262,21 @@ public class DryStreakStorage {
         }
 
         if (!save(accountHash, new PlayerTrackingData())) {
-            log.error("Failed to clear tracking data for account hash {}", accountHash);
+            log.debug("Failed to clear tracking data for account hash {}", accountHash);
         }
     }
 
     private PlayerTrackingData loadFromJson(String json, String key) {
         try {
             if (json == null || json.trim().isEmpty()) {
-                log.error("Tracking data is empty for {}", key);
+                log.debug("Tracking data is empty for {}", key);
                 return null;
             }
 
             String decoded = json.trim().startsWith("{") ? json : gson.fromJson(json, String.class);
 
             if (decoded == null || !decoded.trim().startsWith("{")) {
-                log.error("Invalid tracking data format for {}", key);
+                log.debug("Invalid tracking data format for {}", key);
                 return null;
             }
 
@@ -284,20 +284,20 @@ public class DryStreakStorage {
 
             if (!root.has("version") || !root.has("encounters")
                     || !root.get("encounters").isJsonObject()) {
-                log.error("Tracking data is missing required fields for {}", key);
+                log.debug("Tracking data is missing required fields for {}", key);
                 return null;
             }
 
             PlayerTrackingData data = gson.fromJson(root, PlayerTrackingData.class);
 
             if (data == null || data.getVersion() != 1 || data.getEncounters() == null) {
-                log.error("Unsupported or invalid tracking data for {}", key);
+                log.debug("Unsupported or invalid tracking data for {}", key);
                 return null;
             }
 
             return data;
         } catch (Exception e) {
-            log.error("Failed to parse tracking data for {}", key, e);
+            log.debug("Failed to parse tracking data for {}", key, e);
             return null;
         }
     }
@@ -317,7 +317,7 @@ public class DryStreakStorage {
 
             return loadFromJson(oldJson, oldKey);
         } catch (Exception e) {
-            log.error("Failed to load legacy tracking data for {}", previousPlayerName, e);
+            log.debug("Failed to load legacy tracking data for {}", previousPlayerName, e);
             return null;
         }
     }

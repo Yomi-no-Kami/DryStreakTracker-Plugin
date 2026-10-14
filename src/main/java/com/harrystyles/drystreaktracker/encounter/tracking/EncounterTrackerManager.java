@@ -1160,7 +1160,7 @@ public class EncounterTrackerManager {
             save();
         }
 
-        log.info("Restored legacy tracking data from {} for {}", previousPlayerName, currentPlayerName);
+        log.debug("Restored legacy tracking data from {} for {}", previousPlayerName, currentPlayerName);
 
         return true;
     }
