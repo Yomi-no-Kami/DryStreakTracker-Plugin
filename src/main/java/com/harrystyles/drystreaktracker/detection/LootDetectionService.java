@@ -724,7 +724,7 @@ public class LootDetectionService {
      *
      * This method does not modify encounter kill totals.
      */
-    private void processRecordedDrop(EncounterDefinition encounter, int itemId, int quantity, boolean pet) {
+    public void processRecordedDrop(EncounterDefinition encounter, int itemId, int quantity, boolean pet) {
         long gePrice = itemManager.getItemPrice(itemId);
 
         long totalGeValue = gePrice * quantity;

@@ -512,13 +512,18 @@ public class DryStreakTrackerPlugin extends Plugin {
         boolean first = true;
 
         for (Map.Entry<Integer, Integer> entry : newTrackedDrops.entrySet()) {
+            int itemId = entry.getKey();
+            int quantity = entry.getValue();
+
             if (first) {
                 first = false;
+                lootDetectionService.processRecordedDrop(encounter, itemId, quantity, false);
                 continue;
             }
 
-            trackerManager.recordAdditionalDropForLastKill(
-                    encounterId, entry.getKey(), entry.getValue());
+            if (trackerManager.recordAdditionalDropForLastKill(encounterId, itemId, quantity)) {
+                lootDetectionService.processRecordedDrop(encounter, itemId, quantity, false);
+            }
         }
 
         log.info("[DOOM] Recorded level={} result={} trackedDrops={}",
