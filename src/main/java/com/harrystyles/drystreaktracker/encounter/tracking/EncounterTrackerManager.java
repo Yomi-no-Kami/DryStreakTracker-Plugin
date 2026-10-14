@@ -83,7 +83,7 @@ public class EncounterTrackerManager {
         PlayerTrackingData loadedData = storage.load(normalizedName, accountHash);
 
         if (loadedData == null) {
-            log.error("Unable to load tracking data for {}. Tracking will not start.", normalizedName);
+            log.debug("Unable to load tracking data for {}. Tracking will not start.", normalizedName);
             return;
         }
 
@@ -167,7 +167,7 @@ public class EncounterTrackerManager {
         }
 
         if (!storage.save(currentAccountHash, trackingData)) {
-            log.error("Failed to persist tracking data for {}", currentPlayerName);
+            log.debug("Failed to persist tracking data for {}", currentPlayerName);
         }
     }
 
@@ -417,7 +417,7 @@ public class EncounterTrackerManager {
         PlayerTrackingData emptyData = new PlayerTrackingData();
 
         if (!storage.save(currentAccountHash, emptyData)) {
-            log.error("Failed to clear tracking data for {}. Existing data was preserved.", currentPlayerName);
+            log.debug("Failed to clear tracking data for {}. Existing data was preserved.", currentPlayerName);
             return;
         }
 
@@ -1145,7 +1145,7 @@ public class EncounterTrackerManager {
 
         // Persist the restored data before changing the active tracker.
         if (!storage.save(currentAccountHash, legacyData)) {
-            log.error("Failed to restore legacy tracking data for {}", currentPlayerName);
+            log.debug("Failed to restore legacy tracking data for {}", currentPlayerName);
             return false;
         }
 

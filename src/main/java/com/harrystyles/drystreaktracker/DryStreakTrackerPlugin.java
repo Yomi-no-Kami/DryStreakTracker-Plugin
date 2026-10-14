@@ -25,6 +25,7 @@ import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 
+import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -404,11 +405,6 @@ public class DryStreakTrackerPlugin extends Plugin {
 
 
 
-    private static final int DOOM_WIDGET_GROUP = 919;
-    private static final int DOOM_TITLE_WIDGET = 2;
-    private static final int DOOM_TITLE_CHILD = 1;
-    private static final int DOOM_LOOT_WIDGET = 19;
-
     private static final Pattern DOOM_LEVEL_PATTERN = Pattern.compile("(?i)Level\\s+(\\d+)\\s+Complete!");
     private static final Pattern DOOM_COMPLETION_MESSAGE = Pattern.compile("(?i)Delve\\s+level:\\s*(\\d+)\\s+duration:");
 
@@ -422,13 +418,12 @@ public class DryStreakTrackerPlugin extends Plugin {
         if (client.getGameState() != GameState.LOGGED_IN || !trackerManager.isActive()) {
             return;
         }
-
         if (pendingDoomLevel < 0 || pendingDoomTick < 0
                 || pendingDoomTick == lastRecordedDoomTick) {
             return;
         }
 
-        Widget titleWidget = client.getWidget(DOOM_WIDGET_GROUP, DOOM_TITLE_WIDGET);
+        Widget titleWidget = client.getWidget(InterfaceID.DomEndLevelUi.FRAME);
 
         if (titleWidget == null) {
             return;
@@ -436,12 +431,24 @@ public class DryStreakTrackerPlugin extends Plugin {
 
         Widget[] titleChildren = titleWidget.getDynamicChildren();
 
-        if (titleChildren == null || titleChildren.length <= DOOM_TITLE_CHILD
-                || titleChildren[DOOM_TITLE_CHILD] == null) {
+        if (titleChildren == null) {
             return;
         }
 
-        String title = Text.removeTags(titleChildren[DOOM_TITLE_CHILD].getText());
+        String title = null;
+
+        for (Widget child : titleChildren) {
+            if (child == null || child.getText() == null) {
+                continue;
+            }
+
+            String childText = Text.removeTags(child.getText());
+
+            if (childText != null && DOOM_LEVEL_PATTERN.matcher(childText).find()) {
+                title = childText;
+                break;
+            }
+        }
 
         if (title == null) {
             return;
@@ -459,7 +466,7 @@ public class DryStreakTrackerPlugin extends Plugin {
             return;
         }
 
-        Widget lootWidget = client.getWidget(DOOM_WIDGET_GROUP, DOOM_LOOT_WIDGET);
+        Widget lootWidget = client.getWidget(InterfaceID.DomEndLevelUi.LOOT_CONTENTS);
 
         if (lootWidget == null || lootWidget.isHidden()) {
             return;
@@ -526,7 +533,7 @@ public class DryStreakTrackerPlugin extends Plugin {
             }
         }
 
-        log.info("[DOOM] Recorded level={} result={} trackedDrops={}",
+        log.debug("[DOOM] Recorded level={} result={} trackedDrops={}",
                 pendingDoomLevel, newTrackedDrops.isEmpty() ? "DRY" : "DROP", newTrackedDrops);
 
         previousDoomLoot.clear();
@@ -566,7 +573,7 @@ public class DryStreakTrackerPlugin extends Plugin {
             int itemId = slot.getItemId();
             int quantity = slot.getItemQuantity();
 
-            if (itemId <= 0 || quantity <= 0) {
+            if (itemId <= 0 || quantity <= 0 || itemId == 6512) {
                 continue;
             }
 

@@ -37,7 +37,7 @@ public class RestoreLegacyDataDialog extends JDialog {
         content.setBackground(ColorScheme.DARK_GRAY_COLOR);
         content.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-        JLabel description = new JLabel("<html>Changed your RuneScape username and lost all your data before the storage update on October 13th, 2026?<br>Enter your previous username to recover saved tracking data.</html>");
+        JLabel description = new JLabel("<html>Changed your RuneScape username and lost all your data before the storage update on October 14th, 2026?<br>Enter your previous username to recover saved tracking data.</html>");
         description.setForeground(Color.WHITE);
         description.setAlignmentX(Component.LEFT_ALIGNMENT);
 
